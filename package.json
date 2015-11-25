@@ -1,0 +1,34 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "express": "*",
+    "jade": "*",
+    "sequelize": "*",
+    "pg": "*",    
+    "connect-redis": "*",    
+    "redis": "*",
+    "request": "*",
+    "pg-hstore": "*",
+    "passport-local": "*",
+    "passport": "*",
+    "bcrypt-as-promised": "*",
+    "node-gyp": "*",
+    "connect-flash": "*",
+    "express-session": "*",
+    "repl-promised": "*",
+    "repl": "*",
+    "lodash": "*",
+    "body-parser": "^1.5.2",
+    "morgan": "^1.2.2",
+    "cookie-parser": "*",
+    "method-override": "^2.1.2",    
+    "multer": "^0.1.3",
+    "serve-favicon": "^2.0.1",     
+    "errorhandler": "^1.1.1"
+  }
+}

@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  .container-fluid    
+    .row
+      h4.col-md-4.col-md-offset-4.text-center.error #{message}
+    .row
+      h2.col-md-4.col-md-offset-4.text-center Student Login
+    .row
+      .col-md-4.col-md-offset-4.text-center
+        form.login-form(action="/login" method="POST")
+          .form-group
+            label(for="email") Email
+            input.form-control#email(name="email" type="text" placeholder="example@gmail.com" maxLength="12")
+          .form-group
+            label(for="password") Password
+            input.form-control#password(name="password" type="password" placeholder="password" maxLength="24")  
+          button.btn.btn-default(type="submit") Submit
+    .row
+      a.col-md-4.col-md-offset-4.text-center.create-student-link(href="/user/create")
+        h4 Create a new account
