@@ -4,7 +4,7 @@ module.exports = function(sequelize, DataTypes) {
         passwordHash: DataTypes.STRING,
         usertype: DataTypes.ENUM('Teacher','Student', 'Parent'),
         isAdmin: { type: DataTypes.BOOLEAN, defaulValue: false },
-        name: { type: DataTypes.STRING, validate: { len: [4, 40] }}
+        name: { type: DataTypes.STRING, validate: { len: [1, 40] }}
     }, {
         classMethods: {
             associate: function(models) {}

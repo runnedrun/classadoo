@@ -1,3 +1,7 @@
+var db   = require('../models')
+  , bcrypt = require('bcrypt-as-promised');
+var sequelizeHandlers = require("./helpers/sequelizeHandlers")
+
 exports.create = function(req, res) {
   var name = req.body.name;  
   var password = req.body.password;
@@ -6,23 +10,23 @@ exports.create = function(req, res) {
 
   db.User.findOne({where: {email: email}}).then(function(user) {
     if (user) {
-      res.redirect("/teacher/create?err=user+already+exists")
+      res.render("create-user", { message: "email has already been registered" });
     } else {
       console.log("here");
       if (!name || !password || !email) { 
-        res.redirect("/teacher/create?err=invalid+name+email+or+password");
+        res.render("create-user", { message: "invalid email, name or password" });
       }
 
       bcrypt.hash(password, 10).then(function(hash, err) {
         if (err) {
-          res.send(err, 500)  
+          res.render("create-user", { message: err.message })
           return 
         }
   
         db.User.create({email: email, passwordHash: hash, usertype: usertype, name: name}).then(function(user){
           req.login(user, function(err) {
             if (err) {
-              res.send(err, 500)  
+              res.render("create-user", { message: err.message })
               return 
             } 
 
@@ -30,10 +34,11 @@ exports.create = function(req, res) {
             return              
           })            
         }).catch(function(err) {
-          res.send(err, 500)
+          res.render("create-user", { message: err.message })
           return 
         })    
       });       
     }
-  }) 
+  })
+  .catch(sequelizeHandlers.handleCreate(req, res)) 
 }

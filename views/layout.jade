@@ -1,9 +1,13 @@
 doctype html
 html
-	head
-	title= title
-	link(rel='stylesheet', href='/stylesheets/style.css')
-	link(rel='stylesheet', href='/stylesheets/login.css')
-	link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
-	body
-	block content
+    head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/login.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    body
+    .row        
+        h4.col-md-4.col-md-offset-4.text-center.error-message #{errorMessages}          
+    .row
+        h4.col-md-4.col-md-offset-4.text-center.success-message #{successMessages}
+    block content

@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  .container-fluid        
+    .row
+      h2.col-md-4.col-md-offset-4.text-center #{method} Page Configuration
+    .row
+      .col-md-4.col-md-offset-4.text-center
+        form(action="/page-configurations?_method=#{(method == 'Update' && 'PUT') || (method == 'New' && 'POST')}" method="POST")
+          .form-group
+            label(for="name") Name
+            input.form-control#name(name="pageConfiguration[name]" type="text" maxLength="60" value="#{name || ''}")
+          .form-group
+            label(for="description") Description
+            textarea.form-control#description(name="pageConfiguration[description]" type="text") #{description || ''}
+          .form-group
+            label(for="url") Url
+            input.form-control#description(name="pageConfiguration[url]" type="text", value="#{url || ''}")
+          input(type="hidden", name="id", value="#{id}")          
+          button.btn.btn-default(type="submit") Submit    

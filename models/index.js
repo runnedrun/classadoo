@@ -8,6 +8,15 @@ var env       = process.env.NODE_ENV || 'development';
 var config    = require(__dirname + '/../config/config.json')[env];
 var db        = {};
 
+var originalQuery = Sequelize.prototype.query
+
+Sequelize.prototype.query = function () {
+  return originalQuery.apply(this, arguments).catch(function (err) {
+    console.log("ERRRRRRRR: " + err);
+    throw err;
+  });
+};
+
 if (config.use_env_variable) {
   var sequelize = new Sequelize(process.env[config.use_env_variable]);
 } else {

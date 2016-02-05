@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  .container-fluid    
+    .row
+      h2.col-md-4.col-md-offset-4.text-center Create a new lesson
+    .row
+      .col-md-4.col-md-offset-4.text-center
+        form.login-form(action="/lessons" method="POST")
+          .form-group
+            label(for="name") Name
+            input.form-control#name(name="name" type="text" placeholder="Intro to HTML" maxLength="60")
+          .form-group
+            label(for="description") Description
+            input.form-control#description(name="description" type="text")            
+          button.btn.btn-default(type="submit") Submit    
