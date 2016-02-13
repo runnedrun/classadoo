@@ -16,8 +16,8 @@ chrome.runtime.onMessage.addListener(
 			return true
    		}
 
-   		if (request.storage) {
-   			LocalStorageAccess[request.storage.method](request.storage.args, sendResponse)   			
+   		if (request.storage) {             
+   			LocalStorageAccess[request.storage.method + Util.capitalizeFirstLetter(request.storage.prop)](request.storage.data).then(sendResponse)
    			return true
    		}
 
@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(
         getToolbarIframeHtml(function(html) {
           chrome.tabs.sendMessage(tabId, { html: html}, function() {});          
         })        
-        return true
+      return true
       }
    }
 );

@@ -2,16 +2,9 @@ var express = require('express');
 var session = require('express-session');
 var routes = require('./routes');
 var users = require('./routes/users');
-var tasks = require('./routes/tasks');
-var pageConfigurations = require('./routes/pageConfigurations');
-var windowConfigurations = require('./routes/windowConfigurations');
-var lessons = require("./routes/lessons.js")
+var classes = require('./routes/classes');
 var http = require('http');
 var path = require('path');
-
-var domain = require('domain');
-var dbDomain = domain.create();
-
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -41,7 +34,6 @@ if (process.env.REDISTOGO_URL) {
 } else {
   redisClient = redis.createClient();
 }
-
 
 var redisSession = session({secret: '1234567890QWERTY', 
   store: new RedisStore({
@@ -151,17 +143,10 @@ app.get("/", function(req, res) {
   res.render("user-profile", { user: user });
 })
 
-app.get("/tasks/new", tasks.new);
-app.get("/tasks/:id", tasks.show);
-app.post("/tasks", tasks.create);
-app.put("/tasks", tasks.update);
-
-app.get("/page-configurations/new", pageConfigurations.new)
-app.get("/page-configurations/:id", pageConfigurations.show)
-app.post("/page-configurations", pageConfigurations.create)
-app.put("/page-configurations", pageConfigurations.update)
-
-app.get("/lessons/:id", lessons.show)
+app.get("/classes/new", classes.new);
+app.get("/classes/:id", classes.show);
+app.post("/classes", classes.create);
+app.put("/classes", classes.update);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

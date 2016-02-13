@@ -4,12 +4,29 @@
     <link href="/css/toolbar.css" rel="stylesheet" media="screen">	
 </head>
 <body>
-	<div class="container">
-		<div class="row button-row">
-			<div class="col-md-4">
-				<a class="btn btn-success" href="#">record</a>				
-			</div>
-		</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-2">
+				<h2 class="logo">
+					Classadoo
+				</h2>			
+				<div class="lesson-name-display">
+
+				</div>					
+			</div>		
+			<div class="col-md-10 initial-display-wrapper">
+				<div class="initial-display">			
+					<input type="text" class="toolbar-input form-control student-name" placeholder="your name"></input>				
+					<input type="text" class="toolbar-input form-control class-name" placeholder="class name"></input>					
+				</div>
+				<a class="toolbar-input btn btn-success class-toggle" href="#">Join Class</a>				
+			</div>			
+
+			<!-- This is only displayed after the above col-md-10 is turned into a col-md-1 -->
+			<h4 class="col-md-8 in-progress-display">				
+				Waiting for first task...				
+			</h4>			
+		</div>		
 	</div>
 </body>
 </html>

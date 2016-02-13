@@ -13,7 +13,7 @@
     // "update_url": "http://webtrails.co/chrome_extension_update.xml",
     "background": {        
         "scripts": [
-            "third_party/jquery.js", "js/background/Requests.js", "js/background/main.js",
+            "third_party/jquery.js", "js/content/Util.js", "js/background/Requests.js", "js/background/main.js",
             "js/background/LocalStorageAccess.js"
         ]
     },
@@ -23,13 +23,16 @@
             "exclude_globs": ["http://localhost:3000/*", "http://*.webtrails.co/*"],
             "js": ["third_party/jquery.js",
                 "js/content/BackgroundRequest.js", "js/content/BackgroundStorage.js",
-                "js/content/IframeManager.js","js/content/ButterBar.js", "js/content/main.js"
+                "js/content/DefaultCss.js", "js/content/IframeManager.js", "js/content/Util.js",
+                "js/content/LessonManager.js", "js/content/SampleTasks.js", "js/content/TaskHelpers.js",
+                "js/content/BindingUtils.js", "js/content/UpdateManager.js", "js/content/DataManager.js", 
+                "js/content/Toolbar.js", "js/content/ButterBar.js", "js/content/main.js"
                 ],
             "run_at": "document_start"
         }
     ],
     "permissions": [
-        "*://*/*", "tabs", "cookies"
+        "*://*/*", "tabs", "cookies", "storage"
     ],
     "externally_connectable": {
         "matches": ["*://*.classadoo.com/*", "http://localhost:3000/*"]

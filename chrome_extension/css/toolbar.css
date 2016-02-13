@@ -1,0 +1,42 @@
+body {
+	background: lightgrey;
+}
+
+.row {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	height: 40px;
+}
+
+.logo {
+	text-align: left;
+	margin: 0 0 0 0;
+}
+
+.lesson-name {
+	font-size: 20px;
+	display: none;
+}
+
+.in-progress-display {
+	display: none;
+}
+
+.toolbar-input {
+	margin-left: 10px;	
+}
+
+.toolbar-input.form-control {
+	width: 200px;	
+	display: inline;
+}
+
+.initial-display-wrapper {
+	display: flex
+}
+
+.initial-display {	
+	overflow: hidden;
+	white-space: nowrap;
+	display: inline-block;
+}
