@@ -1,7 +1,7 @@
 DataManager = function(startingState) {	
 	var self = this
 	var loadedProps = ["tasks"];
-	var persistedProps = ["className", "lessonName", "taskIndex", "studentName", "stopIndex"];
+	var persistedProps = ["className", "lessonName", "taskIndex", "studentName", "stopIndex", "toolbarOpen"];
 
 	function set(prop) {
 		return function (value) {
@@ -9,6 +9,12 @@ DataManager = function(startingState) {
 			BackgroundStorage.set("state", state());
 			fire(prop, value);
 		}	
+	}
+
+	// used when being alerted of a data change from the background, so every open tab doesn't call back to persist data
+	function setWithoutPersist(prop, value) {
+		self[prop] = value;		
+		fire(prop, value);
 	}	
 
 	function state() {
@@ -31,10 +37,21 @@ DataManager = function(startingState) {
 	}
 
 	self.initialEvents = function() {
-		persistedProps.forEach(function(prop) {
-			startingState[prop] && fire(prop, startingState[prop]);
+		persistedProps.forEach(function(prop) {					
+			(startingState[prop] !== undefined) && fire(prop, startingState[prop]);
 		})
 	}
+
+	chrome.runtime.onMessage.addListener(function(request) {		
+		var stateObj = request.setState
+		if (stateObj) {
+			console.log("Getting the state!", stateObj);
+			var propsToSet = Object.keys(stateObj);			
+			propsToSet.forEach(function(prop) {
+				setWithoutPersist(prop, stateObj[prop]);
+			})			
+		} 		
+	})
 
 	initialize();
 }

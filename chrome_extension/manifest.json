@@ -13,8 +13,8 @@
     // "update_url": "http://webtrails.co/chrome_extension_update.xml",
     "background": {        
         "scripts": [
-            "third_party/jquery.js", "js/content/Util.js", "js/background/Requests.js", "js/background/main.js",
-            "js/background/LocalStorageAccess.js"
+            "third_party/jquery.js", "third_party/socket.io-1.4.5.min.js", "js/content/Util.js", "js/background/Requests.js", "js/background/main.js",
+            "js/background/LocalStorageAccess.js", "js/background/SocketManager.js"
         ]
     },
     "content_scripts": [

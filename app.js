@@ -22,8 +22,10 @@ var LocalStrategy = require('passport-local').Strategy
 var db = require('./models')
 var bcrypt = require('bcrypt-as-promised')
 var flash = require('connect-flash')
+var io = require('socket.io')();
 
 var app = express();
+app.io = io;
 
 var redisClient;
 if (process.env.REDISTOGO_URL) {
@@ -53,14 +55,14 @@ app.use(methodOverride('_method'))
 app.use(cookieParser());
 // app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(multer());
-app.use(flash());
 app.use(redisSession);
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());  
 app.use(express.static(path.join(__dirname, 'public')));
 
 var authWhitelists = {
-  "GET":  ["/js", "/stylesheets", "/img", "/log", "/user/create"],
+  "GET":  ["/js", "/stylesheets", "/img", "/log", "/user/create", "/socket"],
   "POST": ["/user"],
   "PUT": []
 }
@@ -73,7 +75,11 @@ function checkAuthWhitelist(url, authWhitelist) {
         }
     }    
     return true
-} 
+}
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+}); 
 
 app.use(function(req, res, next) {  
   if (!checkAuthWhitelist(req.url, authWhitelists[req.method]) || req.user) {

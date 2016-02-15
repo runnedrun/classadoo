@@ -8,12 +8,12 @@ $(function() {
 
 		chrome.runtime.sendMessage({getToolbarHtml: true});	
     	chrome.runtime.onMessage.addListener(
-	  		function(request, sender, sendResponse) {    
+	  		function(request, sender, sendResponse) {    	  			
 	    		if (request.html) {
 	    			var iframe = $("<iframe>");
 	    			new Toolbar(iframe, request.html, manager);
 	    			manager.initialEvents();
-				}
+				}				
 			}      		
 		)			
 	})

@@ -31,6 +31,20 @@ chrome.runtime.onMessage.addListener(
    }
 );
 
+chrome.browserAction.onClicked.addListener(function(tab) {  
+  LocalStorageAccess.getOpen().then(function(isOpen) {
+    console.log("isopen", isOpen);
+    if (isOpen) {
+      console.log("closing the tab");      
+      LocalStorageAccess.forwardSet("toolbarOpen", false);
+    } else {
+      console.log("opening the tab");      
+      LocalStorageAccess.forwardSet("toolbarOpen", true);
+    }    
+  })
+  
+});
+
 // chrome.runtime.onMessageExternal.addListener(
 //    function(request, sender, sendResponse) {
 //        if (request.logInFromWebsite) {
@@ -43,8 +57,8 @@ chrome.runtime.onMessage.addListener(
 function sendMessageToAllTabs(message){
     chrome.windows.getAll({populate: true}, function(windows){
         $.each(windows,function(index,window){
-            $.each(window.tabs, function() {
-                chrome.tabs.sendRequest(this.id, message);
+            $.each(window.tabs, function() {                
+                chrome.tabs.sendMessage(this.id, message, function() {});
             });
         })
     } )

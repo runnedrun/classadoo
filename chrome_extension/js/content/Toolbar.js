@@ -110,7 +110,17 @@ var Toolbar = function($iframe, content, dataManager) {
 		i.$(".in-progress-display").html(m.tasks[taskIndex].description);
 	}	
 
+	function hideOrShow(toolbarOpen) {
+		console.log("hiding or showing!");
+		if (toolbarOpen) {
+			$iframe.show();	
+		} else {
+			$iframe.hide();
+		}		
+	}
+
 	respond("taskIndex", displayNewTaskDescription);	
 	respond("lessonName", setLesson);
+	respond("toolbarOpen", hideOrShow);
 }
 

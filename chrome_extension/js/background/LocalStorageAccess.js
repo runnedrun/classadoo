@@ -1,7 +1,20 @@
 LocalStorageAccess = new function() {
-	this.getState = getState		
-	this.setState = setState
-	this.clearState = clearState
+	var self = this;
+
+	self.getState = getState		
+	self.setState = setState
+	self.clearState = clearState
+
+	// set's and alerts the front end data manager, instead of the other way around. For when data is being changed from the background.
+	self.forwardSet = function(propName, value) {
+		setStateProp(propName)(value).then(function() {			
+			var setState = {};
+			setState[propName] = value;
+			sendMessageToAllTabs({setState: setState});
+		})
+	}
+
+	self.getOpen = getStateProp("toolbarOpen");
 
     function getState() {
     	deferred = $.Deferred() 
@@ -21,16 +34,20 @@ LocalStorageAccess = new function() {
     	return deferred.promise();    		
     }
 
-    function setStateProp(propName, prop) {
-    	return getState().then(function(state){
-    		state[propName] = prop;
-    		setState(state)
-    	}); 
+    function setStateProp(propName) {
+    	return function(value) {
+    		return getState().then(function(state){    			
+	    		state[propName] = value;
+	    		setState(state)
+    		}); 
+    	}
     }
 
     function getStateProp(propName) {
-    	return getState().then(function(state){
-    		return state[propName]    		
-    	}); 	
+    	return function() {
+    		return getState().then(function(state){
+    			return state[propName]    		
+    		}); 	
+    	}
     }
 }

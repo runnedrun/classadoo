@@ -4,6 +4,9 @@ var UpdateManager = function(dataManager) {
 
 	function connectToClass(className) {
 		// a bunch of socket.io stuff here
+		chrome.runtime.sendMessage({connectToClass: className}, function(connected) {
+			console.log("connected", connected);
+		});
 
 		var currentTasks = [
 			SampleTask1,
