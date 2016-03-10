@@ -13,8 +13,11 @@
     // "update_url": "http://webtrails.co/chrome_extension_update.xml",
     "background": {        
         "scripts": [
-            "third_party/jquery.js", "third_party/socket.io-1.4.5.min.js", "js/content/Util.js", "js/background/Requests.js", "js/background/main.js",
-            "js/background/LocalStorageAccess.js", "js/background/SocketManager.js"
+            "third_party/jquery.js", "third_party/socket.io-1.4.5.min.js", "js/content/Util.js", "js/background/Requests.js",
+            "js/background/ScreensharePrompter.js", "third_party/web_socket.js", "third_party/RTCMultiConnection.min.js",
+            "js/background/TabCaptureManager.js",
+            "js/background/LessonLoader.js", "js/background/SocketManager.js", "js/background/main.js",
+            "js/background/LocalStorageAccess.js"
         ]
     },
     "content_scripts": [
@@ -25,17 +28,18 @@
                 "js/content/BackgroundRequest.js", "js/content/BackgroundStorage.js",
                 "js/content/DefaultCss.js", "js/content/IframeManager.js", "js/content/Util.js",
                 "js/content/LessonManager.js", "js/content/SampleTasks.js", "js/content/TaskHelpers.js",
-                "js/content/BindingUtils.js", "js/content/UpdateManager.js", "js/content/DataManager.js", 
+                "js/content/LessonExecutor.js", "js/content/ErrorDisplay.js", "js/content/ScreenshareManager.js",
+                "js/content/BindingUtils.js", "js/content/RemoteUpdateManager.js", "js/content/DataManager.js",                 
                 "js/content/Toolbar.js", "js/content/ButterBar.js", "js/content/main.js"
                 ],
             "run_at": "document_start"
         }
     ],
     "permissions": [
-        "*://*/*", "tabs", "cookies", "storage"
+        "<all_urls>", "*://*/*", "tabs", "cookies", "storage", "desktopCapture",  "tabCapture"
     ],
     "externally_connectable": {
-        "matches": ["*://*.classadoo.com/*", "http://localhost:3000/*"]
+        "matches": ["*://*.classadoo.com/*", "http://localhost:3000/*", "https://www.webrtc-experiment.com/*"]
     },
     "web_accessible_resources": ["css/*"]
 }

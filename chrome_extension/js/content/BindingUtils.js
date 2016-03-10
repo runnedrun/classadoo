@@ -40,7 +40,7 @@ Binding = function(type, $bindTo, callback) {
   var eventString = type + "." + namespace;
 
   $bindTo.on(eventString, function(e, data) {    
-    // console.log(e, data);
+    console.log(e, data);
     callback(data.contents)
   });
 

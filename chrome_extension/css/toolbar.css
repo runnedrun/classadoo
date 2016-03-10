@@ -40,3 +40,10 @@ body {
 	white-space: nowrap;
 	display: inline-block;
 }
+
+.help-button {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	cursor: pointer;
+	display: none
+}

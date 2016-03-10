@@ -1,13 +1,12 @@
 LessonManager = function(manager) {
 	var self  = this	
-	var m = manager;
+	var m = manager;	
 
-	function checkForTaskCompletion() {
-		var currentTask = m.tasks && m.tasks[m.taskIndex];
-		if (currentTask && currentTask.check()) {
+	function checkForTaskCompletion() {		
+		if (currentTask() && currentTask().check()) {
 			// task is complete			
 			completeTask(m.taskIndex)
-		} 
+		}
 	}
 
 	function completeTask(taskIndex) {				
@@ -15,9 +14,22 @@ LessonManager = function(manager) {
 			// the lesson is complete
 			fire("lesson.complete", {});
 		} else if (!m.stopIndex || !((taskIndex + 1) >= m.stopIndex)) {			
-			manager.setTaskIndex(taskIndex + 1)
+			m.setTaskIndex(taskIndex + 1);
 		}	
 	}	
+
+	function currentTask() {
+		return m.tasks && m.tasks[m.taskIndex || 0];
+	}
+
+	function setStartTime() {
+		if (currentTask()) {
+			m.setStartTime(Date.now());
+		}
+	}
+
+	respond("tasks", setStartTime);
+	respond("taskIndex", setStartTime);
 
 	setInterval(checkForTaskCompletion, 500);
 }

@@ -6,7 +6,10 @@ var Toolbar = function($iframe, content, dataManager) {
 	var CSS = {
 		frame: {
 			width: "100%",
-			height: "60px"			
+			height: "60px",
+			position: "fixed",
+			top: "0px",
+			"z-index": "10000"			
 		}
 	}	
 
@@ -40,13 +43,19 @@ var Toolbar = function($iframe, content, dataManager) {
 		var initialDisplay = i.$(".initial-display");
 		var initialDisplayWrapper = i.$(".initial-display-wrapper");
 		var inProgressDisplay = i.$(".in-progress-display");		
+		var helpButton = i.$(".help-button")
 
 		initialDisplay.animate({"width": 0}, {
 			complete: function() {
 				initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-2");
 				i.$(".class-toggle").html("Leave Class").removeClass("btn-success").addClass("btn-danger")
 				inProgressDisplay.show();
-				i.$(".class-toggle").click(switchToLoginMode);
+				i.$(".class-toggle").click(switchToLoginMode);				
+
+				helpButton.show();
+				helpButton.click(function() {
+					fire("initiate.screenshare");
+				})
 
 				// actually try to start the lesson
 				m.setClassName(className);
@@ -98,28 +107,39 @@ var Toolbar = function($iframe, content, dataManager) {
 		var initialDisplayWrapper = i.$(".initial-display-wrapper");
 		var inProgressDisplay = i.$(".in-progress-display");		
 		var lessonNameDisplay = i.$(".lesson-name-display");
+		var helpButton = i.$(".help-button")
+
 		initialDisplay.css({width: 0});
 		initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-2");		
 		i.$(".class-toggle").html("Leave Class").removeClass("btn-success").addClass("btn-danger")		
 		inProgressDisplay.css({"display": "block"});
 
+		helpButton.css("display", "block");
+		helpButton.click(function() {
+			fire("initiate.screenshare");
+		})
+
 		i.$(".class-toggle").click(switchToLoginMode);
 	}
 
 	function displayNewTaskDescription(taskIndex) {		
-		i.$(".in-progress-display").html(m.tasks[taskIndex].description);
+		m.tasks && m.tasks[taskIndex] &&
+			i.$(".in-progress-display").html(m.tasks[taskIndex].description);
 	}	
 
-	function hideOrShow(toolbarOpen) {
-		console.log("hiding or showing!");
+	function hideOrShow(toolbarOpen) {		
+		console.log("hiding or showing");
 		if (toolbarOpen) {
-			$iframe.show();	
+			$iframe.show();
+			$(document.body).css({"top": CSS.frame.height, "position": "relative"});
 		} else {
 			$iframe.hide();
+			$(document.body).css("top", "0px");
 		}		
 	}
 
-	respond("taskIndex", displayNewTaskDescription);	
+	respond("taskIndex", displayNewTaskDescription);
+	respond("tasks", displayNewTaskDescription);
 	respond("lessonName", setLesson);
 	respond("toolbarOpen", hideOrShow);
 }

@@ -77,17 +77,26 @@ function checkAuthWhitelist(url, authWhitelist) {
     return true
 }
 
-io.on('connection', function(socket){
-  console.log('a user connected');
+io.on('connection', function(socket) {
+  console.log("connected")  
+
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+
+  socket.on("state.update", function(state) {
+    console.log("emitted state update!");
+    io.emit("state.update", state);    
+  })
 }); 
 
-app.use(function(req, res, next) {  
-  if (!checkAuthWhitelist(req.url, authWhitelists[req.method]) || req.user) {
-    next();
-  } else {
-    res.redirect("/login");
-  }  
-});
+// app.use(function(req, res, next) {  
+//   if (!checkAuthWhitelist(req.url, authWhitelists[req.method]) || req.user) {
+//     next();
+//   } else {
+//     res.redirect("/login");
+//   }  
+// });
 
 app.use(function(req, res, next){
     res.locals.successMessages = req.flash('successMessages');
@@ -144,13 +153,12 @@ app.get("/user/create", function(req, res) {
   res.render("create-user");
 })
 
-app.get("/", function(req, res) {
-  user = req.user;  
-  res.render("user-profile", { user: user });
-})
+app.get("/", classes.index);
 
 app.get("/classes/new", classes.new);
+app.get("/classes", classes.showByName);
 app.get("/classes/:id", classes.show);
+app.get("/classes", classes.index);
 app.post("/classes", classes.create);
 app.put("/classes", classes.update);
 

@@ -30,8 +30,14 @@
     "method-override": "^2.1.2",    
     "multer": "^0.1.3",
     "serve-favicon": "^2.0.1",     
-    "errorhandler": "^1.1.1",
-    "debug": "*",
-    "socket.io": "*"
+    "errorhandler": "^1.1.1",    
+    "socket.io-client": "*",
+    "react-dom": "~0.14.3",
+    "react": "~0.14.3",
+    "babelify": "~7.2.0",
+    "babel-preset-react": "~6.3.13",
+    "jquery": "*",    
+    "babel-loader": "*",
+    "webpack": "*"
   }
 }

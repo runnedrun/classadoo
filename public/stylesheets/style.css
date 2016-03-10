@@ -10,3 +10,15 @@ a {
 .error-message {
 	color: red;
 }
+
+.error-message, .success-message, .flash-success, .flash-error {
+	display: none
+}
+
+.flash-success {
+	background: aqua;	
+}
+
+.flash-error {
+	background: red;	
+}

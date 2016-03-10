@@ -97,6 +97,14 @@ Util = new function() {
   this.capitalizeFirstLetter = function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+
+  this.spaceToHyphen = function(string) {
+    return string.replace(/\s/g, "-")
+  }
+
+  this.spaceToUnderscore = function(string) {
+    return string.replace(/\s/g, "_")
+  }
 }()
 
 ViewUtil = new function() {

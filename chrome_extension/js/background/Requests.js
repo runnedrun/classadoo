@@ -1,22 +1,23 @@
 console.log("ajax_fns loaded");
 
-Requests = {
-   baseUrl: "http://localhost:3000",
-    // baseUrl: "https://clasadoo.herokuapp.com",
-    addAcceptHeader: function(xhr, ajaxRequest) {
-        xhr.setRequestHeader("Accept","application/json");
-    },
+Request = function(domain, dataType, noCache) {
+    var self = this;            
 
-    // saveNote: function (args, callback) {
-    //     $.ajax({
-    //         url: Requests.baseUrl + "/notes",
-    //         type: "post",
-    //         data: {
-    //           "note":  args.note              
-    //         },
-    //         beforeSend: Requests.addAcceptHeader,
-    //         success: function(resp){ callback && callback(resp) },
-    //         error: function() { callback(false) }
-    //     })
-    // },
+    self.get = function(path) {                
+        return $.ajax({
+            url: domain + path,
+            dataType: dataType || "json",
+            cache: !noCache,
+            method: "GET"            
+        })        
+    }
+
+    self.post = function(path) {                
+        return $.ajax({
+            url: domain + path,
+            dataType: dataType || "json",
+            method: "POST",
+            data: data            
+        })
+    }
 }

@@ -9,3 +9,14 @@ exports.handleCreate = function(req, res) {
 		}
 	}		
 }
+
+exports.handleUpdate = function(req, res) {
+	return function(err) {
+		console.log("error is:", err);
+		if (err.name === "SequelizeValidationError") {			
+			res.send(400, {error: err});
+		} else {			
+			res.send(500, {error: err});
+		}
+	}		
+}
