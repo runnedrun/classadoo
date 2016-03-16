@@ -39,6 +39,7 @@
     "babel-loader": "*",
     "webpack": "*",
     "debug": "*",
-    "url": "*"
+    "url": "*",
+    "sequelize-cli": "*"
   }
 }
