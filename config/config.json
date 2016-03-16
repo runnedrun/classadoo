@@ -1,12 +1,16 @@
 {
   "development": {
-    "username": "classadoo",
-    "password": "classadoo",
-    "database": "classadoodb",
-    "host": "127.0.0.1",
+    "username": "dgaynor",
+    "password": "itsaclassdb",
+    "database": "classadoo",
+    "host": "classadoo2.ckexm6oo21mv.us-east-1.rds.amazonaws.com",
     "dialect": "postgres"
   },
   "production": {
-      "use_env_variable": "DATABASE_URL"
+    "username": "dgaynor",
+    "password": "itsaclassdb",
+    "database": "classadoo",
+    "host": "classadoo2.ckexm6oo21mv.us-east-1.rds.amazonaws.com",
+    "dialect": "postgres"
   }
 }
