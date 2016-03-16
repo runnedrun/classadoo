@@ -1,7 +1,8 @@
 var KeyCode = {
   enter: 13,
   down: 40,
-  up: 38
+  up: 38,
+  escape: 27
 }
 
 // contains convenience methods for binding to certain key presses
@@ -40,8 +41,13 @@ Binding = function(type, $bindTo, callback) {
   var eventString = type + "." + namespace;
 
   $bindTo.on(eventString, function(e, data) {    
-    console.log(e, data);
-    callback(data.contents)
+    // console.log(e, data);
+    if (data) {
+      callback(data.contents);
+    } else {
+      callback(e);
+    }
+    
   });
 
   this.unbind = function() {
@@ -55,6 +61,6 @@ function respond(eventName, callback) {
 
 function fire(eventName, data) {
   var id = Util.incrementingString();    
-  console.log("firing event: " + eventName, data);
+  // console.log("firing event: " + eventName, data);
   $(document).trigger(eventName, [{id: id, contents: data}]);
 }

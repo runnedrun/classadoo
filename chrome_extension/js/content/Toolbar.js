@@ -9,7 +9,8 @@ var Toolbar = function($iframe, content, dataManager) {
 			height: "60px",
 			position: "fixed",
 			top: "0px",
-			"z-index": "10000"			
+			"z-index": "10000",
+			display: "none"			
 		}
 	}	
 
@@ -29,15 +30,20 @@ var Toolbar = function($iframe, content, dataManager) {
 	$(document.body).prepend($iframe);
 	
 	function startLoginMode() {
-		i.$(".class-toggle").click(switchToLessonMode);
+		i.$(".class-toggle").click(attemptLogin);
 	}
 
-	function switchToLessonMode() {		
+	function attemptLogin() {
 		var className = i.$(".class-name").val();
 		var studentName = i.$(".student-name").val();
 
 		if (!className || !studentName) return
 
+		// actually try to start the lesson
+		fire("login", {className: className, studentName: studentName});				
+	}
+
+	function switchToLessonMode() {				
 		lessonInProgress = true
 
 		var initialDisplay = i.$(".initial-display");
@@ -53,13 +59,9 @@ var Toolbar = function($iframe, content, dataManager) {
 				i.$(".class-toggle").click(switchToLoginMode);				
 
 				helpButton.show();
-				helpButton.click(function() {
-					fire("initiate.screenshare");
-				})
-
-				// actually try to start the lesson
-				m.setClassName(className);
-				m.setStudentName(studentName);				
+				helpButton.click(function() {					
+					fire("xray");
+				})				
 			},
 			duration: 500	
 		});					
@@ -78,7 +80,7 @@ var Toolbar = function($iframe, content, dataManager) {
 		initialDisplayWrapper.removeClass("col-md-2").addClass("col-md-10");
 		inProgressDisplay.hide();
 		i.$(".class-toggle").html("Join Class").removeClass("btn-danger").addClass("btn-success");
-		i.$(".class-toggle").click(switchToLessonMode);				
+		i.$(".class-toggle").click(attemptLogin);				
 		initialDisplay.animate({"width": "inherit"}, {			
 			duration: 500	
 		});		
@@ -116,19 +118,18 @@ var Toolbar = function($iframe, content, dataManager) {
 
 		helpButton.css("display", "block");
 		helpButton.click(function() {
-			fire("initiate.screenshare");
+			fire("xray");
 		})
 
 		i.$(".class-toggle").click(switchToLoginMode);
 	}
 
-	function displayNewTaskDescription(taskIndex) {		
-		m.tasks && m.tasks[taskIndex] &&
-			i.$(".in-progress-display").html(m.tasks[taskIndex].description);
+	function displayNewTaskDescription() {			
+		m.tasks && m.tasks[m.taskIndex] &&
+			i.$(".in-progress-display").html(m.tasks[m.taskIndex].description);
 	}	
 
-	function hideOrShow(toolbarOpen) {		
-		console.log("hiding or showing");
+	function hideOrShow(toolbarOpen) {				
 		if (toolbarOpen) {
 			$iframe.show();
 			$(document.body).css({"top": CSS.frame.height, "position": "relative"});
@@ -141,6 +142,8 @@ var Toolbar = function($iframe, content, dataManager) {
 	respond("taskIndex", displayNewTaskDescription);
 	respond("tasks", displayNewTaskDescription);
 	respond("lessonName", setLesson);
+	respond("className", startLessonMode)
+	respond("toolbarOpen", hideOrShow);
 	respond("toolbarOpen", hideOrShow);
 }
 

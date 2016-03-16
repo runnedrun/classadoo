@@ -6,6 +6,7 @@ Request = function(domain, dataType, noCache) {
     self.get = function(path) {                
         return $.ajax({
             url: domain + path,
+            timeout: 1000,
             dataType: dataType || "json",
             cache: !noCache,
             method: "GET"            
@@ -15,6 +16,7 @@ Request = function(domain, dataType, noCache) {
     self.post = function(path) {                
         return $.ajax({
             url: domain + path,
+            timeout: 1000,
             dataType: dataType || "json",
             method: "POST",
             data: data            

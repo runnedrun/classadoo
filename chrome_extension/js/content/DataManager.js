@@ -1,81 +1,85 @@
 DataManager = function(startingState) {	
+	var globalStorage = new StorageAccess("globalStorage");
+	var tabStorage = new StorageAccess("tabStorage");
+
 	var self = this
 	var localProps = ["tasks"];	
-	var persistedProps = ["className", "lessonName", "taskIndex", "studentName", "stopIndex", "startTime"];		
+	var globalProps = ["className", "lessonName", "taskIndex", "studentName", "stopIndex", "startTime", "connectedToClass"];		
 	var staticProps = ["url"];
-	var tabSpecificProps = ["toolbarOpen"];
+	var tabProps = ["toolbarOpen", "needsHelp"];
 
-	function set(prop) {
-		return function (value) {
-			self[prop] = value;
-			BackgroundStorage.set("state", self.state());
-			fire(prop, value);
-			fire("dataUpdate", {});
+	// this fires off requests to background storage
+	function set(key, storage, getState) {
+		return function (value) {						
+			var stateCopy = getState();
+			stateCopy[key] = value;
+			return storage.set(stateCopy);			
 		}	
-	}
+	}	
 
-	function setForTab(prop) {
-		return function (value) {
-			self[prop] = value;			
-			BackgroundStorage.setForTab(prop, value);
+	// this updates the local data when background storage changes
+	function localUpdate(prop, value) {		
+		if (self[prop] !== value || (staticProps.indexOf(prop) > -1)) {
+			self[prop] = value;
 			fire(prop, value);
 			fire("dataUpdate", {});
 		}		
 	}
-
-	// used when being alerted of a data change from the background, so every open tab doesn't call back to persist data
-	function setWithoutPersist(prop) {
-		return function(value) {
-			self[prop] = value;		
-			fire(prop, value);	
-		}
 		
-	}		
 
 	function initialize() {
-		persistedProps.forEach(function(prop) {
-			self["set" + Util.capitalizeFirstLetter(prop)] = set(prop);
+		globalProps.forEach(function(prop) {
+			self["set" + Util.capitalizeFirstLetter(prop)] = set(prop, globalStorage, globalState);
 			self[prop] = startingState[prop];			
 		})
 
-		tabSpecificProps.forEach(function(prop) {			
-			self["set" + Util.capitalizeFirstLetter(prop)] = setForTab(prop);			
-			self[prop] = startingState[prop];
+		tabProps.forEach(function(prop) {			
+			self["set" + Util.capitalizeFirstLetter(prop)] = set(prop, tabStorage, tabState);
+			self[prop] = startingState[prop];			
 		})
 
-		localProps.forEach(function(prop) {
-			self["set" + Util.capitalizeFirstLetter(prop)] = setWithoutPersist(prop);	
+		localProps.forEach(function(prop) {			
+			self["set" + Util.capitalizeFirstLetter(prop)] = function(value) { localUpdate(prop,value) };				
 		})
+
+		// update tab storage with the static values
+		tabStorage.set(tabState());		
+	}
+
+	function state(props) {
+		return function() {
+			var state = {};
+			props.forEach(function(prop) {
+				state[prop] = self[prop];
+			})							
+			return state
+		}		
 	}
 
 	self.clear = function() {
-		BackgroundStorage.clear("state");		
+		globalStorage.set({});
+		// tabStorage.set({});
 	}
 
 	self.initialEvents = function() {
-		(persistedProps + tabSpecificProps).forEach(function(prop) {					
+		(globalProps.concat(tabProps)).forEach(function(prop) {					
 			(startingState[prop] !== undefined) && fire(prop, startingState[prop]);
 		})		
 	}
 
-	self.state = function() {
-		var state = {};
-		persistedProps.concat(staticProps).forEach(function(prop) {
-			state[prop] = self[prop];
-		})							
-		return state
-	}
+	var globalState = state(globalProps)
+	var tabState = state(tabProps.concat(staticProps));	
 
-	self.url = document.location.toString()
+	// static props
+	self.url = document.location.toString();
 
-
-	chrome.runtime.onMessage.addListener(function(request) {
-		var stateObj = request.setState
-		if (stateObj) {			
-			console.log("Getting the state!", stateObj);
-			(persistedProps + tabSpecificProps).forEach(function(prop) {
-				if (stateObj[prop] !== undefined) {
-					setWithoutPersist(prop)(stateObj[prop]);	
+	// respond to storage updates from the background	
+	chrome.runtime.onMessage.addListener(function(request) {		
+		var stateObj = request.storageUpdate
+		if (stateObj) {											
+			(globalProps.concat(tabProps)).forEach(function(prop) {
+				if (stateObj[prop] !== undefined) {					
+					localUpdate(prop, stateObj[prop]);	
 				} 
 			})
 		} 		

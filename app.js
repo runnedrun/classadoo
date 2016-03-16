@@ -88,6 +88,11 @@ io.on('connection', function(socket) {
     console.log("emitted state update!");
     io.emit("state.update", state);    
   })
+
+  socket.on("message", function(state) {
+    console.log("emitting message!");
+    io.emit("message", state);    
+  })
 }); 
 
 // app.use(function(req, res, next) {  
@@ -161,6 +166,10 @@ app.get("/classes/:id", classes.show);
 app.get("/classes", classes.index);
 app.post("/classes", classes.create);
 app.put("/classes", classes.update);
+
+app.get("/screenshare", function(req, res) {
+  res.render("screenshare-display");
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

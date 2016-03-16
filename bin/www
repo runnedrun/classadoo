@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('tes:server');
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
@@ -19,7 +21,21 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server;
+if (process.env.ENV == "dev") {    
+    console.log("starting https server")
+    var key = fs.readFileSync('dev_keys/key.pem');
+    var cert = fs.readFileSync('dev_keys/cert.pem');
+
+    var options = {
+        key: key,
+        cert: cert
+    };
+
+    server = https.createServer(options, app)
+} else {
+    server = http.createServer(app);  
+}
 
 /**
  * socket.io
