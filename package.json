@@ -37,6 +37,7 @@
     "babel-preset-react": "~6.3.13",
     "jquery": "*",    
     "babel-loader": "*",
-    "webpack": "*"
+    "webpack": "*",
+    "debug": "*"
   }
 }
