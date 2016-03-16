@@ -29040,7 +29040,76 @@
 	var StudentState = React.createClass({
 	  displayName: "StudentState",
 
+	  getActiveTab: function () {
+	    var allTabs = this.props.state.tabs;
+	    var activeTab;
+	    Object.keys(allTabs).forEach(function (tabId) {
+	      if (allTabs[tabId].active) {
+	        activeTab = allTabs[tabId];
+	      }
+	    });
+	    console.log("active tab is", activeTab);
+	    return activeTab;
+	  },
+
+	  // returns an id for a help screenshare, if the student has initiated one
+	  getHelpUrl: function () {
+	    var allTabs = this.props.state.tabs;
+
+	    var helpId;
+	    Object.keys(allTabs).forEach(function (tabId) {
+	      if (allTabs[tabId].needsHelp) {
+	        helpId = allTabs[tabId].needsHelp;
+	        return false;
+	      }
+	    });
+
+	    if (helpId) {
+	      return "https://" + location.host + "/screenshare?s=" + helpId;
+	    } else {
+	      return false;
+	    }
+	  },
+
 	  render: function () {
+	    var helpUrl = this.getHelpUrl();
+
+	    var helpLink;
+	    if (helpUrl) {
+	      console.log("here is the help url !!!!", helpUrl);
+	      helpLink = React.createElement(
+	        "div",
+	        { className: "help-link" },
+	        React.createElement(
+	          "a",
+	          { target: "_blank", href: helpUrl },
+	          "Needs Help"
+	        )
+	      );
+	    } else {
+	      helpLink = "";
+	    }
+
+	    var activeTab = this.getActiveTab();
+	    var activeUrlLink;
+	    if (activeTab) {
+	      activeUrlLink = React.createElement(
+	        "div",
+	        { className: "url" },
+	        React.createElement(
+	          "a",
+	          { href: activeTab.url },
+	          activeTab.url
+	        )
+	      );
+	    } else {
+	      activeUrlLink = React.createElement(
+	        "div",
+	        { className: "url" },
+	        "No active tab right now?"
+	      );
+	    }
+
 	    return React.createElement(
 	      "div",
 	      { className: "student-state col-md-2" },
@@ -29060,15 +29129,8 @@
 	        { className: "elapsed-time" },
 	        this.props.state.elapsedTime
 	      ),
-	      React.createElement(
-	        "div",
-	        { className: "url" },
-	        React.createElement(
-	          "a",
-	          { href: this.props.state.url },
-	          this.props.state.url
-	        )
-	      )
+	      activeUrlLink,
+	      helpLink
 	    );
 	  }
 	});

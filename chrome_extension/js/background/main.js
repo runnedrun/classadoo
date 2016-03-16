@@ -4,11 +4,12 @@ lessonsEnv = "dev"
 
 var LessonRequest = new Request(lessonsDomain, "text", lessonsEnv === "dev");
 var AppRequest = new Request(appDomain);
-var manager = new DataManager();
-new LessonLoader(AppRequest, LessonRequest, lessonsEnv, manager);
-var socketManager = new SocketManager(appDomain, manager);
-new ScreensharePrompter();
-new TabCaptureManager(manager, socketManager);
+var dataManager = new DataManager();
+new LessonLoader(AppRequest, LessonRequest, lessonsEnv, dataManager);
+var socketManager = new SocketManager(appDomain, dataManager);
+new ServerDataSync(dataManager, socketManager)
+new TabCaptureManager(dataManager, socketManager);
+new VolatileProperties(dataManager);
 
 chrome.runtime.onMessage.addListener(
    function(request, sender, sendResponse) {  		 	      

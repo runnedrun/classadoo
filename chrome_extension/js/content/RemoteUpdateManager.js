@@ -7,16 +7,6 @@ var RemoteUpdateManager = function(dataManager) {
 			chrome.runtime.sendMessage({connectToClass: className});		
 		}		
 	}
-
-	function sendState() {
-		if (m.connectedToClass) {
-			console.log("sending state!");
-			chrome.runtime.sendMessage({ sendState: true });		
-		} else {
-			console.log("not connected to class, cannot send update");
-		}		
-	}
 	
-	respond("className", connectToClass);
-	respond("dataUpdate", sendState);	
+	respond("className", connectToClass);	
 }

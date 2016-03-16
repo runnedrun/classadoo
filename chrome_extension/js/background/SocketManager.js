@@ -14,20 +14,11 @@ SocketManager = function(domain, dataManager) {
 			socket.on("reconnect", connected);	
 			socket.on("connect_error", disconnected);
 		}
-
-		if (request.sendState) {				
-			if(socket) {
-				console.log("sending state to server");
-				m.getFullState().then(function(state) {
-					socket.emit("state.update", state);		
-				})				
-			} 
-		} 
 	})	
 
-	self.sendMessage = function(message) {
+	self.emit = function(name, message) {
 		if (socket) {
-			socket.emit("message", message);
+			socket.emit(name, message);
 		}
 	}
 

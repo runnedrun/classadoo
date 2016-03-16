@@ -6,7 +6,7 @@ DataManager = function(startingState) {
 	var localProps = ["tasks"];	
 	var globalProps = ["className", "lessonName", "taskIndex", "studentName", "stopIndex", "startTime", "connectedToClass"];		
 	var staticProps = ["url"];
-	var tabProps = ["toolbarOpen", "needsHelp"];
+	var tabProps = ["toolbarOpen", "needsHelp", "active"];
 
 	// this fires off requests to background storage
 	function set(key, storage, getState) {
@@ -86,4 +86,13 @@ DataManager = function(startingState) {
 	})
 
 	initialize();
+}
+
+// defining volatile props. These are props which are dependent on browser state, and may change after the extension is loaded
+
+TabActive = function() {
+	var self = this;
+	self.name = active;
+	
+
 }
