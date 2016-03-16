@@ -20,7 +20,6 @@ var RedisStore = require('connect-redis')(session)
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 var db = require('./models')
-var bcrypt = require('bcrypt-as-promised')
 var flash = require('connect-flash')
 var io = require('socket.io')();
 
@@ -53,7 +52,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'))
 app.use(cookieParser());
-// app.use(favicon(__dirname + '/public/favicon.ico'));
+// app.use(favicon(__dirname + '/favicon.ico'));
 app.use(multer());
 app.use(redisSession);
 app.use(flash());
