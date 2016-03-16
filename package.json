@@ -30,6 +30,7 @@
     "serve-favicon": "^2.0.1",     
     "errorhandler": "^1.1.1",    
     "socket.io-client": "*",
+    "socket.io": "*",
     "react-dom": "~0.14.3",
     "react": "~0.14.3",
     "babelify": "~7.2.0",
