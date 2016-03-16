@@ -5,6 +5,7 @@ var users = require('./routes/users');
 var classes = require('./routes/classes');
 var http = require('http');
 var path = require('path');
+var url = require('url');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
