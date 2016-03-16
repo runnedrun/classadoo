@@ -1,0 +1,14 @@
+extends layout
+block scripts        
+    script(src="/javascripts/build/ScreensharePage.js", type="text/javascript")
+
+block style
+    link(rel='stylesheet', href='/stylesheets/ScreenshareDisplay.css')
+
+block content
+    #container(ondblclick='enterFullScreen()')
+        #card
+            #remote
+              video#remoteVideo(autoplay='autoplay')
+
+        #info-bar

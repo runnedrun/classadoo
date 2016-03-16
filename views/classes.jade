@@ -1,0 +1,9 @@
+extends layout
+
+block content
+	.container-fluid
+		each classObj, index in classes
+			.row
+				.col-md-12
+					h3.text-center 
+						a(href='/classes/#{classObj.id}') #{classObj.name}
