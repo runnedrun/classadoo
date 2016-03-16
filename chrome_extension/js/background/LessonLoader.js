@@ -25,7 +25,7 @@ LessonLoader = function(appRequest, lessonRequest, env, dataManager) {
 	}
 
 	function loadCurrentLessonName(className) {
-		return appRequest.get("/classes?name="+className);
+		return appRequest.get("/class_by_name?name="+className);
 	}
 
 	function sendLessonToFrontend(lessonText) {				

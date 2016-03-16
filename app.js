@@ -158,10 +158,8 @@ app.get("/user/create", function(req, res) {
   res.render("create-user");
 })
 
-app.get("/", classes.index);
-
 app.get("/classes/new", classes.new);
-app.get("/classes", classes.showByName);
+app.get("/class_by_name", classes.showByName);
 app.get("/classes/:id", classes.show);
 app.get("/classes", classes.index);
 app.post("/classes", classes.create);

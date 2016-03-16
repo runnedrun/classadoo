@@ -1,10 +1,10 @@
 extends layout
 
 block style
-	link(rel='stylesheet', href='/stylesheets/ClassDashboard.css')
+	link(rel='stylesheet', href='/css/ClassDashboard.css')
 
 block scripts
-	script(src="/javascripts/build/ClassDashboard.js", type="text/javascript")
+	script(src="/js/build/ClassDashboard.js", type="text/javascript")
 	script.
 		var klass = !{JSON.stringify(klass)}
 
