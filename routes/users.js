@@ -1,5 +1,5 @@
 var db   = require('../models')
-  , bcrypt = require('bcrypt-as-promised');
+  // , bcrypt = require('bcrypt-as-promised');
 var sequelizeHandlers = require("./helpers/sequelizeHandlers")
 
 exports.create = function(req, res) {
