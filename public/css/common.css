@@ -1,0 +1,109 @@
+body {
+	font-family: Varela Round, Helvetica;		
+}
+
+body div {
+	font-size: 14px;
+}
+
+h4 {
+	line-height: 1.4
+}
+
+.logo-container {
+	margin-left: 60px;	
+	float: left;
+	border: 1px solid white;
+}
+
+.logo {
+	position: relative;
+	bottom: 10px;
+	height: 60px;	
+}
+
+.nav-links {
+	float: right;	
+	margin-right: 60px;		
+}
+
+.nav-link {
+	display: inline-block;
+	margin-left: 55px;	
+	font-size: 20px;
+}
+
+.nav-link a {
+/*	color: #3ec2d2;*/
+	color: black;
+}
+
+.nav-link.active a {
+	color: #3ec2d2;
+}
+
+.nav-link.active:hover a {
+	text-decoration: none;
+	cursor: default;
+}
+
+.nav-dropdown {
+	display: none;	
+}
+
+@media (max-device-width: 480px) { 	
+	h1 {
+		font-size: 90px;
+	}
+
+	h2 {
+		font-size: 75px;
+	}
+
+	h3 {
+		font-size: 60px;
+	}
+
+	h4 {
+		font-size: 40px;
+	}
+
+	body {
+		font-size: 25px;
+	}	
+
+	.intro-line-1 {
+		font-size: 90px;
+	}
+
+	.nav-links {
+		display: none;
+	}
+
+	.nav-dropdown {
+		display: block;
+		float:left;
+	}
+
+	.menu-button-icon {
+		font-size: 80px;
+	}
+
+	.logo-container {
+		float: right;
+		margin-right: 10px;
+	}
+
+	.dropdown-menu {
+		font-size: 50px;
+	}
+
+	.connect {
+		float: none;
+		font-size: 90px
+	}
+
+	.footer {
+		text-align: center;
+	}
+}

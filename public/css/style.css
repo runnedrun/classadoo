@@ -1,0 +1,24 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.error-message {
+	color: red;
+}
+
+.error-message, .success-message, .flash-success, .flash-error {
+	display: none
+}
+
+.flash-success {
+	background: aqua;	
+}
+
+.flash-error {
+	background: red;	
+}

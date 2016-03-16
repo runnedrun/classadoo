@@ -1,0 +1,48 @@
+.categories-container {
+	margin-top:  30px;
+}
+
+.cost-header {
+	color: #C84F4F;
+	margin-top: 0px;
+	margin-bottom: 20px;
+}
+
+.js .course-logo {
+	width: 100px;
+}
+
+.android .course-logo {
+	width: 200px;
+}
+
+.scratch .course-logo {
+	width: 120px;
+}
+
+.format-row {
+	margin-bottom: 20px;
+}
+
+.category {
+	margin-bottom: 50px;
+	margin-top: 30px;
+}
+
+.full-listing .header {
+	margin-bottom: 20px;
+	color: #C84F4F;
+}
+
+.level-header {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.category-name {
+	color: #C84F4F;
+}
+
+.contact {
+	margin-bottom: 30px;	
+}
