@@ -17,8 +17,9 @@ Sequelize.prototype.query = function () {
   });
 };
 
-if (config.use_env_variable) {
-  var sequelize = new Sequelize(process.env[config.use_env_variable]);
+var dbUrl = process.env.DATABASE_URL
+if (dbUrl) {
+  var sequelize = new Sequelize(dbUrl);
 } else {
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
