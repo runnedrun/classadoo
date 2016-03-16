@@ -19,8 +19,10 @@ Sequelize.prototype.query = function () {
 
 var dbUrl = process.env.DATABASE_URL
 if (dbUrl) {
+  console.log("HERE is the db Url", dbUrl);
   var sequelize = new Sequelize(dbUrl);
 } else {
+  console.log("local, no DB url");
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
