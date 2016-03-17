@@ -53,12 +53,12 @@
 	__webpack_require__(212);
 	var students = {};
 
-	domain = "localhost:3000";
+	host = location.host;
 
 	$(function () {
 		renderClassInfoDisplay();
 
-		var socket = io(domain);
+		var socket = io(host);
 
 		socket.on("connect", function (event, data) {
 			console.log("connected!");
