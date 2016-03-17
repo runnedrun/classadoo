@@ -11,8 +11,7 @@ $(function() {
 		var updateManager = new RemoteUpdateManager(manager);
 		var loginManager = new LoginManager(manager);
 		var lessonExecutor = new LessonExecutor(manager);
-		var backgroundDisplay = new BackgroundDisplay();
-		var screenshareManager = new ScreenshareManager();
+		var backgroundDisplay = new BackgroundDisplay(manager);		
 
 		chrome.runtime.sendMessage({getToolbarHtml: true});
     	chrome.runtime.onMessage.addListener(
@@ -34,11 +33,3 @@ $(function() {
 		})
 	})	
 })
-
-// using this https://github.com/muaz-khan/RTCMultiConnection
-// steps are: override DetectRTC.screen.extensionid with my extensions id - oombnfglplmogeagfpplabpeambpifip
-// then I 
-// psyche, lets just override DetectRTC.screen.getChromeExtensionStatus with something that always retursn true
-
-
-// window.postMessage('rtcmulticonnection-extension-loaded', '*');

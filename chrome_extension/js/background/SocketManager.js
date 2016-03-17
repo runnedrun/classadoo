@@ -1,15 +1,13 @@
-SocketManager = function(domain, dataManager) {
+SocketManager = function(socket, dataManager) {
 	var self = this;		
 	var socket;
-	var m = dataManager;	
+	var m = dataManager;
 
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		var className = request.connectToClass;		
 
 		if (className) {			
-			console.log("connecting to class");			
-			socket = io(domain);
-
+			console.log("connecting to class");						
 			socket.on("connect", connected);		
 			socket.on("reconnect", connected);	
 			socket.on("connect_error", disconnected);

@@ -23,8 +23,11 @@ var LocalStrategy = require('passport-local').Strategy
 var db = require('./models')
 var flash = require('connect-flash')
 var io = require('socket.io')();
+var enforce = require('express-sslify');
 
 var app = express();
+app.use(enforce.HTTPS({ trustProtoHeader: true }))  
+
 app.io = io;
 
 var redisClient;
@@ -88,11 +91,6 @@ io.on('connection', function(socket) {
   socket.on("state.update", function(state) {
     console.log("emitted state update!");
     io.emit("state.update", state);    
-  })
-
-  socket.on("message", function(state) {
-    console.log("emitting message!");
-    io.emit("message", state);    
   })
 }); 
 

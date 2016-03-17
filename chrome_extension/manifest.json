@@ -4,16 +4,16 @@
     "manifest_version": 2,
     "description": "The chrome extension for classadoo",
     "browser_action": {
-        "default_icon": "icon128.png"
+        "default_icon": "question-inactive.png"
     },
-    "icons": { "16": "icon16.png",
-               "48": "icon48.png",
-              "128": "icon128.png" 
+    "icons": { "16": "classadoo-icon16.png",
+               "48": "classadoo-icon48.png",
+              "128": "classadoo-icon128.png" 
     },
     // "update_url": "http://webtrails.co/chrome_extension_update.xml",
     "background": {        
         "scripts": [
-            "third_party/jquery.js", "third_party/socket.io-1.4.5.min.js", "js/content/Util.js", "js/background/Requests.js",
+            "third_party/jquery.js", "third_party/pubnub-socket.io.min.js", "js/content/Util.js", "js/background/Requests.js",
             "js/content/BindingUtils.js", "third_party/web_socket.js", "third_party/RTCMultiConnection.min.js",
             "js/background/TabCaptureManager.js", "js/background/LessonLoader.js", "js/background/SocketManager.js",             
             "js/background/VolatileProperties.js",
@@ -29,7 +29,7 @@
                 "js/content/StorageAccess.js",
                 "js/content/DefaultCss.js", "js/content/IframeManager.js", "js/content/Util.js",
                 "js/content/LessonManager.js", "js/content/SampleTasks.js", "js/content/TaskHelpers.js",
-                "js/content/LessonExecutor.js", "js/content/BackgroundDisplay.js", "js/content/ScreenshareManager.js",
+                "js/content/LessonExecutor.js", "js/content/BackgroundDisplay.js",
                 "js/content/BindingUtils.js", "js/content/RemoteUpdateManager.js", "js/content/DataManager.js",
                 "js/content/LoginManager.js", "js/content/XRayManager.js",
                 "js/content/Toolbar.js", "js/content/ButterBar.js", "js/content/main.js"

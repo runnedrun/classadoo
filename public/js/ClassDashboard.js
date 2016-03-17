@@ -1,18 +1,28 @@
 var $ = require("jquery");
-var io = require("socket.io-client");
 var React = require('react');
 var ReactDOM = require('react-dom');
 require("./Util.js");
 require("./ClassInfoDisplay.js");
 require("./StudentStatesDisplay.js");
+require("./pubnub-socket.io");
 var students = {}
 
 host = location.host;
 
+var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
+var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
+
+var pubnub_setup = {
+  channel       : 'class_channel',
+  publish_key   : pubKey,
+  subscribe_key : subKey,
+  ssl           : true
+};
+
 $(function() {
 	renderClassInfoDisplay();
 	
-	var socket = io(host);	
+	var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
 
 	socket.on("connect", function(event, data) {
 		console.log("connected!");

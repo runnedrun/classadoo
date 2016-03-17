@@ -25,6 +25,10 @@ TabCaptureManager = function(dataManager, socketManager) {
                         title: 'Capturing Tab'
                     });
 
+                    chrome.browserAction.setIcon({
+                        path: 'question-active.png'
+                    });
+
                     chrome.tabs.getSelected(null, function(tab) {
                         captureTab(state, tab.id);                        
                     });  
@@ -291,9 +295,9 @@ TabCaptureManager = function(dataManager, socketManager) {
             connection.attachStreams = [];
         }
 
-        // chrome.browserAction.setIcon({
-        //     path: 'images/tabCapture22.png'
-        // });
+        chrome.browserAction.setIcon({
+            path: 'question-inactive.png'
+        });
 
         if (popup_id) {
             try {

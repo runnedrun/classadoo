@@ -61,6 +61,6 @@ function respond(eventName, callback) {
 
 function fire(eventName, data) {
   var id = Util.incrementingString();    
-  // console.log("firing event: " + eventName, data);
+  console.log("firing event: " + eventName, data);
   $(document).trigger(eventName, [{id: id, contents: data}]);
 }

@@ -1,6 +1,8 @@
-BackgroundDisplay = function() {
+BackgroundDisplay = function(dataManager) {
+	var m = dataManager;
+
 	chrome.runtime.onMessage.addListener(function(request) {		
-		if (request.display) {			
+		if (request.display && m.toolbarOpen) {			
 			ButterBar(request.display.message);
 		}
 	})

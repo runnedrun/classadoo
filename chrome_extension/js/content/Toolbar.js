@@ -10,7 +10,9 @@ var Toolbar = function($iframe, content, dataManager) {
 			position: "fixed",
 			top: "0px",
 			"z-index": "10000",
-			display: "none"			
+			display: "none",
+			"border-bottom": "2px solid black",
+			"border-top": "1px solid black"
 		}
 	}	
 
@@ -49,7 +51,7 @@ var Toolbar = function($iframe, content, dataManager) {
 		var initialDisplay = i.$(".initial-display");
 		var initialDisplayWrapper = i.$(".initial-display-wrapper");
 		var inProgressDisplay = i.$(".in-progress-display");		
-		var helpButton = i.$(".help-button")
+		var inspectButton = i.$(".inspect-button")
 
 		initialDisplay.animate({"width": 0}, {
 			complete: function() {
@@ -58,8 +60,8 @@ var Toolbar = function($iframe, content, dataManager) {
 				inProgressDisplay.show();
 				i.$(".class-toggle").click(switchToLoginMode);				
 
-				helpButton.show();
-				helpButton.click(function() {					
+				inspectButton.show();
+				inspectButton.click(function() {					
 					fire("xray");
 				})				
 			},
@@ -70,7 +72,9 @@ var Toolbar = function($iframe, content, dataManager) {
 	function switchToLoginMode() {
 		var initialDisplay = i.$(".initial-display");
 		var initialDisplayWrapper = i.$(".initial-display-wrapper");
-		var inProgressDisplay = i.$(".in-progress-display");		
+		var inProgressDisplay = i.$(".in-progress-display");
+		var inspectButton = i.$(".inspect-button")		
+
 
 		var lessonNameDisplay = i.$(".lesson-name-display");
 		var logo = i.$(".logo");		
@@ -89,6 +93,8 @@ var Toolbar = function($iframe, content, dataManager) {
 		logo.animate({"font-size": 24}, {			
 			duration: 500
 		});
+
+		inspectButton.hide();
 	}	
 
 	function setLesson(lessonName) {		
@@ -109,15 +115,15 @@ var Toolbar = function($iframe, content, dataManager) {
 		var initialDisplayWrapper = i.$(".initial-display-wrapper");
 		var inProgressDisplay = i.$(".in-progress-display");		
 		var lessonNameDisplay = i.$(".lesson-name-display");
-		var helpButton = i.$(".help-button")
+		var inspectButton = i.$(".inspect-button");
 
 		initialDisplay.css({width: 0});
 		initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-2");		
 		i.$(".class-toggle").html("Leave Class").removeClass("btn-success").addClass("btn-danger")		
 		inProgressDisplay.css({"display": "block"});
 
-		helpButton.css("display", "block");
-		helpButton.click(function() {
+		inspectButton.css("display", "block");
+		inspectButton.click(function() {
 			fire("xray");
 		})
 
