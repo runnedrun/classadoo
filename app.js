@@ -29,10 +29,11 @@ app.io = io;
 
 var redisClient;
 if (process.env.REDISTOGO_URL) {
+  console.log("GOT THE redistogo", process.env.REDISTOGO_URL);
   var rtg = url.parse(process.env.REDISTOGO_URL);
   var redisClient = redis.createClient(rtg.port, rtg.hostname);
 
-  // redisClient.auth(rtg.auth.split(":")[1]);
+  redisClient.auth(rtg.auth.split(":")[1]);
 } else {
   redisClient = redis.createClient();
 }
