@@ -4,15 +4,17 @@
 
 
 TabCaptureManager = function(dataManager, socketManager) {
-    var m = dataManager;
+    var m = dataManager;    
 
     // RTCMultiConnection - www.RTCMultiConnection.org
     var connection;
     var popup_id;
+    var socket;
 
     chrome.browserAction.onClicked.addListener(function(tab) {  
-        if (connection && connection.attachStreams[0]) {
-            connection.attachStreams[0].stop();
+        if (connection && connection.attachStreams[0]) {            
+            socket.disconnect();
+            connection.attachStreams[0].stop();            
             m.tabSet(tab.id, {needsHelp: false});
             setDefaults();                        
             return;
@@ -71,7 +73,7 @@ TabCaptureManager = function(dataManager, socketManager) {
             }
 
             chrome.browserAction.setTitle({
-                title: 'Connecting to WebSockets server.'
+                title: 'Connecting to socket.io'
             });
 
             stream.onended = function() {
@@ -99,11 +101,6 @@ TabCaptureManager = function(dataManager, socketManager) {
             });
 
             setupRTCMultiConnection(stream, state.studentName, tabId);                        
-            // switch to pause button here
-
-            // chrome.browserAction.setIcon({
-            //     path: 'images/pause22.png'
-            // });
         }
     }
 
@@ -136,10 +133,6 @@ TabCaptureManager = function(dataManager, socketManager) {
 
         connection.channel = connection.sessionid = connection.userid;
 
-        // if (roomId && roomId.length) {
-        //     connection.channel = connection.sessionid = connection.userid = roomId;
-        // }
-
         connection.autoReDialOnFailure = true;
         connection.getExternalIceServers = false;
 
@@ -165,11 +158,6 @@ TabCaptureManager = function(dataManager, socketManager) {
 
         // www.RTCMultiConnection.org/docs/openSignalingChannel/
         var onMessageCallbacks = {};
-        // var pub = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5';
-        // var sub = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe';
-
-        // WebSocket = PUBNUB.ws;
-        // var websocket = new WebSocket('wss://pubsub.pubnub.com/' + pub + '/' + sub + '/' + connection.channel);
 
         var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
         var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
@@ -180,7 +168,7 @@ TabCaptureManager = function(dataManager, socketManager) {
               subscribe_key : subKey
           };
 
-        var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
+        socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
 
         var connectedUsers = 0;
         connection.ondisconnected = function() {
@@ -200,7 +188,6 @@ TabCaptureManager = function(dataManager, socketManager) {
             };
         });
 
-        // websocket.push = websocket.send;
         function sendData(data) {
             data.sender = connection.userid;
             console.log("sending!", data);
@@ -222,50 +209,24 @@ TabCaptureManager = function(dataManager, socketManager) {
                         channel: channel,
                         message: message
                     });
-
-                    // socketManager.sendMessage({
-                    //     sender: connection.userid,
-                    //     channel: channel,
-                    //     message: message
-                    // });
                 },
                 channel: channel
             };
         };
 
-        // websocket.onerror = function() {
-        //     if (connection && connection.numberOfConnectedUsers > 0) {
-        //         return;
-        //     }
+        socket.on("disconnect", function() {
+            console.log("disconnected!!!!");
+            if (connection && connection.numberOfConnectedUsers > 0) {
+                return;
+            }
 
-        //     // chrome.windows.create({
-        //     //     url: "data:text/html,<h1>Failed connecting the WebSockets server. Please click screen icon to try again.</h1>",
-        //     //     type: 'popup',
-        //     //     width: screen.width / 2,
-        //     //     height: 170
-        //     // });
-        //     console.log("Failed to connect!");
-        //     m.tabSet(tabId, {needsHelp: false});
+            console.log("the websocket closed!");
+            m.tabSet(tabId, {needsHelp: false});
 
-        //     setDefaults();
-        //     // chrome.runtime.reload();
-        // };
+            setDefaults();            
+        })
 
-        // websocket.onclose = function() {
-        //     if (connection && connection.numberOfConnectedUsers > 0) {
-        //         return;
-        //     }
-
-        //     console.log("the websocket closed!");
-        //     m.tabSet(tabId, {needsHelp: false});
-
-        //     setDefaults();
-        //     // chrome.runtime.reload();
-        // };
-
-        socket.on("connect", function() {
-            // chrome.browserAction.enable();        
-
+        socket.on("connect", function() {            
             console.info('Socket.io connection is opened.', connection.sessionid);
 
             // www.RTCMultiConnection.org/docs/open/
@@ -273,28 +234,7 @@ TabCaptureManager = function(dataManager, socketManager) {
                 dontTransmit: true
             });
 
-            m.tabSet(tabId, {needsHelp: connection.sessionid});            
-
-            // var resultingURL = 'https://www.webrtc-experiment.com/!/?s=' + connection.sessionid;
-
-            // if (room_password && room_password.length) {
-            //     resultingURL += '&p=' + room_password;
-            // }
-
-            // var popup_width = 600;
-            // var popup_height = 170;
-
-            // chrome.windows.create({
-            //     url: "data:text/html,<title>Unique Room URL</title><h1 style='text-align:center'>Copy following private URL:</h1><input type='text' value='" + resultingURL + "' style='text-align:center;width:100%;font-size:1.2em;'><p style='text-align:center'>You can share this private-session URI with fellows using email or social networks.</p>",
-            //     type: 'popup',
-            //     width: popup_width,
-            //     height: popup_height,
-            //     top: parseInt((screen.height / 2) - (popup_height / 2)),
-            //     left: parseInt((screen.width / 2) - (popup_width / 2)),
-            //     focused: true
-            // }, function(win) {
-            //     popup_id = win.id;
-            // });
+            m.tabSet(tabId, {needsHelp: connection.sessionid});                       
         });        
     }
 
@@ -318,7 +258,9 @@ TabCaptureManager = function(dataManager, socketManager) {
 
         chrome.browserAction.setTitle({
             title: 'Get Help!'
-        });    
+        }); 
+
+        chrome.runtime.reload();   
     }
 
     function setBandwidth(connection) {

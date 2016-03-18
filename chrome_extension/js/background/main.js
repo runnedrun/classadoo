@@ -1,7 +1,5 @@
 var env = "prod"
 
-appDomain = "https://localhost:3000";
-
 var lessonsPrefix
 if (env === "prod") {
   lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
@@ -9,18 +7,19 @@ if (env === "prod") {
   lessonsPrefix = "http://localhost:4000";  
 }
 
-var LessonRequest = new Request(lessonsPrefix, "text");
+while (!chrome.runtime.getPlatformInfo) {
+  // just putting this in here to make sure everything is ready before moving on    
+}
 
+var LessonRequest = new Request(lessonsPrefix, "text");
 var dataManager = new DataManager();
 new LessonLoader(LessonRequest, dataManager);
-// var socketManager = new SocketManager(socket, dataManager);
-// new ServerDataSync(dataManager, socket);
 new TabCaptureManager(dataManager);
 new VolatileProperties(dataManager);
 Message = new Message(dataManager);
 
 chrome.runtime.onMessage.addListener(
-   function(request, sender, sendResponse) {  		 	      
+   function(request, sender, sendResponse) {              
       if (request.getToolbarHtml) {        
         var tabId = sender.tab.id
         getToolbarIframeHtml(function(html) {

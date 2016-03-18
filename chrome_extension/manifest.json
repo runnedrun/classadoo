@@ -14,12 +14,10 @@
     "background": {        
         "scripts": [
             "third_party/jquery.js", "third_party/pubnub-socket.io.min.js", "js/content/Util.js", "js/background/Requests.js",
-            "js/content/BindingUtils.js", "third_party/web_socket.js", "third_party/RTCMultiConnection.min.js",
-            "third_party/firebase.min.js", "js/background/LoginManager.js",
-            "js/background/TabCaptureManager.js", "js/background/LessonLoader.js", "js/background/SocketManager.js",             
-            "js/background/VolatileProperties.js",
-            "js/background/Display.js", "js/background/Message.js", "js/background/ServerDataSync.js",
-            "js/background/Storage.js", "js/background/backgroundDataManager.js", "js/background/main.js"            
+            "js/content/BindingUtils.js", "third_party/RTCMultiConnection.min.js", "third_party/firebase.min.js", 
+            "js/background/TabCaptureManager.js", "js/background/LessonLoader.js", "js/background/VolatileProperties.js",
+            "js/background/Display.js", "js/background/Message.js",
+            "js/background/BackgroundDataManager.js", "js/background/main.js"            
         ]
     },
     "content_scripts": [
