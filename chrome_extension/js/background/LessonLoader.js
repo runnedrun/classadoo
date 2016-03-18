@@ -1,41 +1,30 @@
-LessonLoader = function(appRequest, lessonRequest, env, dataManager) {
+LessonLoader = function(lessonRequest, dataManager) {
 	var self = this;	
 	var m = dataManager;
 
-	function loadLessonForClass(className) {
-		loadCurrentLessonName(className)
-		.then(function(resp) {			
-			return loadLesson(resp.class.currentLesson); 
-		})		
-		.then(function(lessonObj) {
-			sendLessonToFrontend(lessonObj.text);
-
-			// now that we know the lesson exists, set it in state
-			m.globalSetProps({ lessonName: lessonObj.lessonName, className: className });			
+	function loadAndSendLesson(lessonName, tabId) {		
+		loadLesson(lessonName) 		
+		.then(function(lessonText) {
+			Message.send(tabId, {lesson: lessonText});
+			// now that we know the lesson exists, set it in state			
+			m.globalSet({ lessonName: lessonName });			
 		})
-		.fail(function(error) {								
-			Display("Could not load class or lesson.");
+		.fail(function(error) {		
+			console.log("ERRRROR while loading lesson");						
+			Display("Could not load lesson.");
 		});
 	}
 
 	function loadLesson(lessonName) {
-		return lessonRequest.get("/lib/" + env + "/" + Util.spaceToUnderscore(lessonName) + ".js").then(function(resp) {
-			return {text: resp, lessonName: lessonName}
+		return lessonRequest.get(Util.spaceToUnderscore(lessonName) + ".js").then(function(resp) {
+			return resp
 		})
 	}
 
-	function loadCurrentLessonName(className) {
-		return appRequest.get("/class_by_name?name="+className);
-	}
-
-	function sendLessonToFrontend(lessonText) {				
-		Message.sendToAllTabs({lesson: lessonText});
-	}
-
 	chrome.runtime.onMessage.addListener(
-		function(request, sender, sendResponse) {
+		function(request, sender, sendResponse) {			
 			if (request.loadLesson) {
-				loadLessonForClass(request.loadLesson);				
+				loadAndSendLesson(request.loadLesson, sender.tab.id);				
 			}
 		}
 	)

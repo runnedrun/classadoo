@@ -4,16 +4,16 @@ LoginManager = function(dataManager) {
 	// for when someone logs in from the toolbar
 	respond("login", function(data) {		
 		m.setStudentName(data.studentName).then(function() {
-			chrome.runtime.sendMessage({loadLesson: data.className});
+			chrome.runtime.sendMessage({loadLesson: data.lessonName});
 		});				
 	})	
 
 	// if someone is already logged when the toolbar is loaded
-	respond("className", checkIfLessonShouldLoad)
+	respond("lessonName", checkIfLessonShouldLoad)
 
-	function checkIfLessonShouldLoad(className) {		
-		if (className && !m.tasks) {			
-			chrome.runtime.sendMessage({loadLesson: className});
+	function checkIfLessonShouldLoad(lessonName) {		
+		if (lessonName && !m.tasks) {			
+			chrome.runtime.sendMessage({loadLesson: lessonName});
 		}
 	}
 }

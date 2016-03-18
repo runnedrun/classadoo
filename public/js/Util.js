@@ -105,6 +105,32 @@ Util = new function() {
   this.spaceToUnderscore = function(string) {
     return string.replace(/\s/g, "_")
   }
+
+  this.guid = function() {
+    var d = new Date().getTime();
+    if(window.performance && typeof window.performance.now === "function"){
+        d += performance.now(); //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  }
+
+  this.extend = function(obj1, obj2) {
+    var extended = {}
+    Object.keys(obj1).forEach(function(key){
+      extended[key] = obj1[key];
+    })
+
+    Object.keys(obj2).forEach(function(key) {
+      extended[key] = obj2[key];
+    })
+
+    return extended
+  }
 }()
 
 ViewUtil = new function() {

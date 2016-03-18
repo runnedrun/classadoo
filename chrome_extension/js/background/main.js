@@ -1,26 +1,23 @@
+var env = "prod"
+
 appDomain = "https://localhost:3000";
-lessonsDomain = "http://localhost:4000";
-lessonsEnv = "dev"
 
-var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
-var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
+var lessonsPrefix
+if (env === "prod") {
+  lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
+} else {
+  lessonsPrefix = "http://localhost:4000";  
+}
 
-var pubnub_setup = {
-      channel       : 'class_channel',
-      publish_key   : pubKey,
-      subscribe_key : subKey
-  };
+var LessonRequest = new Request(lessonsPrefix, "text");
 
-var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
-
-var LessonRequest = new Request(lessonsDomain, "text", lessonsEnv === "dev");
-var AppRequest = new Request(appDomain);
 var dataManager = new DataManager();
-new LessonLoader(AppRequest, LessonRequest, lessonsEnv, dataManager);
-var socketManager = new SocketManager(socket, dataManager);
-new ServerDataSync(dataManager, socketManager)
-new TabCaptureManager(dataManager, socketManager);
+new LessonLoader(LessonRequest, dataManager);
+// var socketManager = new SocketManager(socket, dataManager);
+// new ServerDataSync(dataManager, socket);
+new TabCaptureManager(dataManager);
 new VolatileProperties(dataManager);
+Message = new Message(dataManager);
 
 chrome.runtime.onMessage.addListener(
    function(request, sender, sendResponse) {  		 	      

@@ -4,34 +4,17 @@ var ReactDOM = require('react-dom');
 require("./Util.js");
 require("./ClassInfoDisplay.js");
 require("./StudentStatesDisplay.js");
-require("./pubnub-socket.io");
+require("./firebase.min.js")
+
 var students = {}
 
-host = location.host;
-
-var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
-var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
-
-var pubnub_setup = {
-  channel       : 'class_channel',
-  publish_key   : pubKey,
-  subscribe_key : subKey,
-  ssl           : true
-};
-
 $(function() {
-	renderClassInfoDisplay();
-	
-	var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
+	renderClassInfoDisplay();	
 
-	socket.on("connect", function(event, data) {
-		console.log("connected!");
-	})
-
-	socket.on("state.update", function(status) {
-		console.log("got status: ", status);
-		students[status.studentName] = status;
-		renderStudentStatesDisplay()
+	var ref = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
+	ref.on("value", function(snapshot) {		
+		students = snapshot.val()	
+		renderStudentStatesDisplay();			
 	})
 
 	setInterval(renderStudentStatesDisplay, 5000);
@@ -42,14 +25,20 @@ function renderClassInfoDisplay() {
 }
 
 function renderStudentStatesDisplay() {	
-	var statesArr = Util.objectValues(students);
-	var studentNames = statesArr.map(function(state) { return state.studentName });
+	var statesArr = Util.objectValues(students);	
+
+	var studentsByName = {}
+	statesArr.forEach(function(user) { 		
+		studentsByName[user.state.global.name] = user.state
+	});
+
+	var studentNames = Object.keys(studentsByName);
 	studentNames.sort();      
 
 	var alphaStates = studentNames.map(function(name) {
-		var obj = students[name];
-		if (obj.startTime) {
-			obj["elapsedTime"] = Math.ceil((Date.now() - obj.startTime) / 1000);
+		var obj = studentsByName[name];		
+		if (obj.global.startTime) {			
+			obj.global["elapsedTime"] = Math.ceil((Date.now() - obj.global.startTime) / 1000);
 		}			
 		return obj	
 	})

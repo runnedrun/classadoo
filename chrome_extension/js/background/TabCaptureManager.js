@@ -3,7 +3,7 @@
 // Source Code   - https://github.com/muaz-khan/Chrome-Extensions
 
 
-TabCaptureManager = function(dataManager, socketManager) {
+TabCaptureManager = function(dataManager, socket) {
     var m = dataManager;
 
     // RTCMultiConnection - www.RTCMultiConnection.org
@@ -13,29 +13,27 @@ TabCaptureManager = function(dataManager, socketManager) {
     chrome.browserAction.onClicked.addListener(function(tab) {  
         if (connection && connection.attachStreams[0]) {
             connection.attachStreams[0].stop();
-            m.tabSetProps(tab.id, {needsHelp: false});
+            m.tabSet(tab.id, {needsHelp: false});
             setDefaults();                        
             return;
         } else {
-            m.globalGet().then(function(state) {                
-                console.log("initiating TAB capture");
+            state = m.globalGet()                
+            console.log("initiating TAB capture");
+            if (state.studentName) {                
+                chrome.browserAction.setTitle({
+                    title: 'Capturing Tab'
+                });
 
-                if (state.studentName) {                
-                    chrome.browserAction.setTitle({
-                        title: 'Capturing Tab'
-                    });
+                chrome.browserAction.setIcon({
+                    path: 'question-active.png'
+                });
 
-                    chrome.browserAction.setIcon({
-                        path: 'question-active.png'
-                    });
-
-                    chrome.tabs.getSelected(null, function(tab) {
-                        captureTab(state, tab.id);                        
-                    });  
-                } else {
-                    Display("To request help, first open the toolbar by pressing <esc>, then set your name.");
-                }
-            })  
+                chrome.tabs.getSelected(null, function(tab) {
+                    captureTab(state, tab.id);                        
+                });  
+            } else {
+                Display("To request help, first open the toolbar by pressing <esc>, then set your name.");
+            }
         }        
     });   
 
@@ -109,7 +107,7 @@ TabCaptureManager = function(dataManager, socketManager) {
         }
     }
 
-    function setupRTCMultiConnection(stream, roomId, tabId) {
+    function setupRTCMultiConnection(stream, roomId, tabId) {        
         // www.RTCMultiConnection.org/docs/
         connection = new RTCMultiConnection();
 
@@ -167,104 +165,152 @@ TabCaptureManager = function(dataManager, socketManager) {
 
         // www.RTCMultiConnection.org/docs/openSignalingChannel/
         var onMessageCallbacks = {};
-        var pub = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5';
-        var sub = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe';
+        // var pub = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5';
+        // var sub = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe';
 
-        WebSocket = PUBNUB.ws;
-        var websocket = new WebSocket('wss://pubsub.pubnub.com/' + pub + '/' + sub + '/' + connection.channel);
+        // WebSocket = PUBNUB.ws;
+        // var websocket = new WebSocket('wss://pubsub.pubnub.com/' + pub + '/' + sub + '/' + connection.channel);
 
         var connectedUsers = 0;
         connection.ondisconnected = function() {
             connectedUsers--;        
         };
 
-        websocket.onmessage = function(e) {
-            data = JSON.parse(e.data);
+        // websocket.onmessage = function(e) {
+            // data = JSON.parse(e.data);
 
-            if (data === 'received-your-screen') {
-                connectedUsers++;            
-            }
+            // if (data === 'received-your-screen') {
+            //     connectedUsers++;            
+            // }
 
-            if (data.sender == connection.userid) return;
+            // if (data.sender == connection.userid) return;
 
-            if (onMessageCallbacks[data.channel]) {
-                onMessageCallbacks[data.channel](data.message);
-            };
-        };
+            // if (onMessageCallbacks[data.channel]) {
+            //     onMessageCallbacks[data.channel](data.message);
+            // };
+        // };
 
-        websocket.push = websocket.send;
-        websocket.send = function(data) {
-            data.sender = connection.userid;
-            websocket.push(JSON.stringify(data));
-        };
+        // websocket.push = websocket.send;
+        // websocket.send = function(data) {
+        //     data.sender = connection.userid;
+        //     websocket.push(JSON.stringify(data));
+        // };
 
         // overriding "openSignalingChannel" method
-        connection.openSignalingChannel = function(config) {
-            var channel = config.channel || this.channel;
-            onMessageCallbacks[channel] = config.onmessage;
+        connection.openSignalingChannel = function(config) {            
+            // var channel = config.channel || this.channel;            
 
-            if (config.onopen) setTimeout(config.onopen, 1000);
+            var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
+            var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
 
-            // directly returning socket object using "return" statement
-            return {
-                send: function(message) {
-                    websocket.send({
-                        sender: connection.userid,
-                        channel: channel,
-                        message: message
-                    });
+            var pubnub_setup = {
+                  channel       : "class_channel",
+                  publish_key   : pubKey,
+                  subscribe_key : subKey
+              };
 
-                    // socketManager.sendMessage({
-                    //     sender: connection.userid,
-                    //     channel: channel,
-                    //     message: message
-                    // });
-                },
-                channel: channel
-            };
-        };
+            var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
 
-        websocket.onerror = function() {
-            if (connection && connection.numberOfConnectedUsers > 0) {
-                return;
-            }
-
-            // chrome.windows.create({
-            //     url: "data:text/html,<h1>Failed connecting the WebSockets server. Please click screen icon to try again.</h1>",
-            //     type: 'popup',
-            //     width: screen.width / 2,
-            //     height: 170
+            // socket.emit('new-channel', {
+            //     channel: channel,
+            //     sender : sender
             // });
-            console.log("Failed to connect!");
-            m.tabSetProps(tabId, {needsHelp: false});
 
-            setDefaults();
-            // chrome.runtime.reload();
-        };
+            // connection.channel = connection.sessionid = connection.userid;            
 
-        websocket.onclose = function() {
-            if (connection && connection.numberOfConnectedUsers > 0) {
-                return;
-            }
+            socket.on('connect', function () {
+                console.log("sender is", connection.sessionId);
+                if (config.callback) config.callback(socket);
 
-            console.log("the websocket closed!");
-            m.tabSetProps(tabId, {needsHelp: false});
+                // var sessionDescription = connection.open({
+                //     dontTransmit: true
+                // });
 
-            setDefaults();
-            // chrome.runtime.reload();
-        };
-
-        websocket.onopen = function() {
-            // chrome.browserAction.enable();        
-
-            console.info('WebSockets connection is opened.');
-
-            // www.RTCMultiConnection.org/docs/open/
-            var sessionDescription = connection.open({
-                dontTransmit: true
+                m.tabSet(tabId, {needsHelp: connection.sessionid});
             });
 
-            m.tabSetProps(tabId, {needsHelp: connection.sessionid});
+            socket.send = function (message) {
+                console.log("sending message", connection.sessionid, message)
+               socket.emit('message', {
+                   sender: connection.sessionid,
+                   data  : message,
+                   channel: "class_channel"
+               });
+            };
+
+            socket.on('message', function(message) {
+                console.log("got message!", message)
+                config.onmessage(message);
+            });
+
+
+            // var channel = config.channel || this.channel;
+            // onMessageCallbacks[channel] = config.onmessage;
+
+            // if (config.onopen) setTimeout(config.onopen, 1000);
+
+            // // directly returning socket object using "return" statement
+            // return {
+            //     send: function(message) {
+            //         websocket.send({
+            //             sender: connection.userid,
+            //             channel: channel,
+            //             message: message
+            //         });
+
+            //         // socketManager.sendMessage({
+            //         //     sender: connection.userid,
+            //         //     channel: channel,
+            //         //     message: message
+            //         // });
+            //     },
+            //     channel: channel
+            // };
+        };
+
+        connection.open();
+
+        // websocket.onerror = function() {
+        //     if (connection && connection.numberOfConnectedUsers > 0) {
+        //         return;
+        //     }
+
+        //     // chrome.windows.create({
+        //     //     url: "data:text/html,<h1>Failed connecting the WebSockets server. Please click screen icon to try again.</h1>",
+        //     //     type: 'popup',
+        //     //     width: screen.width / 2,
+        //     //     height: 170
+        //     // });
+        //     console.log("Failed to connect!");
+        //     m.tabSet(tabId, {needsHelp: false});
+
+        //     setDefaults();
+        //     // chrome.runtime.reload();
+        // };
+
+        // websocket.onclose = function() {
+        //     if (connection && connection.numberOfConnectedUsers > 0) {
+        //         return;
+        //     }
+
+        //     console.log("the websocket closed!");
+        //     m.tabSet(tabId, {needsHelp: false});
+
+        //     setDefaults();
+        //     // chrome.runtime.reload();
+        // };
+
+        // websocket.onopen = function() {
+            // chrome.browserAction.enable();        
+
+            // console.info('WebSockets connection is opened.');
+
+            // www.RTCMultiConnection.org/docs/open/
+            // var sessionDescription = connection.open({
+            //     dontTransmit: true
+            // });
+
+            // m.tabSet(tabId, {needsHelp: connection.sessionid});
 
             // var resultingURL = 'https://www.webrtc-experiment.com/!/?s=' + connection.sessionid;
 
@@ -286,7 +332,7 @@ TabCaptureManager = function(dataManager, socketManager) {
             // }, function(win) {
             //     popup_id = win.id;
             // });
-        };        
+        // };        
     }
 
     function setDefaults() {

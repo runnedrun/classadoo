@@ -1,14 +1,14 @@
 console.log("running the main!");
 
 $(function() {		
-	var globalRequest = (new StorageAccess("globalStorage")).get()
-	var tabRequest = (new StorageAccess("tabStorage")).get()
+	var globalRequest = (new StorageAccess("globalStorage")).getAll()
+	var tabRequest = (new StorageAccess("tabStorage")).getAll()
 		
 	$.when(globalRequest, tabRequest).then(function(globalState, tabState){	
 		var intialState = $.extend(globalState, tabState);				
 		var manager = new DataManager(intialState);
 		var lessonManager = new LessonManager(manager);
-		var updateManager = new RemoteUpdateManager(manager);
+		// var updateManager = new RemoteUpdateManager(manager);
 		var loginManager = new LoginManager(manager);
 		var lessonExecutor = new LessonExecutor(manager);
 		var backgroundDisplay = new BackgroundDisplay(manager);		

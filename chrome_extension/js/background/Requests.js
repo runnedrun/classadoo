@@ -1,24 +1,22 @@
 console.log("ajax_fns loaded");
 
-Request = function(domain, dataType, noCache) {
+Request = function(prefix, dataType) {
     var self = this;            
 
     self.get = function(path) {                
         return $.ajax({
-            url: domain + path,
+            url: prefix + path,
             timeout: 1000,
-            dataType: dataType || "json",
-            cache: !noCache,
+            dataType: dataType || "json",            
             method: "GET"            
         })        
     }
 
     self.post = function(path) {                
         return $.ajax({
-            url: domain + path,
+            url: prefix + path,
             timeout: 1000,
-            dataType: dataType || "json",
-            method: "POST",
+            dataType: dataType || "json",            
             data: data            
         })
     }

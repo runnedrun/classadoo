@@ -1,10 +1,10 @@
 StorageAccess = function(storageName) {	
-	this.get = function() {
+	this.getAll = function() {
 		var deferred = $.Deferred()
 
 		var dataObj = {}
 		dataObj[storageName] = {
-			method: "get" 			
+			method: "get"			 			
 		}
 
 		chrome.runtime.sendMessage(dataObj, function(response){ 		

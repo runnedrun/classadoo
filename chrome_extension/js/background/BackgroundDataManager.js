@@ -1,54 +1,69 @@
 DataManager = function() {
+	var storedClientId = localStorage.getItem("clientId");	
+
+	var clientId;
+	if (!storedClientId) {
+		var clientId = Util.guid();	
+		localStorage.setItem("clientId", clientId)
+	} else {
+		clientId = storedClientId;
+	}
+
+	var ref = new Firebase("vivid-inferno-6534.firebaseIO.com/users/" + clientId);
+
 	var self = this;
 
-	var globalStorage = new Storage("state");
-	var tabStorage = new TabStorage("tabState");	
-	tabStorage.clearAllTabs();
+	// var globalStorage = new Storage("state");
+	// var tabStorage = new TabStorage("tabState");	
 
-	self.tabSet = function(tabId, state) {				
-		return tabStorage.set(tabId, state).then(function(data) {
-			// It's possible that data is undefined, if we were clearing data for a tab.
-			// In this case we shouldn't send a message to the tab (which no longer exists).
-			if (data) {
-				Message.send(tabId, {storageUpdate: data});	  			
-			}	
+	var globalStorage = ref.child("state/global");
+	var tabStorage = ref.child("state/tab");	
 
-			fire("storageUpdate");	  			
-			return data	      			  		
+	var tabCache = {}
+	var globalCache = {}
+
+	var tabListeners = {}
+	function listenOnTabData(tabId) {
+		return tabStorage.child(tabId).on("value", function(snapshot){
+			tabCache[tabId] = snapshot.val();
+			Message.send(tabId, {storageUpdate: snapshot.val()});
 		})
+	}	
+
+	globalStorage.on("value", function(snapshot) {		
+		globalCache = snapshot.val() || {}
+		Message.sendToOpenTabs({storageUpdate: globalCache});
+	})
+
+
+	self.tabSet = function(tabId, props) {								
+		if (!tabListeners[tabId]) {
+			tabListeners[tabId] = listenOnTabData(tabId)
+		} 
+
+		tabStorage.child(tabId).update(props);				
 	}
 
-	self.globalSet = function(state) {
-		return globalStorage.set(state).then(function(data) {	      		
-	  		Message.sendToAllTabs({storageUpdate: data});
-	  		fire("storageUpdate");
-	  		return data
-		})
+	self.tabClear = function(tabId) {
+		var listener = tabListeners[tabId];
+		tabStorage.child(tabId).off("value", listener);
+
+		tabStorage.child(tabId).set(null);
 	}
 
-	self.tabGet = function(tabId) {
-		return tabStorage.get(tabId)
+	self.globalSet = function(props) {
+		globalStorage.update(props);		
+	}
+
+	self.tabGet = function(tabId) {		
+		return tabCache[tabId]
 	}
 
 	self.globalGet = function() {
-		return globalStorage.get()
+		return globalCache
 	}
-
-	self.globalSetProps = function(props) {
-		return self.globalGet().then(function(state) {
-			$.extend(state, props);			
-			return self.globalSet(state);
-		})
-	}
-
-	self.tabSetProps = function(tabId, props) {
-		return self.tabGet(tabId).then(function(state) {
-			$.extend(state, props);			
-			return self.tabSet(tabId, state);
-		})
-	}
-
-	self.getAllTabs = tabStorage.getAllTabs
+ 
+	self.getAllTabs = function() { return tabCache }
 
 	self.getFullState = function() {
 		return $.when(self.globalGet(), self.getAllTabs()).then(function(globalState, tabStates) {
@@ -60,19 +75,14 @@ DataManager = function() {
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		if (request.tabStorage) { 			
 			var method = Util.capitalizeFirstLetter(request.tabStorage.method);			
-			self["tab" + method](sender.tab.id, request.tabStorage.data).then(function(state) {
-				sendResponse(state);
-			});			
-			return true
+			var state = self["tab" + method](sender.tab.id, request.tabStorage.data)
+			sendResponse(state);						
    		}
 
 		if (request.globalStorage) {             
 			var method = Util.capitalizeFirstLetter(request.globalStorage.method);
-			self["global" + method](request.globalStorage.data).then(function(state) {									
-				sendResponse(state)
-			});
-
-			return true
+			var state = self["global" + method](request.globalStorage.data)			
+			sendResponse(state)						
    		}   		
   	})
 }

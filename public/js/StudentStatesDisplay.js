@@ -3,7 +3,7 @@ require("./Util.js");
 
 var StudentState = React.createClass({    
     getActiveTab: function() {
-      var allTabs = this.props.state.tabs;
+      var allTabs = this.props.state.tab;
       var activeTab;
       Object.keys(allTabs).forEach(function(tabId) {        
         if (allTabs[tabId].active) {
@@ -16,7 +16,7 @@ var StudentState = React.createClass({
 
     // returns an id for a help screenshare, if the student has initiated one
     getHelpUrl: function() {
-      var allTabs = this.props.state.tabs;
+      var allTabs = this.props.state.tab;
       
       var helpId;
       Object.keys(allTabs).forEach(function(tabId) {        
@@ -64,14 +64,14 @@ var StudentState = React.createClass({
       return(
         <div className="student-state col-md-2">       
             <h4 className="name text-center">
-              {this.props.state.studentName}                          
+              {this.props.state.global.studentName}                          
             </h4>
 
             <div className="task-number">
-              Task Number: {this.props.state.taskIndex}
+              Task Number: {this.props.state.global.taskIndex}
             </div>
             <div className="elapsed-time">
-              {this.props.state.elapsedTime}
+              {this.props.state.global.elapsedTime}
             </div>
             {activeUrlLink}
             {helpLink}
@@ -85,7 +85,7 @@ StudentStatesDisplayRow = React.createClass({
       return(
         <div className="row">
             {this.props.states.map(function(state) { 
-              return <StudentState key={state.studentName} state={state} />
+              return <StudentState key={state.global.studentName} state={state} />
             })}        	  
         </div>         
       )

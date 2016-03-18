@@ -21,7 +21,7 @@ var Toolbar = function($iframe, content, dataManager) {
 	$iframe[0].onload = function() {    				    				    				
 		var html = decodeURI(content);	      				
 		i.setIframeContent(html);
-		if (m.className){
+		if (m.lessonName){
 			startLessonMode()		
 		} else {
 			startLoginMode()
@@ -36,13 +36,13 @@ var Toolbar = function($iframe, content, dataManager) {
 	}
 
 	function attemptLogin() {
-		var className = i.$(".class-name").val();
+		var lessonName = i.$(".lesson-name-input").val();
 		var studentName = i.$(".student-name").val();
 
-		if (!className || !studentName) return
+		if (!lessonName || !studentName) return
 
 		// actually try to start the lesson
-		fire("login", {className: className, studentName: studentName});				
+		fire("login", {lessonName: lessonName, studentName: studentName});				
 	}
 
 	function switchToLessonMode() {				
@@ -148,7 +148,7 @@ var Toolbar = function($iframe, content, dataManager) {
 	respond("taskIndex", displayNewTaskDescription);
 	respond("tasks", displayNewTaskDescription);
 	respond("lessonName", setLesson);
-	respond("className", startLessonMode)
+	respond("lessonName", startLessonMode)
 	respond("toolbarOpen", hideOrShow);
 	respond("toolbarOpen", hideOrShow);
 }

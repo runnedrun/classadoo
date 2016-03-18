@@ -3,16 +3,9 @@ SocketManager = function(socket, dataManager) {
 	var socket;
 	var m = dataManager;
 
-	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-		var className = request.connectToClass;		
-
-		if (className) {			
-			console.log("connecting to class");						
-			socket.on("connect", connected);		
-			socket.on("reconnect", connected);	
-			socket.on("connect_error", disconnected);
-		}
-	})	
+	socket.on("connect", connected);		
+	socket.on("reconnect", connected);	
+	socket.on("connect_error", disconnected);
 
 	self.emit = function(name, message) {
 		if (socket) {
@@ -22,11 +15,11 @@ SocketManager = function(socket, dataManager) {
 
 	function connected() {
 		console.log("connected to class socket");		
-		m.globalSetProps({ "connectedToClass": true });
+		m.globalSetProps({ "connectedToBackend": true });
 	}
 
 	function disconnected() {
 		console.log("error connecting to class socket");		
-		m.globalSetProps({ "connectedToClass": false });
+		m.globalSetProps({ "connectedToBackend": false });
 	}
 }
