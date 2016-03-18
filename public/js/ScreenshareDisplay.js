@@ -1,7 +1,7 @@
 var $ = require("jquery");
 require("./RTCMultiConnection.js");
 // require("./websockets.min.js");
-require("./pubnub-socket.io");
+require("./pubnub-socket.io.js");
 
 module.exports = function() {
     var params = {},
@@ -199,89 +199,62 @@ module.exports = function() {
 
         connection.onstreamended = function() {};
 
+        var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
+        var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
 
+        var pubnub_setup = {
+              channel       : "class_channel",
+              publish_key   : pubKey,
+              subscribe_key : subKey,
+              ssl:           true 
+        };
+
+        var socket = io.connect( 'https://pubsub.pubnub.com', pubnub_setup );
 
         // using websockets as signaling medium
         // http://www.rtcmulticonnection.org/docs/openSignalingChannel/
         // using websockets for signaling
         // www.RTCMultiConnection.org/docs/openSignalingChannel/
-        // var onMessageCallbacks = {};
+        var onMessageCallbacks = {};
         // var pub = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5';
         // var sub = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe';
 
         // WebSocket = PUBNUB.ws;
         // var websocket = new WebSocket('wss://pubsub.pubnub.com/' + pub + '/' + sub + '/' + connection.channel);
 
-        // websocket.onmessage = function(e) {
-        //     data = JSON.parse(e.data);
+        socket.on("message", function(data) {
+            if (data.sender == connection.userid) return;
 
-        //     if (data.sender == connection.userid) return;
-
-        //     if (onMessageCallbacks[data.channel]) {
-        //         onMessageCallbacks[data.channel](data.message);
-        //     };
-        // };
+            if (onMessageCallbacks[data.channel]) {
+                onMessageCallbacks[data.channel](data.message);
+            };
+        });
 
         // websocket.push = websocket.send;
-        // websocket.send = function(data) {
-        //     data.sender = connection.userid;
-        //     websocket.push(JSON.stringify(data));
-        // };
+        function sendData(data) {
+            console.log("sending data!");
+            data.sender = connection.userid;
+            socket.send(data);                
+        };
 
         // overriding "openSignalingChannel" method
-        connection.openSignalingChannel = function(config) {                    
+        connection.openSignalingChannel = function(config) {
             var channel = config.channel || this.channel;
-            // onMessageCallbacks[channel] = config.onmessage;
+            onMessageCallbacks[channel] = config.onmessage;
 
-            var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
-            var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
+            if (config.onopen) setTimeout(config.onopen, 1000);
 
-            var pubnub_setup = {
-                  channel       : "class_channel",
-                  publish_key   : pubKey,
-                  subscribe_key : subKey,
-                  ssl:           true 
+            // directly returning socket object using "return" statement
+            return {
+                send: function(message) {
+                    sendData({
+                        sender: connection.userid,
+                        channel: channel,
+                        message: message
+                    });
+                },
+                channel: channel
             };
-
-            var socket = io.connect( 'https://pubsub.pubnub.com', pubnub_setup );
-
-            // socket.emit('new-channel', {
-            //     channel: channel,
-            //     sender : connection.userId
-            // });
-
-            // connection.channel = connection.sessionid = connection.userid;            
-            
-            // socket.channel = channel;
-
-            socket.on('connect', function () {
-                if (config.callback) config.callback(socket);
-            });
-
-            socket.send = function (message) {
-                console.log("sedning message!", connection.userId, message);
-               socket.emit('message', {
-                   sender: connection.userId,
-                   data  : message,
-                   channel: "class_channel"
-               });
-            };
-
-            socket.on('message', config.onmessage);    
-
-            // if (config.onopen) setTimeout(config.onopen, 1000);
-
-            // // directly returning socket object using "return" statement
-            // return {
-            //     send: function(message) {
-            //         websocket.send({
-            //             sender: connection.userid,
-            //             channel: channel,
-            //             message: message
-            //         });
-            //     },
-            //     channel: channel
-            // };
         };
 
         // websocket.onerror = function() {
@@ -296,55 +269,33 @@ module.exports = function() {
         //     }
         // };
 
-        infoBar.innerHTML = 'Connecting to signalling server.';
+        infoBar.innerHTML = 'Connecting WebSockets server.';
 
-        // websocket.onopen = function() {
-            // infoBar.innerHTML = 'WebSockets connection is opened.';
+        socket.on("connect", function() {
+            infoBar.innerHTML = 'WebSockets connection is opened.';
 
-            // var sessionDescription = {
-            //     userid: params.s,
-            //     extra: {},
-            //     session: {
-            //         video: true,
-            //         oneway: true
-            //     },
-            //     sessionid: params.s
-            // };
+            var sessionDescription = {
+                userid: params.s,
+                extra: {},
+                session: {
+                    video: true,
+                    oneway: true
+                },
+                sessionid: params.s
+            };
 
-            // if (params.s) {
-            //     infoBar.innerHTML = 'Joining session: ' + params.s;
+            if (params.s) {
+                infoBar.innerHTML = 'Joining session: ' + params.s;
                 
-            //     if(params.p) {
-            //         // it seems a password protected room.
-            //         connection.extra.password = params.p;
-            //     }
+                if(params.p) {
+                    // it seems a password protected room.
+                    connection.extra.password = params.p;
+                }
 
-            //     // http://www.rtcmulticonnection.org/docs/join/
-            //     connection.join(sessionDescription);
-            // }
-        // };
-
-         var sessionDescription = {
-            userid: params.s,
-            extra: {},
-            session: {
-                video: true,
-                oneway: true
-            },
-            sessionid: params.s
-        };
-
-        if (params.s) {
-            infoBar.innerHTML = 'Joining session: ' + params.s;
-            
-            if(params.p) {
-                // it seems a password protected room.
-                connection.extra.password = params.p;
+                // http://www.rtcmulticonnection.org/docs/join/
+                connection.join(sessionDescription);
             }
-
-            // http://www.rtcmulticonnection.org/docs/join/
-            connection.join(sessionDescription);
-        }
+        });
     }
 
     function waitForRemoteVideo() {

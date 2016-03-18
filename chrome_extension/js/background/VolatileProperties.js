@@ -11,7 +11,7 @@ VolatileProperties = function(dataManager) {
 		chrome.tabs.onActivated.addListener(function(activeInfo) {
 			var allTabs = m.getAllTabs()
 			Object.keys(allTabs).map(function(tabId) {
-				if (allTabs[tabId].active && !(lastRemovedTab == tabId)) {												
+				if (allTabs[tabId] && allTabs[tabId].active && !(lastRemovedTab == tabId)) {												
 					m.tabSet(tabId, {active: false})
 				}					
 			})	

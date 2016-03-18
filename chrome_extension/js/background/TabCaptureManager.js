@@ -3,7 +3,7 @@
 // Source Code   - https://github.com/muaz-khan/Chrome-Extensions
 
 
-TabCaptureManager = function(dataManager, socket) {
+TabCaptureManager = function(dataManager, socketManager) {
     var m = dataManager;
 
     // RTCMultiConnection - www.RTCMultiConnection.org
@@ -107,7 +107,7 @@ TabCaptureManager = function(dataManager, socket) {
         }
     }
 
-    function setupRTCMultiConnection(stream, roomId, tabId) {        
+    function setupRTCMultiConnection(stream, roomId, tabId) {
         // www.RTCMultiConnection.org/docs/
         connection = new RTCMultiConnection();
 
@@ -171,104 +171,67 @@ TabCaptureManager = function(dataManager, socket) {
         // WebSocket = PUBNUB.ws;
         // var websocket = new WebSocket('wss://pubsub.pubnub.com/' + pub + '/' + sub + '/' + connection.channel);
 
+        var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
+        var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
+
+        var pubnub_setup = {
+              channel       : "class_channel",
+              publish_key   : pubKey,
+              subscribe_key : subKey
+          };
+
+        var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
+
         var connectedUsers = 0;
         connection.ondisconnected = function() {
             connectedUsers--;        
         };
 
-        // websocket.onmessage = function(e) {
-            // data = JSON.parse(e.data);
+        socket.on("message", function(data) {            
 
-            // if (data === 'received-your-screen') {
-            //     connectedUsers++;            
-            // }
+            if (data === 'received-your-screen') {
+                connectedUsers++;            
+            }
 
-            // if (data.sender == connection.userid) return;
+            if (data.sender == connection.userid) return;
 
-            // if (onMessageCallbacks[data.channel]) {
-            //     onMessageCallbacks[data.channel](data.message);
-            // };
-        // };
+            if (onMessageCallbacks[data.channel]) {
+                onMessageCallbacks[data.channel](data.message);
+            };
+        });
 
         // websocket.push = websocket.send;
-        // websocket.send = function(data) {
-        //     data.sender = connection.userid;
-        //     websocket.push(JSON.stringify(data));
-        // };
+        function sendData(data) {
+            data.sender = connection.userid;
+            console.log("sending!", data);
+            socket.send(data);
+        };
 
         // overriding "openSignalingChannel" method
         connection.openSignalingChannel = function(config) {            
-            // var channel = config.channel || this.channel;            
+            var channel = config.channel || this.channel;
+            onMessageCallbacks[channel] = config.onmessage;
 
-            var pubKey = 'pub-c-e34a131f-b2be-4ea4-9f41-0aa84b0be7e5'
-            var subKey = 'sub-c-57b77bd4-e72c-11e5-aad5-02ee2ddab7fe'
+            if (config.onopen) setTimeout(config.onopen, 1000);
 
-            var pubnub_setup = {
-                  channel       : "class_channel",
-                  publish_key   : pubKey,
-                  subscribe_key : subKey
-              };
+            // directly returning socket object using "return" statement
+            return {
+                send: function(message) {
+                    sendData({
+                        sender: connection.userid,
+                        channel: channel,
+                        message: message
+                    });
 
-            var socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
-
-            // socket.emit('new-channel', {
-            //     channel: channel,
-            //     sender : sender
-            // });
-
-            // connection.channel = connection.sessionid = connection.userid;            
-
-            socket.on('connect', function () {
-                console.log("sender is", connection.sessionId);
-                if (config.callback) config.callback(socket);
-
-                // var sessionDescription = connection.open({
-                //     dontTransmit: true
-                // });
-
-                m.tabSet(tabId, {needsHelp: connection.sessionid});
-            });
-
-            socket.send = function (message) {
-                console.log("sending message", connection.sessionid, message)
-               socket.emit('message', {
-                   sender: connection.sessionid,
-                   data  : message,
-                   channel: "class_channel"
-               });
+                    // socketManager.sendMessage({
+                    //     sender: connection.userid,
+                    //     channel: channel,
+                    //     message: message
+                    // });
+                },
+                channel: channel
             };
-
-            socket.on('message', function(message) {
-                console.log("got message!", message)
-                config.onmessage(message);
-            });
-
-
-            // var channel = config.channel || this.channel;
-            // onMessageCallbacks[channel] = config.onmessage;
-
-            // if (config.onopen) setTimeout(config.onopen, 1000);
-
-            // // directly returning socket object using "return" statement
-            // return {
-            //     send: function(message) {
-            //         websocket.send({
-            //             sender: connection.userid,
-            //             channel: channel,
-            //             message: message
-            //         });
-
-            //         // socketManager.sendMessage({
-            //         //     sender: connection.userid,
-            //         //     channel: channel,
-            //         //     message: message
-            //         // });
-            //     },
-            //     channel: channel
-            // };
         };
-
-        connection.open();
 
         // websocket.onerror = function() {
         //     if (connection && connection.numberOfConnectedUsers > 0) {
@@ -300,17 +263,17 @@ TabCaptureManager = function(dataManager, socket) {
         //     // chrome.runtime.reload();
         // };
 
-        // websocket.onopen = function() {
+        socket.on("connect", function() {
             // chrome.browserAction.enable();        
 
-            // console.info('WebSockets connection is opened.');
+            console.info('Socket.io connection is opened.', connection.sessionid);
 
             // www.RTCMultiConnection.org/docs/open/
-            // var sessionDescription = connection.open({
-            //     dontTransmit: true
-            // });
+            var sessionDescription = connection.open({
+                dontTransmit: true
+            });
 
-            // m.tabSet(tabId, {needsHelp: connection.sessionid});
+            m.tabSet(tabId, {needsHelp: connection.sessionid});            
 
             // var resultingURL = 'https://www.webrtc-experiment.com/!/?s=' + connection.sessionid;
 
@@ -332,7 +295,7 @@ TabCaptureManager = function(dataManager, socket) {
             // }, function(win) {
             //     popup_id = win.id;
             // });
-        // };        
+        });        
     }
 
     function setDefaults() {
