@@ -25,22 +25,34 @@ DataManager = function() {
 	var tabListeners = {}
 	function listenOnTabData(tabId) {
 		return tabStorage.child(tabId).on("value", function(snapshot){
-			tabCache[tabId] = snapshot.val();
-			Message.send(tabId, {storageUpdate: snapshot.val()});
+			localTabUpdate(tabId, snapshot.val())
 		})
 	}	
 
+	function localTabUpdate(tabId, update) {
+		console.log("checking if we should update");
+		var previous = tabCache[tabId] || {}
+		var updated = Util.extend(previous, update);
+
+		if (!Util.objectEq(previous, updated)) {
+			console.log("updating");
+			tabCache[tabId] = updated;
+			Message.send(tabId, { storageUpdate: { type: "tab", data: updated } });
+		}			
+	}
+
 	globalStorage.on("value", function(snapshot) {		
-		globalCache = snapshot.val() || {}
-		Message.sendToOpenTabs({storageUpdate: globalCache});
+		globalCache = snapshot.val() || {}		
+		Message.sendToOpenTabs({ storageUpdate: { type: "global", data: globalCache } });
 	})
 
 
 	self.tabSet = function(tabId, props) {								
 		if (!tabListeners[tabId]) {
 			tabListeners[tabId] = listenOnTabData(tabId)
-		} 
+		} 		
 
+		localTabUpdate(tabId, props);
 		tabStorage.child(tabId).update(props);				
 	}
 
@@ -49,6 +61,10 @@ DataManager = function() {
 		tabStorage.child(tabId).off("value", listener);
 
 		tabStorage.child(tabId).set(null);
+	}
+
+	self.globalClear = function(tabId) {		
+		globalStorage.remove();
 	}
 
 	self.globalSet = function(props) {
@@ -64,13 +80,6 @@ DataManager = function() {
 	}
  
 	self.getAllTabs = function() { return tabCache }
-
-	self.getFullState = function() {
-		return $.when(self.globalGet(), self.getAllTabs()).then(function(globalState, tabStates) {
-			globalState.tabs = tabStates;			
-			return globalState
-		})
-	}
 
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		if (request.tabStorage) { 			

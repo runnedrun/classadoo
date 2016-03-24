@@ -11,33 +11,51 @@ TabCaptureManager = function(dataManager, socketManager) {
     var popup_id;
     var socket;
 
-    chrome.browserAction.onClicked.addListener(function(tab) {  
-        if (connection && connection.attachStreams[0]) {            
-            socket.disconnect();
-            connection.attachStreams[0].stop();            
-            m.tabSet(tab.id, {needsHelp: false});
-            setDefaults();                        
-            return;
-        } else {
-            state = m.globalGet()                
-            console.log("initiating TAB capture");
-            if (state.studentName) {                
-                chrome.browserAction.setTitle({
-                    title: 'Capturing Tab'
-                });
-
-                chrome.browserAction.setIcon({
-                    path: 'question-active.png'
-                });
-
-                chrome.tabs.getSelected(null, function(tab) {
-                    captureTab(state, tab.id);                        
-                });  
-            } else {
-                Display("To request help, first open the toolbar by pressing <esc>, then set your name.");
+    respond("startStream", function(streamId) {
+        navigator.getUserMedia({
+                audio: false,
+                video: {
+                    mandatory: {                        
+                        chromeMediaSourceId: streamId
+                    }   
+                }   
+            }, 
+            function(stream) {
+                console.log("STREEEAM", stream)
+            },
+            function onError(errors) {
+                console.log('Failed to get user media.', errors);
             }
-        }        
-    });   
+        )
+    });
+
+    // chrome.browserAction.onClicked.addListener(function(tab) {  
+    //     if (connection && connection.attachStreams[0]) {            
+    //         socket.disconnect();
+    //         connection.attachStreams[0].stop();            
+    //         m.tabSet(tab.id, {needsHelp: false});
+    //         setDefaults();                        
+    //         return;
+    //     } else {
+    //         state = m.globalGet()                
+    //         console.log("initiating TAB capture");
+    //         if (state.studentName) {                
+    //             chrome.browserAction.setTitle({
+    //                 title: 'Capturing Tab'
+    //             });
+
+    //             chrome.browserAction.setIcon({
+    //                 path: 'question-active.png'
+    //             });
+
+    //             chrome.tabs.getSelected(null, function(tab) {
+    //                 captureTab(state, tab.id);                        
+    //             });  
+    //         } else {
+    //             Display("To request help, first open the toolbar by pressing <esc>, then set your name.");
+    //         }
+    //     }        
+    // });   
 
     var constraints;
     var min_bandwidth = 512;
@@ -61,47 +79,46 @@ TabCaptureManager = function(dataManager, socketManager) {
             }
         };
 
-        chrome.tabCapture.capture(constraints, gotStream);
-        
+        chrome.tabCapture.capture(constraints, gotStream);       
+    }
 
-        function gotStream(stream) {
-            if (!stream) {
-                setDefaults();
-                Display("An error occurred while attempting to screen capture");
-               
-                return;
-            }
-
-            chrome.browserAction.setTitle({
-                title: 'Connecting to socket.io'
-            });
-
-            stream.onended = function() {
-                setDefaults();                
-            };
-
-            // as it is reported that if you drag chrome screen's status-bar
-            // and scroll up/down the screen-viewer page.
-            // chrome auto-stops the screen without firing any 'onended' event.
-            // chrome also hides screen status bar.
-            chrome.windows.create({
-                url: chrome.extension.getURL('_generated_background_page.html'),
-                type: 'popup',
-                focused: false,
-                width: 1,
-                height: 1,
-                top: parseInt(screen.height),
-                left: parseInt(screen.width)
-            }, function(win) {
-                var background_page_id = win.id;
-
-                setTimeout(function() {
-                    chrome.windows.remove(background_page_id);
-                }, 3000);
-            });
-
-            setupRTCMultiConnection(stream, state.studentName, tabId);                        
+    function gotStream(stream) {
+        if (!stream) {
+            setDefaults();
+            Display("An error occurred while attempting to screen capture");
+           
+            return;
         }
+
+        chrome.browserAction.setTitle({
+            title: 'Connecting to socket.io'
+        });
+
+        stream.onended = function() {
+            setDefaults();                
+        };
+
+        // as it is reported that if you drag chrome screen's status-bar
+        // and scroll up/down the screen-viewer page.
+        // chrome auto-stops the screen without firing any 'onended' event.
+        // chrome also hides screen status bar.
+        chrome.windows.create({
+            url: chrome.extension.getURL('_generated_background_page.html'),
+            type: 'popup',
+            focused: false,
+            width: 1,
+            height: 1,
+            top: parseInt(screen.height),
+            left: parseInt(screen.width)
+        }, function(win) {
+            var background_page_id = win.id;
+
+            setTimeout(function() {
+                chrome.windows.remove(background_page_id);
+            }, 3000);
+        });
+
+        setupRTCMultiConnection(stream, state.studentName, tabId);                        
     }
 
     function setupRTCMultiConnection(stream, roomId, tabId) {

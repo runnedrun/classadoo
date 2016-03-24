@@ -14,6 +14,21 @@ StorageAccess = function(storageName) {
 		return deferred.promise()
 	}
 
+	this.clear = function() {
+		var deferred = $.Deferred()
+
+		var dataObj = {}
+		dataObj[storageName] = {			
+			method: "clear" 			
+		}
+
+		chrome.runtime.sendMessage(dataObj, function(response){ 		
+			deferred.resolve(response)		
+		});
+
+		return deferred.promise()	
+	}
+
 	this.set = function(data) {
 		var deferred = $.Deferred()
 

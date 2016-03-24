@@ -18,7 +18,7 @@ DataManager = function(startingState) {
 	}	
 
 	// this updates the local data when background storage changes
-	function localUpdate(prop, value) {		
+	function localUpdate(prop, value) {						
 		if (self[prop] !== value || (staticProps.indexOf(prop) > -1)) {
 			self[prop] = value;
 			fire(prop, value);
@@ -57,7 +57,7 @@ DataManager = function(startingState) {
 	}
 
 	self.clear = function() {
-		globalStorage.set({});
+		globalStorage.clear();
 		// tabStorage.set({});
 	}
 
@@ -76,12 +76,16 @@ DataManager = function(startingState) {
 	// respond to storage updates from the background	
 	chrome.runtime.onMessage.addListener(function(request) {		
 		var stateObj = request.storageUpdate
-		if (stateObj) {											
-			(globalProps.concat(tabProps)).forEach(function(prop) {
-				if (stateObj[prop] !== undefined) {					
-					localUpdate(prop, stateObj[prop]);	
-				} 
-			})
+		if (stateObj) {										
+			if (stateObj.type == "tab") {
+				tabProps.forEach(function(prop) {				
+					localUpdate(prop, stateObj.data[prop]);
+				})					
+			} else {
+				globalProps.forEach(function(prop) {				
+					localUpdate(prop, stateObj.data[prop]);
+				})								
+			}			
 		} 		
 	})
 

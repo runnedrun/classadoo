@@ -41,10 +41,21 @@ body {
 	display: inline-block;
 }
 
+.side-buttons {
+	position: relative;
+	bottom: 5px;
+	display: none;
+}
+
 .inspect-button {
 	margin-top: 0px;
 	margin-bottom: 0px;
-	cursor: pointer;
-	display: none;
+	cursor: pointer;	
 	font-size: 30px;
+}
+
+.help-button {
+	font-size: 35px;
+	margin-left: 10px;
+	cursor: pointer;
 }

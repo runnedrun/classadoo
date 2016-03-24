@@ -6,7 +6,7 @@ var window = originalWindow;
 var document = window.document;
 
 // This value is computed at build time.
-var buildMetadata = {"date": "Tue Mar 15 12:31:34 2016", "commit": "unknown"};
+var buildMetadata = {"date": "Wed Mar 23 17:49:33 2016", "commit": "unknown"};
 
 // We might be monkeypatching JSON later; if we do, ensure it's
 // our own private copy of JSON rather than the page's global one.
@@ -12643,7 +12643,7 @@ jQuery.localization.extend("en", "hud-overlay", {"and": "and", "pointing-at": "p
     var cssLoaded = waitForCSSToLoad();
     var prefsLoaded = waitForPreferencesToLoad();
     
-    jQuery.when(prefsLoaded, cssLoaded).done(cb);
+    jQuery.when(cssLoaded).done(cb);
   }
 
   function loadPlugins(cb) {

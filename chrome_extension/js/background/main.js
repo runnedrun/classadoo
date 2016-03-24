@@ -1,19 +1,20 @@
-var env = "prod"
+var env = "dev"
 
 var lessonsPrefix
 if (env === "prod") {
   lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
 } else {
-  lessonsPrefix = "http://localhost:4000";  
+  lessonsPrefix = "http://localhost:4000/lib/dev/";  
 }
 
 while (!chrome.runtime.getPlatformInfo) {
   // just putting this in here to make sure everything is ready before moving on    
 }
 
-var LessonRequest = new Request(lessonsPrefix, "text");
+var LessonRequest = new Request(lessonsPrefix, "text", false);
 var dataManager = new DataManager();
 new LessonLoader(LessonRequest, dataManager);
+new ScreenshareManager();
 new TabCaptureManager(dataManager);
 new VolatileProperties(dataManager);
 Message = new Message(dataManager);
@@ -37,6 +38,14 @@ chrome.runtime.onMessage.addListener(
       }      
    }
 );
+
+chrome.browserAction.onClicked.addListener(function(tab) {   
+  if (dataManager.tabGet(tab.id).toolbarOpen){
+    dataManager.tabSet(tab.id, {"toolbarOpen": false});
+  } else {
+    dataManager.tabSet(tab.id, {"toolbarOpen": true});
+  }  
+})
 
 function getGoggles() {  
     var scriptUrl = chrome.extension.getURL("/x-ray/static-files/webxray.js");

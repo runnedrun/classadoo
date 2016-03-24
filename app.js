@@ -81,18 +81,18 @@ function checkAuthWhitelist(url, authWhitelist) {
     return true
 }
 
-io.on('connection', function(socket) {
-  console.log("connected")  
+// io.on('connection', function(socket) {
+//   console.log("connected")  
 
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
+//   socket.on('disconnect', function(){
+//     console.log('user disconnected');
+//   });
 
-  socket.on("state.update", function(state) {
-    console.log("emitted state update!");
-    io.emit("state.update", state);    
-  })
-}); 
+//   socket.on("state.update", function(state) {
+//     console.log("emitted state update!");
+//     io.emit("state.update", state);    
+//   })
+// }); 
 
 // app.use(function(req, res, next) {  
 //   if (!checkAuthWhitelist(req.url, authWhitelists[req.method]) || req.user) {
@@ -198,6 +198,8 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });  
+
+console.log("asfdsaf")
 
 module.exports = app;
 

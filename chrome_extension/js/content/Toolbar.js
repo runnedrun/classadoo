@@ -16,11 +16,41 @@ var Toolbar = function($iframe, content, dataManager) {
 		}
 	}	
 
+	var inspectButton;
+	var helpButton;
+	var initialDisplay;
+	var initialDisplayWrapper;
+	var inProgressDisplay;
+	var inspectButton;
+	var classToggle;
+	var lessonNameDisplay;
+	var logo;
+	var sideButtons
+
+
 	applyDefaultCSS($iframe).css(CSS.frame)
 
 	$iframe[0].onload = function() {    				    				    				
 		var html = decodeURI(content);	      				
 		i.setIframeContent(html);
+
+		inspectButton = i.$(".inspect-button");
+		helpButton = i.$(".help-button");
+		initialDisplay = i.$(".initial-display");
+		initialDisplayWrapper = i.$(".initial-display-wrapper");
+		inProgressDisplay = i.$(".in-progress-display");				
+		classToggle = i.$(".class-toggle")
+		lessonNameDisplay = i.$(".lesson-name-display");
+		logo = i.$(".logo");
+		sideButtons = i.$(".side-buttons");
+
+		inspectButton.click(function() {
+			fire("xray");
+		})		
+		helpButton.click(function() {			
+			fire("help");
+		})
+
 		if (m.lessonName){
 			startLessonMode()		
 		} else {
@@ -35,7 +65,7 @@ var Toolbar = function($iframe, content, dataManager) {
 		i.$(".class-toggle").click(attemptLogin);
 	}
 
-	function attemptLogin() {
+	function attemptLogin() {		
 		var lessonName = i.$(".lesson-name-input").val();
 		var studentName = i.$(".student-name").val();
 
@@ -46,45 +76,30 @@ var Toolbar = function($iframe, content, dataManager) {
 	}
 
 	function switchToLessonMode() {				
-		lessonInProgress = true
-
-		var initialDisplay = i.$(".initial-display");
-		var initialDisplayWrapper = i.$(".initial-display-wrapper");
-		var inProgressDisplay = i.$(".in-progress-display");		
-		var inspectButton = i.$(".inspect-button")
+		lessonInProgress = true		
 
 		initialDisplay.animate({"width": 0}, {
 			complete: function() {
 				initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-2");
-				i.$(".class-toggle").html("Leave Class").removeClass("btn-success").addClass("btn-danger")
+				classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")
 				inProgressDisplay.show();
-				i.$(".class-toggle").click(switchToLoginMode);				
 
-				inspectButton.show();
-				inspectButton.click(function() {					
-					fire("xray");
-				})				
+				classToggle.off();
+				classToggle.click(m.clear);				
+
+				sideButtons.show();			
 			},
 			duration: 500	
 		});					
 	}
 
-	function switchToLoginMode() {
-		var initialDisplay = i.$(".initial-display");
-		var initialDisplayWrapper = i.$(".initial-display-wrapper");
-		var inProgressDisplay = i.$(".in-progress-display");
-		var inspectButton = i.$(".inspect-button")		
-
-
-		var lessonNameDisplay = i.$(".lesson-name-display");
-		var logo = i.$(".logo");		
-
-		m.clear();
-
+	function switchToLoginMode() {				
 		initialDisplayWrapper.removeClass("col-md-2").addClass("col-md-10");
 		inProgressDisplay.hide();
-		i.$(".class-toggle").html("Join Class").removeClass("btn-danger").addClass("btn-success");
-		i.$(".class-toggle").click(attemptLogin);				
+		classToggle.html("Join Class").removeClass("btn-danger").addClass("btn-success");
+
+		classToggle.off();
+		classToggle.click(attemptLogin);				
 		initialDisplay.animate({"width": "inherit"}, {			
 			duration: 500	
 		});		
@@ -94,13 +109,10 @@ var Toolbar = function($iframe, content, dataManager) {
 			duration: 500
 		});
 
-		inspectButton.hide();
+		sideButtons.hide();
 	}	
 
-	function setLesson(lessonName) {		
-		var lessonNameDisplay = i.$(".lesson-name-display");
-		var logo = i.$(".logo");		
-
+	function setLesson(lessonName) {				
 		logo.animate({"font-size": 18}, {
 			complete: function() {
 				lessonNameDisplay.html(lessonName);
@@ -110,24 +122,13 @@ var Toolbar = function($iframe, content, dataManager) {
 	}
 
 	// Called when we are continuing an existing lesson
-	function startLessonMode() {
-		var initialDisplay = i.$(".initial-display");
-		var initialDisplayWrapper = i.$(".initial-display-wrapper");
-		var inProgressDisplay = i.$(".in-progress-display");		
-		var lessonNameDisplay = i.$(".lesson-name-display");
-		var inspectButton = i.$(".inspect-button");
-
+	function startLessonMode() {		
 		initialDisplay.css({width: 0});
 		initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-2");		
-		i.$(".class-toggle").html("Leave Class").removeClass("btn-success").addClass("btn-danger")		
+		classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")		
 		inProgressDisplay.css({"display": "block"});
-
-		inspectButton.css("display", "block");
-		inspectButton.click(function() {
-			fire("xray");
-		})
-
-		i.$(".class-toggle").click(switchToLoginMode);
+		classToggle.click(m.clear);		
+		sideButtons.show();
 	}
 
 	function displayNewTaskDescription() {			
@@ -145,11 +146,27 @@ var Toolbar = function($iframe, content, dataManager) {
 		}		
 	}
 
+	function highlightHelpButton(needsHelp){
+		if (needsHelp) {
+			helpButton.css("color", "red");	
+		} else {
+			helpButton.css("color", "black");		
+		}	
+	}
+
 	respond("taskIndex", displayNewTaskDescription);
-	respond("tasks", displayNewTaskDescription);
-	respond("lessonName", setLesson);
-	respond("lessonName", startLessonMode)
+	respond("tasks", displayNewTaskDescription);	
+	respond("lessonName", function(lessonName) {			
+		if (lessonName) {
+			setLesson(lessonName);
+			switchToLessonMode()	
+		} else {			
+			switchToLoginMode()
+		}		
+	})
+
 	respond("toolbarOpen", hideOrShow);
 	respond("toolbarOpen", hideOrShow);
+	respond("needsHelp", highlightHelpButton);
 }
 

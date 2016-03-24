@@ -98,7 +98,7 @@
     var cssLoaded = waitForCSSToLoad();
     var prefsLoaded = waitForPreferencesToLoad();
     
-    jQuery.when(prefsLoaded, cssLoaded).done(cb);
+    jQuery.when(cssLoaded).done(cb);
   }
 
   function loadPlugins(cb) {
