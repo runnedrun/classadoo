@@ -18,11 +18,19 @@ ClassControls = React.createClass({
                 URL:
               </span>
               <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.props.classUpdater.updateOnEnter}/>
-            </div>
+            </div>            
         </div>        
         <div className="col-md-2">
           <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>
         </div>
+        <div className="col-md-4">
+            <div className="input-group">
+              <span className="input-group-addon">
+                Write:
+              </span>
+              <textarea className="form-control scratch-input" type="text" data-field="appendToScratchpad" onKeyDown={this.props.classUpdater.updateOnEnter}/>
+            </div>            
+        </div>        
       </div>         
     )
   }

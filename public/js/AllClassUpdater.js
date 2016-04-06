@@ -27,7 +27,7 @@ AllClassUpdater = function(students) {
 
 	self.remove = function(field) {	  
 	  Object.keys(students).forEach(function(id) {
-	    var state = ref.child("" + id + "/state/global");      
+	    var state = ref.child("" + id + "/state/global/" + field);      
 	    state.remove();
 	  })
 	}

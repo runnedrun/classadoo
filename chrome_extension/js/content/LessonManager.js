@@ -3,10 +3,13 @@ LessonManager = function(manager) {
 	var m = manager;
 	var paused = false;	
 
-	function checkForTaskCompletion() {		
-		if (currentTask() && currentTask().check()) {
-			// task is complete						
-			completeTask(m.taskIndex);
+	function checkForTaskCompletion() {
+		if (!paused && currentTask()) {
+			var atCorrectLocation = RegExp(currentTask().location).test(location.href);
+			if (atCorrectLocation && currentTask().check()) {
+				// task is complete						
+				completeTask(m.taskIndex);
+			}	
 		}
 	}
 
@@ -18,26 +21,27 @@ LessonManager = function(manager) {
 	}
 
 	function completeTask(taskIndex) {				
-		if (taskIndex === (m.tasks.length - 1)) {
-			// the lesson is complete
-			fire("lesson.complete", {});			
-			pause()
-		} else if (!m.stopIndex || !((taskIndex + 1) >= m.stopIndex)) {						
-			m.setTaskIndex(taskIndex + 1);
-		} else {
-			pause()
-		}
+		m.setTaskIndex(taskIndex + 1);								
 	}		
 
-	function newTask(taskIndex) {
-		if (currentTask()) {
-			console.log("setting the new task!");
-			paused = false;
-			fire("task.text", currentTask().description); 
+	function newTask() {
+		if (m.tasks) {
+			if (m.taskIndex > (m.tasks.length - 1)) {
+				// the lesson is complete
+				fire("lesson.complete", {});			
+				pause()
+			} else if (m.stopIndex && (m.taskIndex > m.stopIndex)) {						
+				console.log("stop index hit");
+				pause()
+			} else {
+				console.log("setting the new task!");
+				paused = false;
+				fire("task.text", currentTask().description); 	
+			}			
 		}
 	}
 
-	function currentTask() {
+	function currentTask() {		
 		return m.tasks && m.tasks[m.taskIndex || 0];
 	}
 
@@ -52,6 +56,8 @@ LessonManager = function(manager) {
 
 	respond("taskIndex", setStartTime);
 	respond("taskIndex", newTask);
+
+	respond("stopIndex", newTask);
 
 	setInterval(checkForTaskCompletion, 500);
 }

@@ -10,7 +10,7 @@ StudentUpdater = function(studentId) {
 	}  	
 
 	self.remove = function(field) {	  	 
-	    var state = ref.child("" + studentId + "/state/global");      
+	    var state = ref.child("" + studentId + "/state/global" + field);      
 	    state.remove();	  
 	}
 

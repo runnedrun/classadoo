@@ -15,7 +15,7 @@
             "third_party/jquery.js", "third_party/pubnub-socket.io.min.js", "js/content/Util.js", "js/background/Requests.js",
             "js/content/BindingUtils.js", "third_party/RTCMultiConnection.min.js", "third_party/firebase.min.js", 
             "js/background/TabCaptureManager.js", "js/background/LessonLoader.js", "js/background/VolatileProperties.js",
-            "js/background/GotoUrlManager.js",
+            "js/background/GotoUrlManager.js", "js/background/ScratchpadAppendManager.js",
             "js/background/Display.js", "js/background/Message.js", "js/background/ScreenshareManager.js",
             "js/background/BackgroundDataManager.js", "js/background/main.js"            
         ]

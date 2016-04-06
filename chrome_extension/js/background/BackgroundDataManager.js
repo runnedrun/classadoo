@@ -32,24 +32,21 @@ DataManager = function() {
 	function localTabUpdate(tabId, update) {
 		console.log("checking if we should update tab");
 		var previous = tabCache[tabId] || {}
-		var updated = Util.extend(previous, update);
-
-		if (!Util.objectEq(previous, updated)) {
+		if (!Util.objectEq(previous, update)) {
 			console.log("updating");
-			tabCache[tabId] = updated;
-			Message.send(Number(tabId), { storageUpdate: { type: "tab", data: updated } });
+			tabCache[tabId] = update;
+			Message.send(Number(tabId), { storageUpdate: { type: "tab", data: update } });
 		}			
 	}
 
 	function localGlobalUpdate(update) {
 		console.log("checking if we should update global");
 		var previous = globalCache || {}
-		var updated = Util.extend(previous, update);
 
-		if (!Util.objectEq(previous, updated)) {
+		if (!Util.objectEq(previous, update)) {
 			console.log("updating");
-			globalCache = updated;
-			Message.sendToOpenTabs({ storageUpdate: { type: "global", data: updated } });
+			globalCache = update;
+			Message.sendToOpenTabs({ storageUpdate: { type: "global", data: update } });
 		}			
 	}
 
@@ -63,24 +60,24 @@ DataManager = function() {
 			tabListeners[tabId] = listenOnTabData(tabId)
 		} 		
 
-		localTabUpdate(tabId, props);
+		localTabUpdate(tabId, Util.extend(tabCache, props));
 		tabStorage.child(tabId).update(props);				
 	}
 
 	self.tabClear = function(tabId) {
 		var listener = tabListeners[tabId];
 		tabStorage.child(tabId).off("value", listener);
-		tabCache[tabId] = {};
-		tabStorage.child(tabId).set(null);
+		localTabUpdate(tabId, {});
+		tabStorage.child(tabId).remove();
 	}
 
 	self.globalClear = function(tabId) {		
-		globalCache = {};
+		localGlobalUpdate({});
 		globalStorage.remove();
 	}
 
 	self.globalSet = function(props) {
-		localGlobalUpdate(props);
+		localGlobalUpdate(Util.extend(globalCache, props));
 		globalStorage.update(props);		
 	}
 

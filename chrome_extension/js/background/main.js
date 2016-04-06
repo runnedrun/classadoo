@@ -4,7 +4,7 @@ var lessonsPrefix
 if (env === "prod") {
   lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
 } else {
-  lessonsPrefix = "http://localhost:4000/lib/dev/";  
+  lessonsPrefix = "http://localhost:8000/lib/dev/";  
 }
 
 while (!chrome.runtime.getPlatformInfo) {
@@ -19,6 +19,7 @@ new ScreenshareManager();
 new TabCaptureManager(dataManager);
 new VolatileProperties(dataManager);
 new GotoUrlManger(dataManager);
+new ScratchpadAppendManager(dataManager);
 
 
 chrome.runtime.onMessage.addListener(
