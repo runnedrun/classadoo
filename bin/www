@@ -22,7 +22,7 @@ app.set('port', port);
  */
 
 var server;
-if (process.env.ENV == "dev") {    
+if (process.env.USE_HTTPS) {    
     console.log("starting https server")
     var key = fs.readFileSync('dev_keys/key.pem');
     var cert = fs.readFileSync('dev_keys/cert.pem');

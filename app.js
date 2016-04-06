@@ -26,7 +26,10 @@ var io = require('socket.io')();
 var enforce = require('express-sslify');
 
 var app = express();
-app.use(enforce.HTTPS({ trustProtoHeader: true }))  
+
+if (process.env.ENV != "dev") {
+  app.use(enforce.HTTPS({ trustProtoHeader: true }))  
+}    
 
 app.io = io;
 

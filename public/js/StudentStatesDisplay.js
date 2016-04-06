@@ -1,7 +1,13 @@
+var $ = require("jquery");
 var React = require('react');
 require("./Util.js");
+require("./StudentUpdater.js");
 
-var StudentState = React.createClass({    
+var StudentState = React.createClass({  
+    componentWillMount: function() {
+      this.updater = new StudentUpdater(this.props.state.id);
+    },
+
     getActiveTab: function() {
       var allTabs = this.props.state.tab;
       var activeTab;
@@ -33,6 +39,16 @@ var StudentState = React.createClass({
       }
     },
 
+    toggleDisplay: function() {
+      $(this.hiddenFields).toggle();
+    },   
+
+    gotoScratchPadUrl: function(e) {
+      e.stopPropagation();
+      var url = "http://scratchpad.io/classadoo-" + this.props.state.global.studentName
+      this.updater.update({"gotoUrl": url});
+    }, 
+
     render: function() {
       var helpUrl = this.getHelpUrl()
 
@@ -59,22 +75,34 @@ var StudentState = React.createClass({
             No active tab right now?
         </div>)
       }
-      
 
       return(
-        <div className="student-state col-md-2">       
+        <div className="student-state col-md-3" onClick={this.toggleDisplay}>       
             <h4 className="name text-center">
               {this.props.state.global.studentName}                          
             </h4>
 
             <div className="task-number">
-              Task Number: {this.props.state.global.taskIndex}
-            </div>
+              Current Task: {this.props.state.global.taskIndex}
+            </div>            
+
             <div className="elapsed-time">
               {this.props.state.global.elapsedTime}
-            </div>
+            </div>            
+
             {activeUrlLink}
             {helpLink}
+
+            <div className="hidden-fields" ref={(ref) => this.hiddenFields = ref}>
+              <div className="input-group url-input-group">
+                <label>
+                  URL:
+                </label>
+                <input className="form-control url-input" type="text" onClick={function(e) { e.stopPropagation(); return false; }} data-field="gotoUrl" onKeyDown={this.updater.updateOnEnter}/>
+              </div>
+
+              <button className="btn btn-primary goto-scratchpad" onClick={this.gotoScratchPadUrl}>Scratchpad</button>
+            </div>
         </div>         
       )
   }
@@ -82,10 +110,11 @@ var StudentState = React.createClass({
 
 StudentStatesDisplayRow = React.createClass({
     render: function() {
+      var classUpdater = this.props.classUpdater
       return(
         <div className="row">
             {this.props.states.map(function(state) { 
-              return <StudentState key={state.global.studentName} state={state} />
+              return <StudentState classUpdater={classUpdater} key={state.global.studentName} state={state} />
             })}        	  
         </div>         
       )
@@ -95,7 +124,7 @@ StudentStatesDisplayRow = React.createClass({
 StudentStatesDisplay = React.createClass({
     statesObjToRows: function() {
       var rows = [];
-      var rowSize = 6;      
+      var rowSize = 4;      
 
       var studentStates = this.props.studentStates
       var statesCopy = studentStates.slice(0, studentStates.length);
@@ -107,10 +136,11 @@ StudentStatesDisplay = React.createClass({
     },
 
     render: function() {
+      var classUpdater = this.props.classUpdater
       return(
-        <div className="container">
+        <div>
             {this.statesObjToRows().map(function(stateRow, i) {               
-              return <StudentStatesDisplayRow key={i} states={stateRow} />              
+              return <StudentStatesDisplayRow classUpdater={classUpdater} key={i} states={stateRow} />              
             })}           
         </div>         
       )

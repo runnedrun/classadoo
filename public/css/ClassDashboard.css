@@ -1,12 +1,67 @@
 .student-state {
-	border: 2px solid black;
-}
-
-.student-state {
+	border: 2px solid black;	
 	overflow: hidden;
 	white-space: nowrap;
+	padding: 5px;
 }
 
 #student-state-wrapper {
 	margin-top: 50px;
+}
+
+#student-state-wrapper .url-input-group {
+	margin-top: 10px;
+}
+
+#student-state-wrapper .goto-scratchpad {
+	margin-top: 10px;
+}
+
+#lesson-controls {
+	margin-top: 50px;
+	border: 1px solid grey;
+    padding: 5px;
+}
+
+.task-list {
+	table-layout:fixed;
+    width: 100%; 
+}
+
+.task-index {
+	/*border: 1px solid black;*/
+	width: 8%;
+	font-weight: bold;
+
+}
+
+.task-description {
+	border: 1px solid black;
+	width: 72%;	
+	white-space: nowrap;
+	overflow: hidden;
+	padding: 4px;
+}
+
+.set-stop, .set-task {
+	width: 10%;	
+	border: 1px solid black;	
+	cursor: pointer;
+}
+
+.set-task.active {
+	background: green;
+}
+
+.set-stop.active {
+	background: red;
+}
+
+#class-controls {
+	margin-top: 20px;
+}
+
+
+.hidden-fields {
+	display: none;
 }

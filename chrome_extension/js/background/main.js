@@ -13,11 +13,13 @@ while (!chrome.runtime.getPlatformInfo) {
 
 var LessonRequest = new Request(lessonsPrefix, "text", false);
 var dataManager = new DataManager();
+Message = new Message(dataManager);
 new LessonLoader(LessonRequest, dataManager);
 new ScreenshareManager();
 new TabCaptureManager(dataManager);
 new VolatileProperties(dataManager);
-Message = new Message(dataManager);
+new GotoUrlManger(dataManager);
+
 
 chrome.runtime.onMessage.addListener(
    function(request, sender, sendResponse) {              

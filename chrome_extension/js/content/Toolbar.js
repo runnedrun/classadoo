@@ -12,7 +12,8 @@ var Toolbar = function($iframe, content, dataManager) {
 			"z-index": "10000",
 			display: "none",
 			"border-bottom": "2px solid black",
-			"border-top": "1px solid black"
+			"border-top": "1px solid black",
+			"left": "0px"
 		}
 	}	
 
@@ -25,8 +26,7 @@ var Toolbar = function($iframe, content, dataManager) {
 	var classToggle;
 	var lessonNameDisplay;
 	var logo;
-	var sideButtons
-
+	var sideButtons;
 
 	applyDefaultCSS($iframe).css(CSS.frame)
 
@@ -58,8 +58,8 @@ var Toolbar = function($iframe, content, dataManager) {
 		}			
 	};
 
-	$iframe[0].src = 'about:blank';
-	$(document.body).prepend($iframe);
+	$iframe[0].src = 'about:blank';	
+	$(document.body).prepend($iframe);	
 	
 	function startLoginMode() {
 		i.$(".class-toggle").click(attemptLogin);
@@ -131,18 +131,26 @@ var Toolbar = function($iframe, content, dataManager) {
 		sideButtons.show();
 	}
 
-	function displayNewTaskDescription() {			
-		m.tasks && m.tasks[m.taskIndex] &&
-			i.$(".in-progress-display").html(m.tasks[m.taskIndex].description);
+	function displayNewTaskDescription(description) {	
+		console.log("displaying task text", description);
+
+		if (i.$(".in-progress-display").html()) {
+			// there is currently something displayed, flash it
+			flashTaskDisplay(2, function() {
+				i.$(".in-progress-display").html(description);	
+			})		
+		} else {
+			i.$(".in-progress-display").html(description);	
+		}
 	}	
 
 	function hideOrShow(toolbarOpen) {				
+		ModifyPageForToolbar(toolbarOpen);
+
 		if (toolbarOpen) {
-			$iframe.show();
-			$(document.body).css({"top": CSS.frame.height, "position": "relative"});
+			$iframe.show();			
 		} else {
-			$iframe.hide();
-			$(document.body).css("top", "0px");
+			$iframe.hide();			
 		}		
 	}
 
@@ -154,8 +162,30 @@ var Toolbar = function($iframe, content, dataManager) {
 		}	
 	}
 
-	respond("taskIndex", displayNewTaskDescription);
-	respond("tasks", displayNewTaskDescription);	
+	function flashTaskDisplay(numberOfCycles, callback) {
+		console.log("flashingnign")
+		numberOfCycles = numberOfCycles || 2
+		var cycles = 0;	
+		var display = i.$(".in-progress-display");
+		function cycle() {
+			display.css({ color: "black" });		
+			setTimeout(function() { 
+				display.css({ color: "white" })
+				cycles += 1
+				if (cycles < numberOfCycles) {
+					setTimeout(cycle, 500)
+				} else {
+					display.css({ color: "black" });
+					callback && callback();
+				}
+			}, 300)		
+		}
+		
+		cycle()	
+	}
+
+	respond("task.text", displayNewTaskDescription);
+
 	respond("lessonName", function(lessonName) {			
 		if (lessonName) {
 			setLesson(lessonName);

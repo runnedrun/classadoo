@@ -1,12 +1,10 @@
-console.log("ajax_fns loaded");
-
 Request = function(prefix, dataType, noCache) {
     var self = this;            
 
-    self.get = function(path) {                
+    self.get = function(path) {                        
         return $.ajax({
             url: prefix + path,
-            timeout: 1000,
+            timeout: 1000,            
             dataType: dataType || "json",
             cache: !noCache,
             method: "GET"            

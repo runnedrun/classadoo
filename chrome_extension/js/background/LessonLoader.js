@@ -16,9 +16,7 @@ LessonLoader = function(lessonRequest, dataManager) {
 	}
 
 	function loadLesson(lessonName) {
-		return lessonRequest.get(Util.spaceToUnderscore(lessonName) + ".js").then(function(resp) {
-			return resp
-		})
+		return lessonRequest.get(Util.spaceToUnderscore(lessonName).toLowerCase() + ".js")
 	}
 
 	chrome.runtime.onMessage.addListener(

@@ -30,20 +30,31 @@ DataManager = function() {
 	}	
 
 	function localTabUpdate(tabId, update) {
-		console.log("checking if we should update");
+		console.log("checking if we should update tab");
 		var previous = tabCache[tabId] || {}
 		var updated = Util.extend(previous, update);
 
 		if (!Util.objectEq(previous, updated)) {
 			console.log("updating");
 			tabCache[tabId] = updated;
-			Message.send(tabId, { storageUpdate: { type: "tab", data: updated } });
+			Message.send(Number(tabId), { storageUpdate: { type: "tab", data: updated } });
+		}			
+	}
+
+	function localGlobalUpdate(update) {
+		console.log("checking if we should update global");
+		var previous = globalCache || {}
+		var updated = Util.extend(previous, update);
+
+		if (!Util.objectEq(previous, updated)) {
+			console.log("updating");
+			globalCache = updated;
+			Message.sendToOpenTabs({ storageUpdate: { type: "global", data: updated } });
 		}			
 	}
 
 	globalStorage.on("value", function(snapshot) {		
-		globalCache = snapshot.val() || {}		
-		Message.sendToOpenTabs({ storageUpdate: { type: "global", data: globalCache } });
+		localGlobalUpdate(snapshot.val());
 	})
 
 
@@ -59,15 +70,17 @@ DataManager = function() {
 	self.tabClear = function(tabId) {
 		var listener = tabListeners[tabId];
 		tabStorage.child(tabId).off("value", listener);
-
+		tabCache[tabId] = {};
 		tabStorage.child(tabId).set(null);
 	}
 
 	self.globalClear = function(tabId) {		
+		globalCache = {};
 		globalStorage.remove();
 	}
 
 	self.globalSet = function(props) {
+		localGlobalUpdate(props);
 		globalStorage.update(props);		
 	}
 
@@ -80,6 +93,19 @@ DataManager = function() {
 	}
  
 	self.getAllTabs = function() { return tabCache }
+
+	self.listenOnGlobalProp = function(prop, listener) {
+		var ref = globalStorage.child(prop);
+		var ignoreItems = true;
+
+		ref.on('value', function(snapshot) {
+			if (ignoreItems) {
+				ignoreItems	= false;
+			} else {
+				listener(snapshot.val())
+			}					  	
+		});
+	}
 
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		if (request.tabStorage) { 			

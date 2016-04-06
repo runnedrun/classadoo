@@ -1,6 +1,6 @@
 {
 "name": "Classadoo",
-    "version": "0.0.0.3",
+    "version": "0.0.0.5",
     "manifest_version": 2,
     "description": "The chrome extension for classadoo",
     "browser_action": {
@@ -15,21 +15,21 @@
             "third_party/jquery.js", "third_party/pubnub-socket.io.min.js", "js/content/Util.js", "js/background/Requests.js",
             "js/content/BindingUtils.js", "third_party/RTCMultiConnection.min.js", "third_party/firebase.min.js", 
             "js/background/TabCaptureManager.js", "js/background/LessonLoader.js", "js/background/VolatileProperties.js",
+            "js/background/GotoUrlManager.js",
             "js/background/Display.js", "js/background/Message.js", "js/background/ScreenshareManager.js",
             "js/background/BackgroundDataManager.js", "js/background/main.js"            
         ]
     },
     "content_scripts": [
         {
-            "matches": ["<all_urls>"],
-            // "exclude_globs": ["*localhost:3000/*"],
+            "matches": ["<all_urls>"],            
             "js": ["third_party/jquery.js",
                 "js/content/StorageAccess.js",
                 "js/content/DefaultCss.js", "js/content/IframeManager.js", "js/content/Util.js",
-                "js/content/LessonManager.js", "js/content/SampleTasks.js", "js/content/TaskHelpers.js",
+                "js/content/LessonManager.js",
                 "js/content/LessonExecutor.js", "js/content/BackgroundDisplay.js", "js/content/HelpManager.js",
                 "js/content/BindingUtils.js", "js/content/RemoteUpdateManager.js", "js/content/DataManager.js",
-                "js/content/LoginManager.js", "js/content/XRayManager.js",
+                "js/content/LoginManager.js", "js/content/XRayManager.js", "js/content/ModifyPageForToolbar.js",
                 "js/content/Toolbar.js", "js/content/ButterBar.js", "js/content/main.js"
                 ],
             "run_at": "document_start"

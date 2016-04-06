@@ -1,27 +1,7 @@
 var React = require('react');
 var $ = require("jquery");
 
-ClassInfoDisplay = React.createClass({
-  submitData: function() {
-    $.ajax({
-      url: "/classes?_method=PUT",
-      method: "POST",
-      data: klass,
-      success: function() {
-        $(".flash-success").show();
-        setTimeout(function() {
-          $(".flash-success").hide();          
-        }, 3000)
-      },
-      error: function() {      	
-      	$(".flash-error").show();
-        setTimeout(function() {
-          $(".flash-error").hide();          
-        }, 3000)
-      }
-    })
-  },  
-
+ClassInfoDisplay = React.createClass({  
   updateClassData: function(event) {
   	var enterKeyCode = 13;	
 
@@ -32,8 +12,8 @@ ClassInfoDisplay = React.createClass({
   		var value = $(target).html();
   		if (!(value === "null" || value === "")) {  			  			
   			target.contentEditable = false
-	  		klass[field] = value;
-	  		this.submitData();
+	  		klass.data[field] = value;
+        klass.update();
   		}  		  		
   		event.preventDefault();  	  		
   	}   	
@@ -48,7 +28,7 @@ ClassInfoDisplay = React.createClass({
       <div className="row">       
       	  <div className="col-md-6">
       	  		<h3 data-field="name" onKeyDown={this.updateClassData} onClick={this.makeEditable}>
-	      			{this.props.klass.name}
+	      			{this.props.klass.data.name}
 	      		</h3>        	
       	  </div>
 	      
@@ -58,7 +38,7 @@ ClassInfoDisplay = React.createClass({
 		  		  			Current Lesson:
 		  		  		</span>
 		  			  	<span className="form-control" data-field="currentLesson" onKeyDown={this.updateClassData} onClick={this.makeEditable}>
-		  			  	   {this.props.klass.currentLesson || "null"}
+		  			  	   {this.props.klass.data.currentLesson || "null"}
 		  			  	</span>        
 		  		  </h3>
 		  </div>        		           
