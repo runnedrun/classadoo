@@ -18,10 +18,13 @@ body {
 	display: none;
 }
 
-.in-progress-display {
-	display: none;
+.in-progress-display {	
 	font-size: 16px;
 	margin-top: 0px;
+}
+
+.right-side-wrapper {
+	display: none;
 }
 
 .toolbar-input {
@@ -61,4 +64,40 @@ body {
 	font-size: 35px;
 	margin-left: 10px;
 	cursor: pointer;	
+}
+
+.progress-bar-wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%
+}
+
+.progress-bar-container {
+	height: 50%;	
+	border: 2px solid black;	
+	background: none;		
+}
+
+.complete-overlay {
+	display: none;
+	color: black;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 5px;
+}
+
+.progress-meter {
+	width: 0;
+	background-color: limegreen;  
+  	height: 100%;
+  	display: inline-block;
+}
+
+.first-progress {	
+    border-right: 2px solid #bbb;
+    display: inline-block;
+    background: white;
+    height: 100%;
 }

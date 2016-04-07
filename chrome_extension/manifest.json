@@ -1,6 +1,6 @@
 {
 "name": "Classadoo",
-    "version": "0.0.0.5",
+    "version": "0.0.0.7",
     "manifest_version": 2,
     "description": "The chrome extension for classadoo",
     "browser_action": {
@@ -26,7 +26,7 @@
             "js": ["third_party/jquery.js",
                 "js/content/StorageAccess.js",
                 "js/content/DefaultCss.js", "js/content/IframeManager.js", "js/content/Util.js",
-                "js/content/LessonManager.js",
+                "js/content/LessonManager.js", "js/content/ProgressBar.js",
                 "js/content/LessonExecutor.js", "js/content/BackgroundDisplay.js", "js/content/HelpManager.js",
                 "js/content/BindingUtils.js", "js/content/RemoteUpdateManager.js", "js/content/DataManager.js",
                 "js/content/LoginManager.js", "js/content/XRayManager.js", "js/content/ModifyPageForToolbar.js",

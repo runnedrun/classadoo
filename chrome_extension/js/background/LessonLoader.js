@@ -22,6 +22,7 @@ LessonLoader = function(lessonRequest, dataManager) {
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {			
 			if (request.loadLesson) {
+				console.log("loaindingnig lesson");
 				loadAndSendLesson(request.loadLesson, sender.tab.id);				
 			}
 		}

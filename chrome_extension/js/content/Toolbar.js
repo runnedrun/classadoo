@@ -1,7 +1,10 @@
 var Toolbar = function($iframe, content, dataManager) {
 	var self = this;	
 	var i = new IframeManager($iframe);
-	var m = dataManager;
+	var m = dataManager;	
+
+	// the number which to compare progress against for the current task set.
+	var progressStart = 0;
 
 	var CSS = {
 		frame: {
@@ -24,11 +27,13 @@ var Toolbar = function($iframe, content, dataManager) {
 	var logoWrapper;
 	var	leftSideWrapper;
 	var inProgressDisplay;
+	var rightSideWrapper;
 	var inspectButton;
 	var classToggle;
 	var lessonNameDisplay;
 	var logo;
 	var sideButtons;
+	var progressBarContainer; 
 
 	applyDefaultCSS($iframe).css(CSS.frame)
 
@@ -43,10 +48,13 @@ var Toolbar = function($iframe, content, dataManager) {
 		logoWrapper = i.$(".logo-wrapper");
 		leftSideWrapper = i.$(".left-side-wrapper");
 		inProgressDisplay = i.$(".in-progress-display");				
+		rightSideWrapper = i.$(".right-side-wrapper");		
 		classToggle = i.$(".class-toggle")
 		lessonNameDisplay = i.$(".lesson-name-display");
 		logo = i.$(".logo");
 		sideButtons = i.$(".side-buttons");
+		progressBarContainer = i.$(".progress-bar-wrapper");
+
 
 		inspectButton.click(function() {
 			fire("xray");
@@ -59,7 +67,9 @@ var Toolbar = function($iframe, content, dataManager) {
 			startLessonMode()		
 		} else {
 			startLoginMode()
-		}			
+		}	
+
+		progressBar = new ProgressBar(m, progressBarContainer, "100%");		
 	};
 
 	$iframe[0].src = 'about:blank';	
@@ -83,12 +93,14 @@ var Toolbar = function($iframe, content, dataManager) {
 		initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-6");
 		logoWrapper.removeClass("col-md-2").addClass("col-md-6");
 		leftSideWrapper.removeClass("col-md-12").addClass("col-md-3");		
+		rightSideWrapper.show();
 	}
 
 	function expandLeftSide() {
 		initialDisplayWrapper.removeClass("col-md-6").addClass("col-md-10");
 		logoWrapper.removeClass("col-md-6").addClass("col-md-2");
-		leftSideWrapper.removeClass("col-md-3").addClass("col-md-12");		
+		leftSideWrapper.removeClass("col-md-3").addClass("col-md-12");	
+		rightSideWrapper.hide();	
 	}
 
 	function switchToLessonMode() {				
@@ -97,8 +109,7 @@ var Toolbar = function($iframe, content, dataManager) {
 		initialDisplay.animate({"width": 0}, {
 			complete: function() {
 				shrinkLeftSide();
-				classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")
-				inProgressDisplay.show();
+				classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")				
 
 				classToggle.off();
 				classToggle.click(m.clear);				
@@ -110,8 +121,7 @@ var Toolbar = function($iframe, content, dataManager) {
 	}
 
 	function switchToLoginMode() {				
-		expandLeftSide();
-		inProgressDisplay.hide();
+		expandLeftSide();		
 		classToggle.html("Join Class").removeClass("btn-danger").addClass("btn-success");
 
 		classToggle.off();
@@ -141,8 +151,7 @@ var Toolbar = function($iframe, content, dataManager) {
 	function startLessonMode() {		
 		initialDisplay.css({width: 0});
 		shrinkLeftSide();
-		classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")		
-		inProgressDisplay.css({"display": "block"});
+		classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")				
 		classToggle.click(m.clear);		
 		sideButtons.show();
 	}
@@ -150,13 +159,13 @@ var Toolbar = function($iframe, content, dataManager) {
 	function displayNewTaskDescription(description) {	
 		console.log("displaying task text", description);
 
-		if (i.$(".in-progress-display").html()) {
+		if (inProgressDisplay.html()) {
 			// there is currently something displayed, flash it
 			flashTaskDisplay(2, function() {
-				i.$(".in-progress-display").html(description);	
+				inProgressDisplay.html(description);	
 			})		
 		} else {
-			i.$(".in-progress-display").html(description);	
+			inProgressDisplay.html(description);	
 		}
 	}	
 
@@ -170,7 +179,7 @@ var Toolbar = function($iframe, content, dataManager) {
 		}		
 	}
 
-	function highlightHelpButton(needsHelp){
+	function highlightHelpButton(needsHelp){		
 		if (needsHelp) {
 			helpButton.css("color", "red");	
 		} else {
@@ -178,8 +187,7 @@ var Toolbar = function($iframe, content, dataManager) {
 		}	
 	}
 
-	function flashTaskDisplay(numberOfCycles, callback) {
-		console.log("flashingnign")
+	function flashTaskDisplay(numberOfCycles, callback) {		
 		numberOfCycles = numberOfCycles || 2
 		var cycles = 0;	
 		var display = i.$(".in-progress-display");
@@ -198,6 +206,10 @@ var Toolbar = function($iframe, content, dataManager) {
 		}
 		
 		cycle()	
+	}
+
+	function incrementProgress() {
+
 	}
 
 	respond("task.text", displayNewTaskDescription);

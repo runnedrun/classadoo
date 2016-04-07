@@ -2,7 +2,7 @@ LessonExecutor = function(dataManager) {
 	var m = dataManager;
 
 	chrome.runtime.onMessage.addListener(function(request) {				
-		if (request.lesson) {						
+		if (request.lesson) {									
 			execute(request.lesson);
 		}
 	})

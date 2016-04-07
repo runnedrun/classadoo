@@ -9,6 +9,7 @@ LessonManager = function(manager) {
 			if (atCorrectLocation && currentTask().check()) {				
 				// task is complete						
 				completeTask(m.taskIndex);
+				fire("task.complete");
 			}	
 		}
 	}
@@ -24,8 +25,8 @@ LessonManager = function(manager) {
 		m.setTaskIndex(taskIndex + 1);								
 	}		
 
-	function newTask() {
-		if (m.tasks && m.taskIndex) {
+	function newTask() {				
+		if (m.tasks && m.taskIndex !== undefined && m.taskIndex !== null) {
 			if (m.taskIndex > (m.tasks.length - 1)) {
 				// the lesson is complete
 				fire("lesson.complete", {});			

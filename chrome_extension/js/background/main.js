@@ -1,4 +1,4 @@
-var env = "dev"
+var env = "prod"
 
 var lessonsPrefix
 if (env === "prod") {

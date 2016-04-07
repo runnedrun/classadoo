@@ -10,7 +10,10 @@ DataManager = function(startingState) {
 
 	// this fires off requests to background storage
 	function set(key, storage, getState) {
-		return function (value) {									
+		return function (value) {	
+			if (key === "needsHelp") {
+				console.log("helping", value);
+			}
 			var dataObj = {}
 			dataObj[key] = value
 			return storage.set(dataObj);			
@@ -97,8 +100,8 @@ DataManager = function(startingState) {
 					})					
 				}				
 			} else {
-				if (stateObj.data) {
-					globalProps.forEach(function(prop) {				
+				if (stateObj.data) {					
+					globalProps.forEach(function(prop) {	
 						localUpdate(prop, stateObj.data[prop]);
 					})								
 				} else {

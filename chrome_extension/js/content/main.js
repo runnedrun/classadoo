@@ -13,7 +13,7 @@ $(function() {
 		var loginManager = new LoginManager(manager);
 		var lessonExecutor = new LessonExecutor(manager);
 		var backgroundDisplay = new BackgroundDisplay(manager);		
-		var helpManager = new HelpManager(manager);		
+		var helpManager = new HelpManager(manager);				
 
 		chrome.runtime.sendMessage({getToolbarHtml: true});
     	chrome.runtime.onMessage.addListener(

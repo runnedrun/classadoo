@@ -30,7 +30,6 @@ DataManager = function() {
 	}	
 
 	function localTabUpdate(tabId, update) {
-		console.log("checking if we should update tab");
 		var previous = tabCache[tabId] || {}
 		if (!Util.objectEq(previous, update)) {
 			console.log("updating");
@@ -44,8 +43,7 @@ DataManager = function() {
 		}			
 	}
 
-	function localGlobalUpdate(update) {
-		console.log("checking if we should update global");
+	function localGlobalUpdate(update) {		
 		var previous = globalCache || {}
 
 		if (!Util.objectEq(previous, update)) {
