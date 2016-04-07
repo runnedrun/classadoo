@@ -61,7 +61,19 @@
 	margin-top: 20px;
 }
 
-
 .hidden-fields {
 	display: none;
+}
+
+.help-indicator {
+	color: red;
+	cursor: pointer;	
+}
+
+.hidden-toggle {
+	cursor: pointer;
+}
+
+.call-back-btn {
+	margin-top:10px;
 }

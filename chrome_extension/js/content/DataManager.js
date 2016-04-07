@@ -4,9 +4,9 @@ DataManager = function(startingState) {
 
 	var self = this
 	var localProps = ["tasks"];	
-	var globalProps = ["lessonName", "taskIndex", "studentName", "stopIndex", "startTime", "connectedToBackend"];		
+	var globalProps = ["lessonName", "taskIndex", "studentName", "stopIndex", "startTime", "connectedToBackend", "needsHelp"];		
 	var staticProps = ["url"];
-	var tabProps = ["toolbarOpen", "needsHelp", "active"];
+	var tabProps = ["toolbarOpen", "active"];
 
 	// this fires off requests to background storage
 	function set(key, storage, getState) {

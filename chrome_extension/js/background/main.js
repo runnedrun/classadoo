@@ -20,7 +20,7 @@ new TabCaptureManager(dataManager);
 new VolatileProperties(dataManager);
 new GotoUrlManger(dataManager);
 new ScratchpadAppendManager(dataManager);
-
+new PopupMessageManager(dataManager);
 
 chrome.runtime.onMessage.addListener(
    function(request, sender, sendResponse) {              

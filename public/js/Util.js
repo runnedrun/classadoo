@@ -167,6 +167,10 @@ Util = new function() {
     parser.search = parser.search + "__=" + Date.now();
     return parser.href
   }
+
+  this.timestampedMessage = function(message) {    
+    return message + "%%" + Date.now();
+  }
 }()
 
 ViewUtil = new function() {

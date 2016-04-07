@@ -1,8 +1,7 @@
 HelpManager = function(dataManager){
 	var m = dataManager;
 
-	respond("help", function() {
-		// chrome.runtime.sendMessage({startScreenshare: true});
+	respond("help", function() {		
 		if (m.needsHelp) {
 			m.setNeedsHelp(false);	
 		} else {

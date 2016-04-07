@@ -19,25 +19,6 @@ var StudentState = React.createClass({
       return activeTab;
     },
 
-    // returns an id for a help screenshare, if the student has initiated one
-    getHelpUrl: function() {
-      var allTabs = this.props.state.tab;
-      
-      var helpId;
-      Object.keys(allTabs).forEach(function(tabId) {        
-        if (allTabs[tabId].needsHelp) {
-          helpId = allTabs[tabId].needsHelp
-          return false
-        }         
-      })  
-
-      if (helpId) {
-        return "https://" + location.host + "/screenshare?s=" + helpId
-      } else {
-        return false
-      }
-    },
-
     toggleDisplay: function() {
       $(this.hiddenFields).toggle();
     },   
@@ -52,26 +33,27 @@ var StudentState = React.createClass({
       return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name))
     },
 
-    render: function() {
-      var helpUrl = this.getHelpUrl()
+    resolveHelp: function(e) {
+      this.updater.update({needsHelp: false})
+    },
 
-      var helpLink;
-      if (helpUrl) {
-        console.log("here is the help url !!!!", helpUrl);
-        helpLink = (
-          <div className="help-link">
-            <a target="_blank" href={helpUrl}>Needs Help</a>
+    render: function() {      
+      var helpIndicator;
+      if (this.props.state.global.needsHelp) {        
+        helpIndicator = (
+          <div className="help-indicator" onClick={this.resolveHelp}>
+            Needs Help
           </div>
         )
       } else {
-        helpLink = ""
+        helpIndicator = ""
       }
 
       var activeTab = this.getActiveTab();
       var activeUrlLink;
       if (activeTab) {
         activeUrlLink = (<div className="url">
-            <a href={activeTab.url}>{activeTab.url}</a>
+            <a target="_blank" href={activeTab.url}>{activeTab.url}</a>
         </div>)
       } else {
         activeUrlLink = (<div className="url">
@@ -80,7 +62,7 @@ var StudentState = React.createClass({
       }
 
       return(
-        <div className="student-state col-md-3" onClick={this.toggleDisplay}>       
+        <div className="student-state col-md-3">       
             <h4 className="name text-center">
               {this.props.state.global.studentName}                          
             </h4>
@@ -94,7 +76,11 @@ var StudentState = React.createClass({
             </div>            
 
             {activeUrlLink}
-            {helpLink}
+            {helpIndicator}
+
+            <div className="hidden-toggle text-center" onClick={this.toggleDisplay}>
+              more...
+            </div>
 
             <div className="hidden-fields" ref={(ref) => this.hiddenFields = ref}>
               <div className="input-group url-input-group">

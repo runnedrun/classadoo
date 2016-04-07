@@ -21545,6 +21545,10 @@
 	    parser.search = parser.search + "__=" + Date.now();
 	    return parser.href;
 	  };
+
+	  this.timestampedMessage = function (message) {
+	    return message + "%%" + Date.now();
+	  };
 	}();
 
 	ViewUtil = new function () {
@@ -21653,6 +21657,16 @@
 	    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name));
 	  },
 
+	  warnClass: function () {
+	    var message = Util.timestampedMessage("Hi! Class will be starting again in a minute. Try to finish up what you're working on, then look front.");
+	    this.props.classUpdater.update({ popupMessage: message });
+	  },
+
+	  callClassBack: function () {
+	    var message = Util.timestampedMessage("Hi! Class is starting again, stop your work and look front please.");
+	    this.props.classUpdater.update({ popupMessage: message });
+	  },
+
 	  render: function () {
 	    return React.createElement(
 	      "div",
@@ -21692,6 +21706,20 @@
 	            "Write:"
 	          ),
 	          React.createElement("textarea", { className: "form-control scratch-input", type: "text", "data-field": "appendToScratchpad", onKeyDown: this.props.classUpdater.updateOnEnter })
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "col-md-2" },
+	        React.createElement(
+	          "button",
+	          { className: "btn btn-warning warn-btn", onClick: this.warnClass },
+	          "Warn"
+	        ),
+	        React.createElement(
+	          "button",
+	          { className: "btn btn-danger call-back-btn", onClick: this.callClassBack },
+	          "Call Back"
 	        )
 	      )
 	    );
@@ -21813,25 +21841,6 @@
 	    return activeTab;
 	  },
 
-	  // returns an id for a help screenshare, if the student has initiated one
-	  getHelpUrl: function () {
-	    var allTabs = this.props.state.tab;
-
-	    var helpId;
-	    Object.keys(allTabs).forEach(function (tabId) {
-	      if (allTabs[tabId].needsHelp) {
-	        helpId = allTabs[tabId].needsHelp;
-	        return false;
-	      }
-	    });
-
-	    if (helpId) {
-	      return "https://" + location.host + "/screenshare?s=" + helpId;
-	    } else {
-	      return false;
-	    }
-	  },
-
 	  toggleDisplay: function () {
 	    $(this.hiddenFields).toggle();
 	  },
@@ -21846,23 +21855,20 @@
 	    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name));
 	  },
 
-	  render: function () {
-	    var helpUrl = this.getHelpUrl();
+	  resolveHelp: function (e) {
+	    this.updater.update({ needsHelp: false });
+	  },
 
-	    var helpLink;
-	    if (helpUrl) {
-	      console.log("here is the help url !!!!", helpUrl);
-	      helpLink = React.createElement(
+	  render: function () {
+	    var helpIndicator;
+	    if (this.props.state.global.needsHelp) {
+	      helpIndicator = React.createElement(
 	        "div",
-	        { className: "help-link" },
-	        React.createElement(
-	          "a",
-	          { target: "_blank", href: helpUrl },
-	          "Needs Help"
-	        )
+	        { className: "help-indicator", onClick: this.resolveHelp },
+	        "Needs Help"
 	      );
 	    } else {
-	      helpLink = "";
+	      helpIndicator = "";
 	    }
 
 	    var activeTab = this.getActiveTab();
@@ -21873,7 +21879,7 @@
 	        { className: "url" },
 	        React.createElement(
 	          "a",
-	          { href: activeTab.url },
+	          { target: "_blank", href: activeTab.url },
 	          activeTab.url
 	        )
 	      );
@@ -21887,7 +21893,7 @@
 
 	    return React.createElement(
 	      "div",
-	      { className: "student-state col-md-3", onClick: this.toggleDisplay },
+	      { className: "student-state col-md-3" },
 	      React.createElement(
 	        "h4",
 	        { className: "name text-center" },
@@ -21905,7 +21911,12 @@
 	        this.props.state.global.elapsedTime
 	      ),
 	      activeUrlLink,
-	      helpLink,
+	      helpIndicator,
+	      React.createElement(
+	        "div",
+	        { className: "hidden-toggle text-center", onClick: this.toggleDisplay },
+	        "more..."
+	      ),
 	      React.createElement(
 	        "div",
 	        { className: "hidden-fields", ref: ref => this.hiddenFields = ref },
