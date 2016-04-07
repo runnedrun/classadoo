@@ -1,0 +1,10 @@
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%
+}
+
+#message {
+	padding: 20px;
+}
