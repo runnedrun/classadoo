@@ -4,9 +4,9 @@ LessonManager = function(manager) {
 	var paused = false;	
 
 	function checkForTaskCompletion() {
-		if (!paused && currentTask()) {
-			var atCorrectLocation = RegExp(currentTask().location).test(location.href);
-			if (atCorrectLocation && currentTask().check()) {
+		if (!paused && currentTask()) {			
+			var atCorrectLocation = RegExp(currentTask().location).test(location.href);			
+			if (atCorrectLocation && currentTask().check()) {				
 				// task is complete						
 				completeTask(m.taskIndex);
 			}	
@@ -25,7 +25,7 @@ LessonManager = function(manager) {
 	}		
 
 	function newTask() {
-		if (m.tasks) {
+		if (m.tasks && m.taskIndex) {
 			if (m.taskIndex > (m.tasks.length - 1)) {
 				// the lesson is complete
 				fire("lesson.complete", {});			

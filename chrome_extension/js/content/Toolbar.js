@@ -21,6 +21,8 @@ var Toolbar = function($iframe, content, dataManager) {
 	var helpButton;
 	var initialDisplay;
 	var initialDisplayWrapper;
+	var logoWrapper;
+	var	leftSideWrapper;
 	var inProgressDisplay;
 	var inspectButton;
 	var classToggle;
@@ -38,6 +40,8 @@ var Toolbar = function($iframe, content, dataManager) {
 		helpButton = i.$(".help-button");
 		initialDisplay = i.$(".initial-display");
 		initialDisplayWrapper = i.$(".initial-display-wrapper");
+		logoWrapper = i.$(".logo-wrapper");
+		leftSideWrapper = i.$(".left-side-wrapper");
 		inProgressDisplay = i.$(".in-progress-display");				
 		classToggle = i.$(".class-toggle")
 		lessonNameDisplay = i.$(".lesson-name-display");
@@ -75,12 +79,24 @@ var Toolbar = function($iframe, content, dataManager) {
 		fire("login", {lessonName: lessonName, studentName: studentName});				
 	}
 
+	function shrinkLeftSide() {
+		initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-6");
+		logoWrapper.removeClass("col-md-2").addClass("col-md-6");
+		leftSideWrapper.removeClass("col-md-12").addClass("col-md-3");		
+	}
+
+	function expandLeftSide() {
+		initialDisplayWrapper.removeClass("col-md-6").addClass("col-md-10");
+		logoWrapper.removeClass("col-md-6").addClass("col-md-2");
+		leftSideWrapper.removeClass("col-md-3").addClass("col-md-12");		
+	}
+
 	function switchToLessonMode() {				
 		lessonInProgress = true		
 
 		initialDisplay.animate({"width": 0}, {
 			complete: function() {
-				initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-2");
+				shrinkLeftSide();
 				classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")
 				inProgressDisplay.show();
 
@@ -94,7 +110,7 @@ var Toolbar = function($iframe, content, dataManager) {
 	}
 
 	function switchToLoginMode() {				
-		initialDisplayWrapper.removeClass("col-md-2").addClass("col-md-10");
+		expandLeftSide();
 		inProgressDisplay.hide();
 		classToggle.html("Join Class").removeClass("btn-danger").addClass("btn-success");
 
@@ -124,7 +140,7 @@ var Toolbar = function($iframe, content, dataManager) {
 	// Called when we are continuing an existing lesson
 	function startLessonMode() {		
 		initialDisplay.css({width: 0});
-		initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-2");		
+		shrinkLeftSide();
 		classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")		
 		inProgressDisplay.css({"display": "block"});
 		classToggle.click(m.clear);		

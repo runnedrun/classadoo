@@ -7,15 +7,39 @@ GotoUrlManger = function(dataManager) {
 		}		
 	})
 
+	function parseUrl(url) {
+		var parser = document.createElement('a');
+		parser.href = url;
+		return parser
+	}
+
+	function onlyTimestampInPath(url) { 
+		var parser = parseUrl(url)
+
+		var queryKVs = parser.search.split("=");
+		var onlyTimestamp = queryKVs[0] == "?__"		
+
+		return onlyTimestamp
+	}
+
 	function openUrlOrGoToExistingTab(gotoUrl) {
 		chrome.windows.getAll({populate: true}, function(windows){
 			var alreadyOpenId; 
 
 	        windows.forEach(function(window){
-	            window.tabs.forEach(function(tab) {      	            	
-	            	if (tab.url == gotoUrl) {
-	            		alreadyOpenId = tab.id;	            		
-	            	}
+	            window.tabs.forEach(function(tab) {
+	            	if (onlyTimestampInPath(gotoUrl)) {	            		
+	            		var parsedTabUrl = parseUrl(tab.url);
+	            		var parsedGotoUrl = parseUrl(gotoUrl);
+
+	            		if (parsedTabUrl.path == parsedGotoUrl.path && parsedGotoUrl.host == parsedTabUrl.host) {
+		            		alreadyOpenId = tab.id;	            		
+		            	}
+	            	} else {
+	            		if (tab.url == gotoUrl) {
+	            			alreadyOpenId = tab.id;	            		
+	            		}
+	            	}	            	
 	            });
 	        })
 

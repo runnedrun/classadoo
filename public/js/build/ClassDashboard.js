@@ -120,7 +120,9 @@
 
 		var studentsByName = {};
 		statesWithIds.forEach(function (state) {
-			studentsByName[state.global.name] = state;
+			if (state.global && state.global.studentName) {
+				studentsByName[state.global.studentName] = state;
+			}
 		});
 
 		var studentNames = Object.keys(studentsByName);
@@ -142,7 +144,8 @@
 	}
 
 	function renderLessonControls(lesson) {
-		var currentStopIndex = Util.objectValues(students)[0].state.global.stopIndex;
+		var firstStudent = Util.objectValues(students)[0];
+		var currentStopIndex = firstStudent && firstStudent.state && firstStudent.state.global && firstStudent.state.global.stopIndex || 0;
 		ReactDOM.render(React.createElement(LessonControls, { currentStopIndex: currentStopIndex, studentIds: Object.keys(students), tasks: lesson }), document.getElementById("lesson-controls"));
 	}
 
@@ -21498,6 +21501,8 @@
 	  };
 
 	  this.extend = function (obj1, obj2) {
+	    obj1 = obj1 || {};
+	    obj2 = obj2 || {};
 	    var extended = {};
 	    Object.keys(obj1).forEach(function (key) {
 	      extended[key] = obj1[key];
@@ -21531,6 +21536,14 @@
 	          return '\\\\u2029';
 	      }
 	    });
+	  };
+
+	  this.timestampedUrl = function (url) {
+	    var parser = document.createElement('a');
+	    parser.href = url;
+
+	    parser.search = parser.search + "__=" + Date.now();
+	    return parser.href;
 	  };
 	}();
 
@@ -21623,15 +21636,21 @@
 
 	var React = __webpack_require__(2);
 	var $ = __webpack_require__(1);
+	__webpack_require__(160);
 
 	ClassControls = React.createClass({
 	  displayName: "ClassControls",
 
 	  gotoScratchPadUrls: function () {
+	    var self = this;
 	    this.props.classUpdater.updateBasedOnStudent("gotoUrl", function (student) {
 	      var name = student.state.global.studentName;
-	      return "http://scratchpad.io/classadoo-" + name;
+	      return self.createScratchUrl(name);
 	    });
+	  },
+
+	  createScratchUrl: function (name) {
+	    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name));
 	  },
 
 	  render: function () {
@@ -21819,8 +21838,12 @@
 
 	  gotoScratchPadUrl: function (e) {
 	    e.stopPropagation();
-	    var url = "http://scratchpad.io/classadoo-" + this.props.state.global.studentName;
+	    var url = this.createScratchUrl(this.props.state.global.studentName);
 	    this.updater.update({ "gotoUrl": url });
+	  },
+
+	  createScratchUrl: function (name) {
+	    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name));
 	  },
 
 	  render: function () {

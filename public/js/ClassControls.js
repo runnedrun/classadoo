@@ -1,12 +1,18 @@
 var React = require('react');
 var $ = require("jquery");
+require("./Util.js");
 
 ClassControls = React.createClass({  
   gotoScratchPadUrls: function() {
+    var self = this
     this.props.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
       var name = student.state.global.studentName;      
-      return "http://scratchpad.io/classadoo-" + name
+      return self.createScratchUrl(name)
     })
+  },
+
+  createScratchUrl: function(name) {
+    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name))
   },
 
   render: function() {

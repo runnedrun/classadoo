@@ -61,6 +61,14 @@ DataManager = function(startingState) {
 		// tabStorage.set({});
 	}
 
+	self.localTabClear = function() {
+		
+	}
+
+	self.localGlobalClear = function() {
+
+	}
+
 	self.initialEvents = function() {
 		(globalProps.concat(tabProps)).forEach(function(prop) {					
 			(startingState[prop] !== undefined) && fire(prop, startingState[prop]);
@@ -78,13 +86,27 @@ DataManager = function(startingState) {
 		var stateObj = request.storageUpdate
 		if (stateObj) {										
 			if (stateObj.type == "tab") {
-				tabProps.forEach(function(prop) {				
-					localUpdate(prop, stateObj.data[prop]);
-				})					
+				if (stateObj.data) {
+					tabProps.forEach(function(prop) {				
+						localUpdate(prop, stateObj.data[prop]);
+					})					
+				} else {
+					console.log("deleting locally");
+					tabProps.forEach(function(prop) {				
+						localUpdate(prop, null);
+					})					
+				}				
 			} else {
-				globalProps.forEach(function(prop) {				
-					localUpdate(prop, stateObj.data[prop]);
-				})								
+				if (stateObj.data) {
+					globalProps.forEach(function(prop) {				
+						localUpdate(prop, stateObj.data[prop]);
+					})								
+				} else {
+					console.log("deleting locally global");
+					globalProps.forEach(function(prop) {				
+						localUpdate(prop, null);
+					})					
+				}				
 			}			
 		} 		
 	})

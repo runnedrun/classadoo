@@ -34,7 +34,12 @@ DataManager = function() {
 		var previous = tabCache[tabId] || {}
 		if (!Util.objectEq(previous, update)) {
 			console.log("updating");
-			tabCache[tabId] = update;
+			if (update) {
+				tabCache[tabId] = update;
+			} else {
+				delete tabCache[tabId];
+			}
+			
 			Message.send(Number(tabId), { storageUpdate: { type: "tab", data: update } });
 		}			
 	}

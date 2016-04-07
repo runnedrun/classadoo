@@ -44,9 +44,13 @@ var StudentState = React.createClass({
 
     gotoScratchPadUrl: function(e) {
       e.stopPropagation();
-      var url = "http://scratchpad.io/classadoo-" + this.props.state.global.studentName
+      var url = this.createScratchUrl(this.props.state.global.studentName)
       this.updater.update({"gotoUrl": url});
     }, 
+
+    createScratchUrl: function(name) {
+      return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name))
+    },
 
     render: function() {
       var helpUrl = this.getHelpUrl()

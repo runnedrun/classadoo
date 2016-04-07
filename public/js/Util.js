@@ -123,6 +123,8 @@ Util = new function() {
   }
 
   this.extend = function(obj1, obj2) {
+    obj1 = obj1 || {}
+    obj2 = obj2 || {}
     var extended = {}
     Object.keys(obj1).forEach(function(key){
       extended[key] = obj1[key];
@@ -158,6 +160,13 @@ Util = new function() {
     })
   }
 
+  this.timestampedUrl = function(url) {
+    var parser = document.createElement('a');
+    parser.href = url;
+
+    parser.search = parser.search + "__=" + Date.now();
+    return parser.href
+  }
 }()
 
 ViewUtil = new function() {

@@ -75,7 +75,9 @@ function renderStudentStatesDisplay() {
 
 	var studentsByName = {}
 	statesWithIds.forEach(function(state) { 		
-		studentsByName[state.global.name] = state;
+		if (state.global && state.global.studentName) {
+       		studentsByName[state.global.studentName] = state;
+		}
 	});
 
 	var studentNames = Object.keys(studentsByName);
@@ -97,7 +99,8 @@ function renderClassControls() {
 }
 
 function renderLessonControls(lesson) {
-	var currentStopIndex = Util.objectValues(students)[0].state.global.stopIndex;	
+	var firstStudent = Util.objectValues(students)[0];
+	var currentStopIndex = (firstStudent && firstStudent.state && firstStudent.state.global && firstStudent.state.global.stopIndex) || 0;	
 	ReactDOM.render(<LessonControls currentStopIndex={currentStopIndex} studentIds={Object.keys(students)} tasks={lesson} />, document.getElementById("lesson-controls"));	
 }
 
