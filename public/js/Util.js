@@ -79,6 +79,10 @@ Util = new function() {
     Object.keys(obj).length
   }
 
+  this.objectDiff = function() {
+    
+  }
+
   this.objectEq = function(obj1, obj2) {
     var obj1 = obj1 || {}
     var obj2 = obj2 || {}

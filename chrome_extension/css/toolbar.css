@@ -53,6 +53,10 @@ body {
 	text-align: right;
 }
 
+/*.side-buttons span {
+	padding: 0px 3px 0px px;
+}*/
+
 .inspect-button {
 	margin-top: 0px;
 	margin-bottom: 0px;
@@ -60,10 +64,15 @@ body {
 	font-size: 30px;
 }
 
-.help-button {
-	font-size: 35px;
-	margin-left: 10px;
-	cursor: pointer;	
+.side-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%
+}
+
+.side-buttons {
+	height: 50%;	
 }
 
 .progress-bar-wrapper {

@@ -33,8 +33,10 @@ DataManager = function() {
 
 	function localTabUpdate(tabId, update) {
 		var previous = tabCache[tabId] || {}
+		
 		if (!Util.objectEq(previous, update)) {
 			console.log("updating");
+
 			if (update) {
 				tabCache[tabId] = update;
 			} else {
@@ -51,7 +53,7 @@ DataManager = function() {
 		if (!Util.objectEq(previous, update)) {			
 			globalCache = update;
 			Message.sendToOpenTabs({ storageUpdate: { type: "global", data: update } });
-		}			
+		}
 	}
 
 	globalStorage.on("value", function(snapshot) {		
@@ -90,6 +92,8 @@ DataManager = function() {
 	}
 
 	self.globalSet = function(props) {
+		console.log("settin", props)
+
 		localGlobalUpdate(Util.extend(globalCache, props));
 
 		if (globalCache.studentName || props.studentName) {					

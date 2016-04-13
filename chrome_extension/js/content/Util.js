@@ -78,6 +78,18 @@ Util = new function() {
   this.objectSize = function(obj) {
     Object.keys(obj).length
   }
+  
+  this.objectDiff = function(oldObj, newObj) {
+    var diffObj = {}
+    var allKeys = Object.keys(oldObj).concat(Object.keys(newObj));
+    allKeys.forEach(function(key) {
+      if (oldObj[key] !== newObj[key]){
+        diffObj[key] = newObj[key]
+      } 
+    })
+
+    return diffObj
+  }
 
   this.objectEq = function(obj1, obj2) {
     var obj1 = obj1 || {}

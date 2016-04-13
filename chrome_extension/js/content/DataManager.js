@@ -4,16 +4,16 @@ DataManager = function(startingState) {
 
 	var self = this
 	var localProps = ["tasks"];	
-	var globalProps = ["lessonName", "taskIndex", "studentName", "stopIndex", "startTime", "connectedToBackend", "needsHelp"];		
+	var globalProps = 
+		["lessonName", "taskIndex", "studentName", "stopIndex", 
+		"startTime", "connectedToBackend", "needsHelp", "promptHint",
+		"showHint"];		
 	var staticProps = ["url"];
 	var tabProps = ["toolbarOpen", "active"];
 
 	// this fires off requests to background storage
 	function set(key, storage, getState) {
-		return function (value) {	
-			if (key === "needsHelp") {
-				console.log("helping", value);
-			}
+		return function (value) {				
 			var dataObj = {}
 			dataObj[key] = value
 			return storage.set(dataObj);			

@@ -1,10 +1,13 @@
 var env = "dev"
 
 var lessonsPrefix
+var hintPrefix
 if (env === "prod") {
   lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
+  hintPrefix = "https://classadoo.github.io/lessons/samples/";
 } else {
   lessonsPrefix = "http://localhost:8000/lib/dev/";  
+  hintPrefix = "http://localhost:8000/samples/";  
 }
 
 while (!chrome.runtime.getPlatformInfo) {
@@ -13,7 +16,9 @@ while (!chrome.runtime.getPlatformInfo) {
 
 var LessonRequest = new Request(lessonsPrefix, "text", false);
 var dataManager = new DataManager();
+
 Message = new Message(dataManager);
+new HintManager(dataManager, hintPrefix)
 new LessonLoader(LessonRequest, dataManager);
 new ScreenshareManager();
 new TabCaptureManager(dataManager);

@@ -24,6 +24,8 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 
 	var inspectButton;
 	var helpButton;
+	var hintButton;
+
 	var initialDisplay;
 	var initialDisplayWrapper;
 	var logoWrapper;
@@ -45,6 +47,8 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 
 		inspectButton = i.$(".inspect-button");
 		helpButton = i.$(".help-button");
+		hintButton = i.$(".hint-button"); 
+
 		initialDisplay = i.$(".initial-display");
 		initialDisplayWrapper = i.$(".initial-display-wrapper");
 		logoWrapper = i.$(".logo-wrapper");
@@ -57,6 +61,13 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		sideButtons = i.$(".side-buttons");
 		progressBarContainer = i.$(".progress-bar-wrapper");
 
+		hintButton.click(function() {
+			if (m.showHint) {
+				m.setShowHint(null);
+			} else {
+				m.setShowHint(m.tasks[m.taskIndex].name);
+			}			
+		})
 
 		inspectButton.click(function() {
 			fire("xray");
@@ -184,11 +195,31 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 
 	function highlightHelpButton(needsHelp){		
 		if (needsHelp) {
-			helpButton.css("color", "red");	
+			helpButton.removeClass("btn-primary").addClass("btn-danger");	
 		} else {
-			helpButton.css("color", "black");		
+			helpButton.removeClass("btn-danger").addClass("btn-primary");			
 		}	
 	}
+
+	var blinkInterval;
+	function blinkHint() {
+		var active = true;
+		blinkInterval = setInterval(function() {
+			if (active) {
+				hintButton.addClass("btn-success").removeClass("btn-primary");
+				active = false
+			} else {
+				hintButton.addClass("btn-primary").removeClass("btn-success");
+				active = true
+			}			
+		}, 800)
+	} 
+
+	function stopHintBlinking() {
+		clearInterval(blinkInterval);
+		hintButton.removeClass("btn-success").addClass("btn-primary");
+	}
+
 
 	function flashTaskDisplay(numberOfCycles, callback) {		
 		numberOfCycles = numberOfCycles || 2
@@ -211,8 +242,12 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		cycle()	
 	}
 
-	function incrementProgress() {
-
+	function startOrStopHintBlink() {		
+		if (m.promptHint) {
+			blinkHint()
+		} else {
+			stopHintBlinking();
+		}
 	}
 
 	respond("task.text", displayNewTaskDescription);
@@ -229,6 +264,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	respond("toolbarOpen", hideOrShow);
 	respond("toolbarOpen", hideOrShow);
 	respond("needsHelp", highlightHelpButton);
+	respond("promptHint", startOrStopHintBlink);
 
 	// run the laoded callback only if the iframe has already loaded. Otherwise, wait for it to load;
 	wholeClassLoaded = true
