@@ -46,7 +46,7 @@ LessonManager = function(manager) {
 		return m.tasks && m.tasks[m.taskIndex || 0];
 	}
 
-	function setStartTime() {
+	function setStartTime() {		
 		if (currentTask()) {
 			m.setStartTime(Date.now());
 		}

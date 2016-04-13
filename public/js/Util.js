@@ -109,6 +109,10 @@ Util = new function() {
     return string.replace(/\s/g, "_")
   }
 
+  this.nonAlpaToUnderscore = function(string) {
+    return string.replace(/\W/g, "_")
+  }
+
   this.guid = function() {
     var d = new Date().getTime();
     if(window.performance && typeof window.performance.now === "function"){

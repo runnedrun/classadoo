@@ -22,6 +22,8 @@ DataManager = function() {
 	var tabCache = {}
 	var globalCache = {}
 
+	var syncCache = false	
+
 	var tabListeners = {}
 	function listenOnTabData(tabId) {
 		return tabStorage.child(tabId).on("value", function(snapshot){
@@ -46,8 +48,7 @@ DataManager = function() {
 	function localGlobalUpdate(update) {		
 		var previous = globalCache || {}
 
-		if (!Util.objectEq(previous, update)) {
-			console.log("updating");
+		if (!Util.objectEq(previous, update)) {			
 			globalCache = update;
 			Message.sendToOpenTabs({ storageUpdate: { type: "global", data: update } });
 		}			
@@ -63,8 +64,17 @@ DataManager = function() {
 			tabListeners[tabId] = listenOnTabData(tabId)
 		} 		
 
-		localTabUpdate(tabId, Util.extend(tabCache, props));
-		tabStorage.child(tabId).update(props);				
+		localTabUpdate(tabId, Util.extend(tabCache[tabId], props));
+
+		if (globalCache.studentName) {					
+			if (syncCache) {
+				syncCaches()
+			} else{				
+				tabStorage.child(tabId).update(props);				
+			}
+		} else {
+			syncCache = true;
+		}
 	}
 
 	self.tabClear = function(tabId) {
@@ -81,15 +91,31 @@ DataManager = function() {
 
 	self.globalSet = function(props) {
 		localGlobalUpdate(Util.extend(globalCache, props));
-		globalStorage.update(props);		
+
+		if (globalCache.studentName || props.studentName) {					
+			if (syncCache) {
+				syncCaches()
+			} else{				
+				globalStorage.update(props);					
+			}
+		} else {
+			syncCache = true;
+		}
 	}
 
 	self.tabGet = function(tabId) {		
-		return tabCache[tabId]
+		return tabCache[tabId] || {}
+	}
+
+	function syncCaches() {	
+		console.log("syncing");
+		globalStorage.update(globalCache);
+		tabStorage.update(tabCache);
+		syncCache = false;
 	}
 
 	self.globalGet = function() {
-		return globalCache
+		return globalCache || {}
 	}
  
 	self.getAllTabs = function() { return tabCache }

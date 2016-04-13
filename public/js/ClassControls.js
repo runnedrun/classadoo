@@ -12,7 +12,7 @@ ClassControls = React.createClass({
   },
 
   createScratchUrl: function(name) {
-    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name))
+    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.nonAlpaToUnderscore(name))
   },
 
   warnClass: function() {

@@ -45,8 +45,8 @@ DataManager = function(startingState) {
 			self["set" + Util.capitalizeFirstLetter(prop)] = function(value) { localUpdate(prop,value) };				
 		})
 
-		// update tab storage with the static values
-		tabStorage.set(tabState());		
+		// update tab storage with the static values, if we're logged in
+		tabStorage.set(tabState());						
 	}
 
 	function state(props) {
@@ -61,16 +61,11 @@ DataManager = function(startingState) {
 
 	self.clear = function() {
 		globalStorage.clear();
+		localProps.forEach(function(prop) {
+			self[prop] = null;
+		})
 		// tabStorage.set({});
-	}
-
-	self.localTabClear = function() {
-		
-	}
-
-	self.localGlobalClear = function() {
-
-	}
+	}	
 
 	self.initialEvents = function() {
 		(globalProps.concat(tabProps)).forEach(function(prop) {					

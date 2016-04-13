@@ -23,14 +23,13 @@ var StudentState = React.createClass({
       $(this.hiddenFields).toggle();
     },   
 
-    gotoScratchPadUrl: function(e) {
-      e.stopPropagation();
+    gotoScratchPadUrl: function(e) {      
       var url = this.createScratchUrl(this.props.state.global.studentName)
       this.updater.update({"gotoUrl": url});
     }, 
 
     createScratchUrl: function(name) {
-      return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.spaceToUnderscore(name))
+      return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.nonAlpaToUnderscore(name))
     },
 
     resolveHelp: function(e) {
@@ -61,8 +60,10 @@ var StudentState = React.createClass({
         </div>)
       }
 
+      var doneWithTasks  = (Number(this.props.state.global.taskIndex) > Number(this.props.state.global.stopIndex)) ? "done" : ""
+
       return(
-        <div className="student-state col-md-3">       
+        <div className={"student-state col-md-3 " + doneWithTasks}>       
             <h4 className="name text-center">
               {this.props.state.global.studentName}                          
             </h4>

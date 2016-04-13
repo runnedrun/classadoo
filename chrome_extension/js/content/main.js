@@ -20,8 +20,9 @@ $(function() {
 	  		function(request, sender, sendResponse) {    	  			
 	    		if (request.html) {
 	    			var iframe = $("<iframe>");
-	    			new Toolbar(iframe, request.html, manager);
-	    			manager.initialEvents();
+	    			new Toolbar(iframe, request.html, manager, function() {
+	    				manager.initialEvents();    				    			
+	    			});		    			
 				}
 
 				if (request.streamId) {

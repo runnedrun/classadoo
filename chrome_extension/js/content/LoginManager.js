@@ -10,10 +10,11 @@ LoginManager = function(dataManager) {
 
 	// if someone is already logged when the toolbar is loaded
 	respond("lessonName", checkIfLessonShouldLoad)
+	respond("toolbarOpen", checkIfLessonShouldLoad)
 
-	function checkIfLessonShouldLoad(lessonName) {		
-		if (lessonName && !m.tasks && m.toolbarOpen) {						
-			chrome.runtime.sendMessage({loadLesson: lessonName});
+	function checkIfLessonShouldLoad() {		
+		if (m.lessonName && !m.tasks && m.toolbarOpen) {									
+			chrome.runtime.sendMessage({loadLesson: m.lessonName});
 		}
 	}
 }

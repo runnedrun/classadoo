@@ -1,7 +1,9 @@
-var Toolbar = function($iframe, content, dataManager) {
+var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	var self = this;	
 	var i = new IframeManager($iframe);
 	var m = dataManager;	
+	var wholeClassLoaded;
+	var iframeLoaded;
 
 	// the number which to compare progress against for the current task set.
 	var progressStart = 0;
@@ -69,7 +71,8 @@ var Toolbar = function($iframe, content, dataManager) {
 			startLoginMode()
 		}	
 
-		progressBar = new ProgressBar(m, progressBarContainer, "100%");		
+		progressBar = new ProgressBar(m, progressBarContainer, "100%");						
+		wholeClassLoaded && loadedCallback();
 	};
 
 	$iframe[0].src = 'about:blank';	
@@ -226,5 +229,9 @@ var Toolbar = function($iframe, content, dataManager) {
 	respond("toolbarOpen", hideOrShow);
 	respond("toolbarOpen", hideOrShow);
 	respond("needsHelp", highlightHelpButton);
+
+	// run the laoded callback only if the iframe has already loaded. Otherwise, wait for it to load;
+	wholeClassLoaded = true
+	!iframeLoaded && loadedCallback();
 }
 

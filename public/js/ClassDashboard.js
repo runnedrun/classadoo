@@ -46,25 +46,27 @@ klass.update = function() {
 }
 
 
-$(function() {
-	renderClassInfoDisplay();	
-
+$(function() {	
 	var ref = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
-	ref.on("value", function(snapshot) {		
-		$.extend(students, snapshot.val());
-		renderStudentStatesDisplay();
+	ref.on("value", function(snapshot) {
+		var filteredSnapshot = {}
+		var snap = snapshot.val()
+		Object.keys(snap).forEach(function(key) {
+			if (snap[key] && snap[key].state && snap[key].state.global && snap[key].state.global.studentName) {				
+				filteredSnapshot[key] = snap[key];
+			}
+		})
+
+		$.extend(students, filteredSnapshot);		
+		renderStudentStatesAndClassDisplay();
 		fetchAndRenderLesson(klass);		
 		renderClassControls();
 	})
 
-	setInterval(renderStudentStatesDisplay, 5000);
+	setInterval(renderStudentStatesAndClassDisplay, 5000);
 })
 
-function renderClassInfoDisplay() {
-  	ReactDOM.render(<ClassInfoDisplay klass={klass} />, document.getElementById("class-info-container"))   
-}
-
-function renderStudentStatesDisplay() {	
+function renderStudentStatesAndClassDisplay() {	
 	var ids = Object.keys(students);
 
 	var statesWithIds = ids.map(function(id) {
@@ -74,10 +76,8 @@ function renderStudentStatesDisplay() {
 	})	
 
 	var studentsByName = {}
-	statesWithIds.forEach(function(state) { 		
-		if (state.global && state.global.studentName) {
-       		studentsByName[state.global.studentName] = state;
-		}
+	statesWithIds.forEach(function(state) { 				
+   		studentsByName[state.global.studentName] = state;		
 	});
 
 	var studentNames = Object.keys(studentsByName);
@@ -89,8 +89,9 @@ function renderStudentStatesDisplay() {
 			obj.global["elapsedTime"] = Math.ceil((Date.now() - obj.global.startTime) / 1000);
 		}			
 		return obj	
-	})
+	})	
 	
+	ReactDOM.render(<ClassInfoDisplay numberOfStudents={alphaStates.length} klass={klass} />, document.getElementById("class-info-container"))   
   	ReactDOM.render(<StudentStatesDisplay classUpdater={classUpdater} studentStates={alphaStates} />, document.getElementById("student-state-wrapper"))   
 }
 
@@ -99,8 +100,9 @@ function renderClassControls() {
 }
 
 function renderLessonControls(lesson) {
+	lesson = lesson;
 	var firstStudent = Util.objectValues(students)[0];
-	var currentStopIndex = (firstStudent && firstStudent.state && firstStudent.state.global && firstStudent.state.global.stopIndex) || 0;	
+	var currentStopIndex = (firstStudent && firstStudent.state && firstStudent.state.global && firstStudent.state.global.stopIndex) || (lesson.length - 1);	
 	ReactDOM.render(<LessonControls currentStopIndex={currentStopIndex} studentIds={Object.keys(students)} tasks={lesson} />, document.getElementById("lesson-controls"));	
 }
 
