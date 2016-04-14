@@ -289,6 +289,15 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		sideButtonDisplay.removeClass("col-xs-4").addClass("col-xs-3")
 	}
 
+	function changeHintButtonText() {
+		if (m.showHint) {
+			stopHintBlinking();
+			hintButton.html("Hide").removeClass("btn-primary").addClass("btn-danger")
+		} else {
+			hintButton.html("Hint").removeClass("btn-danger").addClass("btn-primary")
+		}
+	}
+
 
 	respond("task.text", displayNewTaskDescription);
 
@@ -305,6 +314,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	respond("toolbarOpen", hideOrShow);
 	respond("needsHelp", highlightHelpButton);
 	respond("promptHint", startOrStopHintBlink);
+	respond("showHint", changeHintButtonText);
 
 	// run the laoded callback only if the iframe has already loaded. Otherwise, wait for it to load;
 	wholeClassLoaded = true
