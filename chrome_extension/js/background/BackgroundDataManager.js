@@ -33,15 +33,20 @@ DataManager = function() {
 
 	function localTabUpdate(tabId, update) {
 		var previous = tabCache[tabId] || {}
-		
-		if (!Util.objectEq(previous, update)) {
-			console.log("updating");
 
+		var diff = Util.objectDiff(previous, update)
+		var diffKeys = Object.keys(diff);
+
+		if (diffKeys.length) {			
 			if (update) {
 				tabCache[tabId] = update;
 			} else {
 				delete tabCache[tabId];
 			}
+
+			diffKeys.forEach(function(key) {
+				fire("tab-" + key, diff[key]);
+			})
 			
 			Message.send(Number(tabId), { storageUpdate: { type: "tab", data: update } });
 		}			
@@ -50,8 +55,16 @@ DataManager = function() {
 	function localGlobalUpdate(update) {		
 		var previous = globalCache || {}
 
-		if (!Util.objectEq(previous, update)) {			
+		var diff = Util.objectDiff(previous, update)
+		var diffKeys = Object.keys(diff);
+
+		if (diffKeys.length) {			
 			globalCache = update;
+
+			diffKeys.forEach(function(key) {
+				fire("global-" + key, diff[key]);
+			})			
+
 			Message.sendToOpenTabs({ storageUpdate: { type: "global", data: update } });
 		}
 	}
@@ -91,9 +104,7 @@ DataManager = function() {
 		globalStorage.remove();
 	}
 
-	self.globalSet = function(props) {
-		console.log("settin", props)
-
+	self.globalSet = function(props) {		
 		localGlobalUpdate(Util.extend(globalCache, props));
 
 		if (globalCache.studentName || props.studentName) {					
@@ -111,8 +122,7 @@ DataManager = function() {
 		return tabCache[tabId] || {}
 	}
 
-	function syncCaches() {	
-		console.log("syncing");
+	function syncCaches() {			
 		globalStorage.update(globalCache);
 		tabStorage.update(tabCache);
 		syncCache = false;
@@ -125,16 +135,7 @@ DataManager = function() {
 	self.getAllTabs = function() { return tabCache }
 
 	self.listenOnGlobalProp = function(prop, listener) {
-		var ref = globalStorage.child(prop);
-		var ignoreItems = true;
-
-		ref.on('value', function(snapshot) {
-			if (ignoreItems) {
-				ignoreItems	= false;
-			} else {
-				listener(snapshot.val())
-			}					  	
-		});
+		respond("global-" + prop, listener);
 	}
 
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

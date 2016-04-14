@@ -83,7 +83,7 @@ Util = new function() {
     var diffObj = {}
     var allKeys = Object.keys(oldObj).concat(Object.keys(newObj));
     allKeys.forEach(function(key) {
-      if (oldObj[key] !== newObj[key]){
+      if (oldObj[key] != newObj[key]){
         diffObj[key] = newObj[key]
       } 
     })

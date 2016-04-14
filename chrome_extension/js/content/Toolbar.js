@@ -4,6 +4,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	var m = dataManager;	
 	var wholeClassLoaded;
 	var iframeLoaded;
+	var lessonInProgress = false;
 
 	// the number which to compare progress against for the current task set.
 	var progressStart = 0;
@@ -26,6 +27,8 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	var helpButton;
 	var hintButton;
 
+	var progressBarWrapper;	
+	var sideButtonDisplay;
 	var initialDisplay;
 	var initialDisplayWrapper;
 	var logoWrapper;
@@ -49,6 +52,8 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		helpButton = i.$(".help-button");
 		hintButton = i.$(".hint-button"); 
 
+		progressBarWrapper = i.$(".progress-bar-wrapper");
+		sideButtonDisplay = i.$(".side-button-display")
 		initialDisplay = i.$(".initial-display");
 		initialDisplayWrapper = i.$(".initial-display-wrapper");
 		logoWrapper = i.$(".logo-wrapper");
@@ -62,7 +67,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		progressBarContainer = i.$(".progress-bar-wrapper");
 
 		hintButton.click(function() {
-			if (m.showHint) {
+			if (m.showHint) {				
 				m.setShowHint(null);
 			} else {
 				m.setShowHint(m.tasks[m.taskIndex].name);
@@ -83,6 +88,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		}	
 
 		progressBar = new ProgressBar(m, progressBarContainer, "100%");						
+		expandOrShrink();
 		wholeClassLoaded && loadedCallback();
 	};
 
@@ -90,6 +96,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	$(document.body).prepend($iframe);	
 	
 	function startLoginMode() {
+		lessonInProgress = false;
 		i.$(".class-toggle").click(attemptLogin);
 	}
 
@@ -103,18 +110,20 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		fire("login", {lessonName: lessonName, studentName: studentName});				
 	}
 
-	function shrinkLeftSide() {
-		initialDisplayWrapper.removeClass("col-md-10").addClass("col-md-6");
-		logoWrapper.removeClass("col-md-2").addClass("col-md-6");
-		leftSideWrapper.removeClass("col-md-12").addClass("col-md-3");		
-		rightSideWrapper.show();
+	function shrinkLeftSide() {				
+		initialDisplayWrapper.removeClass("col-xs-10").addClass("col-xs-6");				
+		logoWrapper.removeClass("col-xs-2").addClass("col-xs-6");
+		leftSideWrapper.removeClass("col-xs-12").addClass("col-xs-2");				
+		rightSideWrapper.show();		
+		expandOrShrink();
 	}
 
-	function expandLeftSide() {
-		initialDisplayWrapper.removeClass("col-md-6").addClass("col-md-10");
-		logoWrapper.removeClass("col-md-6").addClass("col-md-2");
-		leftSideWrapper.removeClass("col-md-3").addClass("col-md-12");	
-		rightSideWrapper.hide();	
+	function expandLeftSide() {	
+		expandElements();			
+		initialDisplayWrapper.removeClass("col-xs-6").addClass("col-xs-10");
+		logoWrapper.removeClass("col-xs-6").addClass("col-xs-2");
+		leftSideWrapper.removeClass("col-xs-2").addClass("col-xs-12");	
+		rightSideWrapper.hide();		
 	}
 
 	function switchToLessonMode() {				
@@ -131,7 +140,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 				sideButtons.show();			
 			},
 			duration: 500	
-		});					
+		});						
 	}
 
 	function switchToLoginMode() {				
@@ -249,6 +258,37 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 			stopHintBlinking();
 		}
 	}
+
+	$(window).resize(function(e) {		
+		expandOrShrink()
+	})
+
+	function expandOrShrink() {
+		if (lessonInProgress) {
+			if ($(window).width() < 950) {
+				console.log('srhining');			
+				shrinkElements()
+			} else  {
+				console.log('expand');			
+				expandElements()
+			} 
+		}		
+	}
+
+	function shrinkElements() {	
+		leftSideWrapper.removeClass("col-xs-2").addClass("col-xs-4")
+		rightSideWrapper.removeClass("col-xs-10").addClass("col-xs-8");
+		progressBarWrapper.removeClass("col-xs-3").addClass("col-xs-2")
+		sideButtonDisplay.removeClass("col-xs-3").addClass("col-xs-4")
+	}
+
+	function expandElements() {
+		leftSideWrapper.removeClass("col-xs-4").addClass("col-xs-2")
+		rightSideWrapper.removeClass("col-xs-8").addClass("col-xs-10");
+		progressBarWrapper.removeClass("col-xs-2").addClass("col-xs-3")
+		sideButtonDisplay.removeClass("col-xs-4").addClass("col-xs-3")
+	}
+
 
 	respond("task.text", displayNewTaskDescription);
 
