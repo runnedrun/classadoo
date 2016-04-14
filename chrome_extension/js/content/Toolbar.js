@@ -89,6 +89,9 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 
 		progressBar = new ProgressBar(m, progressBarContainer, "100%");						
 		expandOrShrink();
+		disableOrEnableHintButton();
+		changeHintButtonText();
+		startOrStopHintBlink()
 		wholeClassLoaded && loadedCallback();
 	};
 
@@ -213,7 +216,9 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	var blinkInterval;
 	function blinkHint() {
 		var active = true;
-		blinkInterval = setInterval(function() {
+
+		if (!blinkInterval) {
+			blinkInterval = setInterval(function() {
 			if (active) {
 				hintButton.addClass("btn-success").removeClass("btn-primary");
 				active = false
@@ -222,10 +227,12 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 				active = true
 			}			
 		}, 800)
+		}		
 	} 
 
 	function stopHintBlinking() {
 		clearInterval(blinkInterval);
+		blinkInterval = false;
 		hintButton.removeClass("btn-success").addClass("btn-primary");
 	}
 
@@ -252,7 +259,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	}
 
 	function startOrStopHintBlink() {		
-		if (m.promptHint) {
+		if (m.promptHint && !m.showHint) {
 			blinkHint()
 		} else {
 			stopHintBlinking();
@@ -278,15 +285,17 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	function shrinkElements() {	
 		leftSideWrapper.removeClass("col-xs-2").addClass("col-xs-4")
 		rightSideWrapper.removeClass("col-xs-10").addClass("col-xs-8");
-		progressBarWrapper.removeClass("col-xs-3").addClass("col-xs-2")
-		sideButtonDisplay.removeClass("col-xs-3").addClass("col-xs-4")
+		progressBarWrapper.css("display", "none");
+		inProgressDisplay.removeClass("col-xs-7").addClass("col-xs-6");
+		sideButtonDisplay.removeClass("col-xs-3").addClass("col-xs-6")
 	}
 
 	function expandElements() {
 		leftSideWrapper.removeClass("col-xs-4").addClass("col-xs-2")
 		rightSideWrapper.removeClass("col-xs-8").addClass("col-xs-10");
-		progressBarWrapper.removeClass("col-xs-2").addClass("col-xs-3")
-		sideButtonDisplay.removeClass("col-xs-4").addClass("col-xs-3")
+		progressBarWrapper.css("display", "flex");
+		inProgressDisplay.removeClass("col-xs-6").addClass("col-xs-7");
+		sideButtonDisplay.removeClass("col-xs-6").addClass("col-xs-3")
 	}
 
 	function changeHintButtonText() {
@@ -298,6 +307,13 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		}
 	}
 
+	function disableOrEnableHintButton() {		
+		if (m.hintAllowed) {
+			hintButton[0].disabled = false;
+		} else {
+			hintButton.prop("disabled", "true");
+		}
+	}
 
 	respond("task.text", displayNewTaskDescription);
 
@@ -310,6 +326,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		}		
 	})
 
+	respond("hintAllowed", disableOrEnableHintButton)
 	respond("toolbarOpen", hideOrShow);
 	respond("toolbarOpen", hideOrShow);
 	respond("needsHelp", highlightHelpButton);

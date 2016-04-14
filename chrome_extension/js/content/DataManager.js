@@ -7,7 +7,7 @@ DataManager = function(startingState) {
 	var globalProps = 
 		["lessonName", "taskIndex", "studentName", "stopIndex", 
 		"startTime", "connectedToBackend", "needsHelp", "promptHint",
-		"showHint"];		
+		"showHint", "hintAllowed"];		
 	var staticProps = ["url"];
 	var tabProps = ["toolbarOpen", "active"];
 

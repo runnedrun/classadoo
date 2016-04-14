@@ -11,6 +11,17 @@ LessonManager = function(manager) {
 				completeTask(m.taskIndex);
 				fire("task.complete");
 			}	
+
+			if ((Date.now() - m.startTime) > 45000) {
+				m.setHintAllowed(true);
+				m.setPromptHint(true);
+			} else if ((Date.now() - m.startTime) > 30000) {
+				m.setHintAllowed(true);
+				m.setPromptHint(false);
+			} else {				
+				m.setHintAllowed(false);
+				m.setPromptHint(false);
+			}
 		}
 	}
 
@@ -26,17 +37,26 @@ LessonManager = function(manager) {
 	}		
 
 	function newTask() {				
-		if (m.tasks && m.taskIndex !== undefined && m.taskIndex !== null) {
+		console.log("stop", m.stopIndex);
+		if (m.tasks && (typeof m.taskIndex !== undefined) && m.taskIndex !== null) {
 			if (m.taskIndex > (m.tasks.length - 1)) {
 				// the lesson is complete
 				fire("lesson.complete", {});			
+				m.setHintAllowed(false);
+				m.setPromptHint(false);				
+				m.setShowHint(false)
 				pause()
-			} else if (m.stopIndex && (m.taskIndex > m.stopIndex)) {						
+			} else if ((typeof m.stopIndex !== undefined) && (m.taskIndex > m.stopIndex)) {						
 				console.log("stop index hit");
+				m.setHintAllowed(false);
+				m.setPromptHint(false);				
+				m.setShowHint(false)
 				pause()
 			} else {
 				console.log("setting the new task!");
 				paused = false;
+				setStartTime();
+				currentTask().start && currentTask().start();
 				fire("task.text", currentTask().description); 	
 			}			
 		}
@@ -52,12 +72,8 @@ LessonManager = function(manager) {
 		}
 	}
 
-	respond("tasks", setStartTime);
 	respond("tasks", newTask);
-
-	respond("taskIndex", setStartTime);
 	respond("taskIndex", newTask);
-
 	respond("stopIndex", newTask);
 
 	setInterval(checkForTaskCompletion, 500);

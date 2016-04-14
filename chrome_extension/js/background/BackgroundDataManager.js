@@ -58,7 +58,8 @@ DataManager = function() {
 		var diff = Util.objectDiff(previous, update)
 		var diffKeys = Object.keys(diff);
 
-		if (diffKeys.length) {			
+		if (diffKeys.length) {	
+			console.log("updating global")		
 			globalCache = update;
 
 			diffKeys.forEach(function(key) {

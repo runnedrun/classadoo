@@ -57,11 +57,8 @@ body {
 	padding: 0px 3px 0px px;
 }*/
 
-.inspect-button {
-	margin-top: 0px;
-	margin-bottom: 0px;
-	cursor: pointer;	
-	font-size: 30px;
+.inspect-button {	
+	/*font-size: 25px;*/
 }
 
 .side-button-wrapper {
