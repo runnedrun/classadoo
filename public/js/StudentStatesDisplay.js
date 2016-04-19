@@ -2,10 +2,17 @@ var $ = require("jquery");
 var React = require('react');
 require("./Util.js");
 require("./StudentUpdater.js");
+require("./ScratchUpdater.js");
 
 var StudentState = React.createClass({  
     componentWillMount: function() {
       this.updater = new StudentUpdater(this.props.state.id);
+      this.scratchUpdater = new ScratchUpdater(this.props.state.global.studentName);
+    },
+
+    componentDidUpdate: function() {      
+      var staticDisplay = $(this.scratchDisplay).find(".static")      
+      hljs.highlightBlock(staticDisplay[0]);
     },
 
     getActiveTab: function() {
@@ -24,16 +31,44 @@ var StudentState = React.createClass({
     },   
 
     gotoScratchPadUrl: function(e) {      
-      var url = this.createScratchUrl(this.props.state.global.studentName)
+      var url = Util.createScratchUrl(this.props.state.global.studentName)
       this.updater.update({"gotoUrl": url});
     }, 
 
-    createScratchUrl: function(name) {
-      return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.nonAlpaToUnderscore(name))
-    },
-
     resolveHelp: function(e) {
       this.updater.update({needsHelp: false})
+    },
+
+    toggleScratchDisplay: function() {
+      $(this.scratchDisplay).toggle();
+    },
+
+    showEditableScratchDisplay: function(e) {
+      var parent = $(e.currentTarget).parent();
+      parent.find(".editable").show();      
+      parent.find(".static").hide();
+      parent.find(".editable").focus();
+    },
+
+    makeScratchDisplayStatic: function(e) {                
+      if (e.keyCode === 27) {        
+        var parent = $(e.currentTarget).parent();
+        parent.find(".static").show();      
+        parent.find(".editable").blur();
+        parent.find(".editable").hide();
+        e.preventDefault();
+        e.stopPropagation();
+      };
+    },
+
+    syncScratchDisplay: function(e) {                      
+      var content = unescape($(e.currentTarget).text());
+      this.scratchUpdater.update(content);
+    },    
+
+    completeTask: function() {
+      var nextTask = this.props.state.global.taskIndex + 1; 
+      this.updater.update({taskIndex: nextTask});
     },
 
     render: function() {      
@@ -74,10 +109,23 @@ var StudentState = React.createClass({
 
             <div className="elapsed-time">
               {this.props.state.global.elapsedTime}
-            </div>            
+            </div> 
 
             {activeUrlLink}
             {helpIndicator}
+
+            <button className="btn btn-success complete-task" onClick={this.completeTask}>
+              complete
+            </button>
+
+            <button className="btn btn-primary toggle-scratch-input" onClick={this.toggleScratchDisplay}>
+              toggle
+            </button>
+
+            <div className="scratch-input" ref={(ref) => this.scratchDisplay = ref}>
+              <pre className="editable" onKeyUp={this.syncScratchDisplay} onKeyDown={this.makeScratchDisplayStatic} contentEditable="true">{this.props.state.scratchInput}</pre>
+              <pre className="static" onClick={this.showEditableScratchDisplay}><code>{this.props.state.scratchInput}</code></pre>
+            </div>
 
             <div className="hidden-toggle text-center" onClick={this.toggleDisplay}>
               more...

@@ -17,11 +17,14 @@ var classUpdater = new AllClassUpdater(students);
 var lessonsPrefix
 if (location.host.indexOf("localhost") > -1) {
 	lessonsPrefix = "http://localhost:8000/lib/dev/";    
+	samplePrefix = "http://localhost:8000/samples/";  
 } else {
   	lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
+  	samplePrefix = "https://classadoo.github.io/lessons/samples/";  	
 }
 
 var LessonRequest = new Request(lessonsPrefix, "text", true);
+var SampleRequest = new Request(samplePrefix, "html", true);
 
 klass.update = function() {	
 	$.ajax({
@@ -45,10 +48,14 @@ klass.update = function() {
 	klass.updateCallback && klass.updateCallback(klass);
 }
 
+scratchTrackers = {
+
+}
+
 
 $(function() {	
-	var ref = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
-	ref.on("value", function(snapshot) {
+	var state = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
+	state.on("value", function(snapshot) {
 		var filteredSnapshot = {}
 		var snap = snapshot.val()
 		Object.keys(snap).forEach(function(key) {
@@ -57,14 +64,38 @@ $(function() {
 			}
 		})
 
-		$.extend(students, filteredSnapshot);		
-		renderStudentStatesAndClassDisplay();
-		fetchAndRenderLesson(klass);		
-		renderClassControls();
+		$.extend(students, filteredSnapshot);	
+
+		trackScratchInputs(students);
+		updateDisplaysOnChanges();			
 	})
 
-	setInterval(renderStudentStatesAndClassDisplay, 5000);
+	// setInterval(renderStudentStatesAndClassDisplay, 5000);
 })
+
+function updateDisplaysOnChanges() {
+	renderStudentStatesAndClassDisplay();
+	fetchAndRenderLesson(klass);		
+	renderClassControls();
+}
+
+function trackScratchInputs(students) {	
+	Object.keys(students).forEach(function(id) {
+		var student = students[id];
+		var scratchId = Util.createScratchId(student.state.global.studentName);
+		if (!scratchTrackers[id]) {
+			var ref = new Firebase("scratchpad.firebaseio.com/" + scratchId);
+			ref.on("value", function(snapshot) {
+				var val = snapshot.val();
+				scratchTrackers[id].input = val.editor.code;				
+				updateDisplaysOnChanges()				
+			})
+
+			scratchTrackers[id] = {}
+			scratchTrackers[id].tracker = ref			
+		}					
+	})	
+}
 
 function renderStudentStatesAndClassDisplay() {	
 	var ids = Object.keys(students);
@@ -72,12 +103,13 @@ function renderStudentStatesAndClassDisplay() {
 	var statesWithIds = ids.map(function(id) {
 		var state = students[id].state
 		state.id = id;
+		state.scratchInput = scratchTrackers[id] && scratchTrackers[id].input;
 		return state
 	})	
 
 	var studentsByName = {}
 	statesWithIds.forEach(function(state) { 				
-   		studentsByName[state.global.studentName] = state;		
+   		studentsByName[state.global.studentName] = state;		   		
 	});
 
 	var studentNames = Object.keys(studentsByName);
@@ -112,7 +144,7 @@ function fetchAndRenderLesson(klass) {
 	if (lessonName) {
 		LessonRequest.get(Util.spaceToUnderscore(lessonName).toLowerCase() + ".js").then(function(lessonText) {
 			eval(lessonText);			
-			renderLessonControls(__importedLesson);			
+			renderLessonControls(__importedLesson);						
 		})
 	}	
 }

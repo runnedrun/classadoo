@@ -1,6 +1,6 @@
 {
 "name": "Classadoo",
-    "version": "0.0.0.11",
+    "version": "0.0.0.13",
     "manifest_version": 2,
     "description": "The chrome extension for classadoo",
     "browser_action": {

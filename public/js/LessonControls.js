@@ -49,7 +49,6 @@ TaskDisplay = React.createClass({
 LessonControls = React.createClass({
   componentWillMount: function() {
     this.firebaseRef = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
-    console.log("ref is", this.firebaseRef);
   },
 
   render: function() {

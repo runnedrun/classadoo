@@ -1,4 +1,5 @@
 Util = new function() {
+  var self = this;
   var counter = 0;
 
   this.randomize = function(arr) {
@@ -79,9 +80,6 @@ Util = new function() {
     Object.keys(obj).length
   }
 
-  this.objectDiff = function() {
-    
-  }
 
   this.objectEq = function(obj1, obj2) {
     var obj1 = obj1 || {}
@@ -178,6 +176,14 @@ Util = new function() {
 
   this.timestampedMessage = function(message) {    
     return message + "%%" + Date.now();
+  }
+
+  this.createScratchUrl = function(name) {
+    return self.timestampedUrl("http://scratchpad.io/" + self.createScratchId(name));
+  }
+
+  this.createScratchId = function(name) {
+    return "classadoo-" + self.nonAlpaToUnderscore(name)
   }
 }()
 

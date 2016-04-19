@@ -17,6 +17,23 @@
 	margin-top: 10px;
 }
 
+#student-state-wrapper .scratch-input code {
+	white-space: pre;
+}
+
+#student-state-wrapper .scratch-input pre {
+	max-height: 300px;
+	font-size: 10px;
+}
+
+#student-state-wrapper button {
+	font-size: 10px;
+}
+
+#student-state-wrapper .scratch-input .editable {
+	display: none;
+}
+
 #lesson-controls {
 	margin-top: 50px;
 	border: 1px solid grey;

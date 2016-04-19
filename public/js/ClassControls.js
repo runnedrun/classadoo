@@ -25,32 +25,43 @@ ClassControls = React.createClass({
     this.props.classUpdater.update({popupMessage: message})
   },  
 
+  closeAllScratchDisplays: function() {
+    $(".scratch-input").toggle();
+  },
+
   render: function() {
     return(
-      <div className="row">       
-        <div className="col-md-4">
-            <div className="input-group">
-              <span className="input-group-addon">
-                URL:
-              </span>
-              <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.props.classUpdater.updateOnEnter}/>
-            </div>            
-        </div>        
-        <div className="col-md-2">
-          <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>
+      <div className="div">       
+        <div className="row">       
+          <div className="col-md-4">
+              <div className="input-group">
+                <span className="input-group-addon">
+                  URL:
+                </span>
+                <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.props.classUpdater.updateOnEnter}/>
+              </div>            
+          </div>        
+          <div className="col-md-2">
+            <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>
+          </div>
+          <div className="col-md-4">
+              <div className="input-group">
+                <span className="input-group-addon">
+                  Write:
+                </span>
+                <textarea className="form-control scratch-append" type="text" data-field="appendToScratchpad" onKeyDown={this.props.classUpdater.updateOnEnter}/>
+              </div>            
+          </div>
+          <div className="col-md-2">
+            <button className="btn btn-warning warn-btn" onClick={this.warnClass}>Warn</button>
+            <button className="btn btn-danger call-back-btn" onClick={this.callClassBack}>Call Back</button>          
+          </div>        
         </div>
-        <div className="col-md-4">
-            <div className="input-group">
-              <span className="input-group-addon">
-                Write:
-              </span>
-              <textarea className="form-control scratch-input" type="text" data-field="appendToScratchpad" onKeyDown={this.props.classUpdater.updateOnEnter}/>
-            </div>            
+        <div className="row">       
+          <div className="col-md-2">
+            <button className="btn btn-primary" onClick={this.closeAllScratchDisplays}>Toggle scratch displays</button>
+          </div>
         </div>
-        <div className="col-md-2">
-          <button className="btn btn-warning warn-btn" onClick={this.warnClass}>Warn</button>
-          <button className="btn btn-danger call-back-btn" onClick={this.callClassBack}>Call Back</button>
-        </div>        
       </div>         
     )
   }
