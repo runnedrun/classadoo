@@ -62,9 +62,21 @@ var StudentState = React.createClass({
     },
 
     syncScratchDisplay: function(e) {                      
-      var content = unescape($(e.currentTarget).text());
+      var content = $(e.currentTarget).text();
       this.scratchUpdater.update(content);
     },    
+
+    appendToScratchDisplay: function(e) {
+      var enterKeyCode = 13;  
+      console.log(e);
+
+      if (e.keyCode === enterKeyCode && !e.shiftKey) {
+        var content = $(e.currentTarget).val();
+        var currentContent = this.props.state.scratchInput
+
+        this.scratchUpdater.update(content + "\n\n" + this.props.state.scratchInput);
+      }
+    },
 
     completeTask: function() {
       var nextTask = this.props.state.global.taskIndex + 1; 
@@ -114,13 +126,19 @@ var StudentState = React.createClass({
             {activeUrlLink}
             {helpIndicator}
 
-            <button className="btn btn-success complete-task" onClick={this.completeTask}>
-              complete
-            </button>
+            <div className="scratch-display-buttons">
+              <a href="#" className="complete-task" onClick={this.completeTask}>
+                complete
+              </a>
 
-            <button className="btn btn-primary toggle-scratch-input" onClick={this.toggleScratchDisplay}>
-              toggle
-            </button>
+              <a href="#" className="toggle-scratch-input" onClick={this.toggleScratchDisplay}>
+                toggle
+              </a>
+            </div>   
+
+            <div className="input-group">
+              <input className="form-control scratchpad-append-input" type="text" onKeyDown={this.appendToScratchDisplay}/>
+            </div>         
 
             <div className="scratch-input" ref={(ref) => this.scratchDisplay = ref}>
               <pre className="editable" onKeyUp={this.syncScratchDisplay} onKeyDown={this.makeScratchDisplayStatic} contentEditable="true">{this.props.state.scratchInput}</pre>
@@ -136,7 +154,7 @@ var StudentState = React.createClass({
                 <label>
                   URL:
                 </label>
-                <input className="form-control url-input" type="text" onClick={function(e) { e.stopPropagation(); return false; }} data-field="gotoUrl" onKeyDown={this.updater.updateOnEnter}/>
+                <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.updater.updateOnEnter}/>
               </div>
 
               <button className="btn btn-primary goto-scratchpad" onClick={this.gotoScratchPadUrl}>Scratchpad</button>

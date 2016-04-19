@@ -30,9 +30,9 @@ GotoUrlManger = function(dataManager) {
 	            window.tabs.forEach(function(tab) {
 	            	if (onlyTimestampInPath(gotoUrl)) {	            		
 	            		var parsedTabUrl = parseUrl(tab.url);
-	            		var parsedGotoUrl = parseUrl(gotoUrl);
+	            		var parsedGotoUrl = parseUrl(gotoUrl);	            		
 
-	            		if (parsedTabUrl.path == parsedGotoUrl.path && parsedGotoUrl.host == parsedTabUrl.host) {
+	            		if ((parsedTabUrl.pathname == parsedGotoUrl.pathname) && (parsedGotoUrl.host == parsedTabUrl.host)) {
 		            		alreadyOpenId = tab.id;	            		
 		            	}
 	            	} else {

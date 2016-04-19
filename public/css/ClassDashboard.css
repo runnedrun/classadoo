@@ -17,6 +17,10 @@
 	margin-top: 10px;
 }
 
+#student-state-wrapper .complete-task {
+	margin-right: 20px;
+}
+
 #student-state-wrapper .scratch-input code {
 	white-space: pre;
 }
@@ -32,6 +36,10 @@
 
 #student-state-wrapper .scratch-input .editable {
 	display: none;
+}
+
+.scratch-display-buttons {
+	margin-bottom: 5px;
 }
 
 #lesson-controls {

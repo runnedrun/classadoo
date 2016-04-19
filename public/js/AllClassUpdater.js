@@ -32,26 +32,29 @@ AllClassUpdater = function(students) {
 	  })
 	}
 
-	self.updateOnEnter = function(event) {		
-		var enterKeyCode = 13;  
+	self.updateOnEnter = function(manipulateValue) {		
+		return function(event) {
+			var enterKeyCode = 13;  
 
-		if (event.keyCode === enterKeyCode) {
-			console.log("updating on enter");
-			var target = $(event.target);
-			var field = target.data("field");
+			if (event.keyCode === enterKeyCode) {
+				console.log("updating on enter");
+				var target = $(event.target);
+				var field = target.data("field");
 
-			var value =  $(target).val() || $(target).html();
+				var value =  $(target).val() || $(target).html();
 
-			if (value === "") {                        
-				self.remove(field);        
-			} else {				
-				var obj = {}
-				obj[field] = value;				
-				self.update(obj);
-			}           
+				if (value === "") {                        
+					self.remove(field);        
+				} else {				
+					var obj = {}
+					var finalValue = manipulateValue ? manipulateValue(value) : value;					
+					obj[field] = finalValue;				
+					self.update(obj);
+				}           
 
-			target.blur();
-			event.preventDefault();         
-		}     
+				target.blur();
+				event.preventDefault();         
+			}     
+		}		
 	}
 }

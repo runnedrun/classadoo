@@ -26,6 +26,11 @@ TaskDisplay = React.createClass({
     this.update({taskIndex: index});
   },
 
+  openSampleInNewWindow: function() {
+    window.open(this.props.samplePrefix + this.props.task.name + ".html", "sample", 'height:200, width:400');
+    return false
+  },
+
   render: function() {
     return (
       <tr className="task-row" data-index={this.props.index}>      
@@ -33,7 +38,7 @@ TaskDisplay = React.createClass({
           {this.props.index}
         </td>
         <td className="task-description">
-          {this.props.task.description}
+          <a onClick={this.openSampleInNewWindow}>{this.props.task.description}</a>
         </td>
         <td className={ "set-stop text-center " + (this.props.isCurrentStop ? "active" : "") } onClick={this.updateStopIndex}>
           <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>
@@ -59,7 +64,7 @@ LessonControls = React.createClass({
           {this.props.tasks.map(function(task, i) {            
             var isCurrentStop = self.props.currentStopIndex == i            
 
-            return <TaskDisplay isCurrentStop={isCurrentStop} key={i} index={i} task={task} fbRef={self.firebaseRef} studentIds={self.props.studentIds} />
+            return <TaskDisplay samplePrefix={self.props.samplePrefix} isCurrentStop={isCurrentStop} key={i} index={i} task={task} fbRef={self.firebaseRef} studentIds={self.props.studentIds} />
           })}                                                    
         </tbody>
       </table>         

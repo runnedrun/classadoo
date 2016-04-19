@@ -9,6 +9,7 @@ require("./StudentStatesDisplay.js");
 require("./Request.js");
 require("./firebase.min.js");
 require("./AllClassUpdater.js");
+require("./ScratchUpdater.js");
 
 var students = {};
 // klass is defined globally by the template
@@ -52,6 +53,8 @@ scratchTrackers = {
 
 }
 
+scratchUpdater = new AllClassScratchUpdater(students, scratchTrackers)
+
 
 $(function() {	
 	var state = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
@@ -65,8 +68,8 @@ $(function() {
 		})
 
 		$.extend(students, filteredSnapshot);	
-
 		trackScratchInputs(students);
+
 		updateDisplaysOnChanges();			
 	})
 
@@ -92,7 +95,7 @@ function trackScratchInputs(students) {
 			})
 
 			scratchTrackers[id] = {}
-			scratchTrackers[id].tracker = ref			
+			scratchTrackers[id].ref = ref			
 		}					
 	})	
 }
@@ -128,14 +131,14 @@ function renderStudentStatesAndClassDisplay() {
 }
 
 function renderClassControls() {
-	ReactDOM.render(<ClassControls classUpdater={classUpdater} students={students} />, document.getElementById("class-controls"));
+	ReactDOM.render(<ClassControls scratchUpdater={scratchUpdater} classUpdater={classUpdater} students={students} />, document.getElementById("class-controls"));
 }
 
 function renderLessonControls(lesson) {
 	lesson = lesson;
 	var firstStudent = Util.objectValues(students)[0];
 	var currentStopIndex = (firstStudent && firstStudent.state && firstStudent.state.global && firstStudent.state.global.stopIndex) || (lesson.length - 1);	
-	ReactDOM.render(<LessonControls currentStopIndex={currentStopIndex} studentIds={Object.keys(students)} tasks={lesson} />, document.getElementById("lesson-controls"));	
+	ReactDOM.render(<LessonControls samplePrefix={samplePrefix} currentStopIndex={currentStopIndex} studentIds={Object.keys(students)} tasks={lesson} />, document.getElementById("lesson-controls"));	
 }
 
 function fetchAndRenderLesson(klass) {

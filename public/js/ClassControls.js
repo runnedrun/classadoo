@@ -15,6 +15,15 @@ ClassControls = React.createClass({
     return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.nonAlpaToUnderscore(name))
   },
 
+  appendToScratch: function(e) {
+    var enterKeyCode = 13;  
+
+    if (e.keyCode === enterKeyCode && !e.shiftKey) {
+      var input = $(e.currentTarget);
+      this.props.scratchUpdater.append(input.val());
+    }
+  },
+
   warnClass: function() {
     var message = Util.timestampedMessage("Hi! Class will be starting again in a minute. Try to finish up what you're working on, then look front.")
     this.props.classUpdater.update({popupMessage: message})
@@ -38,7 +47,7 @@ ClassControls = React.createClass({
                 <span className="input-group-addon">
                   URL:
                 </span>
-                <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.props.classUpdater.updateOnEnter}/>
+                <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.props.classUpdater.updateOnEnter(Util.timestampedUrl)}/>
               </div>            
           </div>        
           <div className="col-md-2">
@@ -49,7 +58,7 @@ ClassControls = React.createClass({
                 <span className="input-group-addon">
                   Write:
                 </span>
-                <textarea className="form-control scratch-append" type="text" data-field="appendToScratchpad" onKeyDown={this.props.classUpdater.updateOnEnter}/>
+                <textarea className="form-control scratch-append" type="text" data-field="appendToScratchpad" onKeyDown={this.appendToScratch}/>
               </div>            
           </div>
           <div className="col-md-2">
