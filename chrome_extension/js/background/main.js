@@ -1,31 +1,42 @@
-var env = "dev"
+var env = "prod"
 
 var lessonsPrefix
 var hintPrefix
-if (env === "prod") {
-  lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
-  hintPrefix = "https://classadoo.github.io/lessons/samples/";
-} else {
-  lessonsPrefix = "http://localhost:8000/lib/dev/";  
-  hintPrefix = "http://localhost:8000/samples/";  
-}
+
+
 
 while (!chrome.runtime.getPlatformInfo) {
   // just putting this in here to make sure everything is ready before moving on    
 }
 
-var LessonRequest = new Request(lessonsPrefix, "text", false);
-var dataManager = new DataManager();
+var deferred = $.Deferred();
 
-Message = new Message(dataManager);
-new HintManager(dataManager, hintPrefix)
-new LessonLoader(LessonRequest, dataManager);
-new ScreenshareManager();
-new TabCaptureManager(dataManager);
-new VolatileProperties(dataManager);
-new GotoUrlManger(dataManager);
-new ScratchpadAppendManager(dataManager);
-new PopupMessageManager(dataManager);
+var dataManager;
+
+chrome.management.getSelf(function(info) {  
+  if (info.installType === "development") {
+    lessonsPrefix = "http://localhost:8000/lib/dev/";  
+    hintPrefix = "http://localhost:8000/samples/";      
+  } else {    
+    lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
+    hintPrefix = "https://classadoo.github.io/lessons/samples/";
+  }
+
+  console.log("less", lessonsPrefix);
+
+  var LessonRequest = new Request(lessonsPrefix, "text", false);
+  dataManager = new DataManager();
+
+  Message = new Message(dataManager);
+  new HintManager(dataManager, hintPrefix)
+  new LessonLoader(LessonRequest, dataManager);
+  new ScreenshareManager();
+  new TabCaptureManager(dataManager);
+  new VolatileProperties(dataManager);
+  new GotoUrlManger(dataManager);
+  new ScratchpadAppendManager(dataManager);
+  new PopupMessageManager(dataManager);  
+})
 
 chrome.runtime.onMessage.addListener(
    function(request, sender, sendResponse) {              

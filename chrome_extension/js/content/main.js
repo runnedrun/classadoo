@@ -14,6 +14,7 @@ $(function() {
 		var lessonExecutor = new LessonExecutor(manager);
 		var backgroundDisplay = new BackgroundDisplay(manager);		
 		var helpManager = new HelpManager(manager);				
+		var scratchPadSJsRunner = new ScratchPadJsRunner();				
 
 		chrome.runtime.sendMessage({getToolbarHtml: true});
     	chrome.runtime.onMessage.addListener(

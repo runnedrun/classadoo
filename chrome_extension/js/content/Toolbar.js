@@ -65,6 +65,14 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		logo = i.$(".logo");
 		sideButtons = i.$(".side-buttons");
 		progressBarContainer = i.$(".progress-bar-wrapper");
+		JSButton = i.$(".js-button");
+
+		if (window.location.host.indexOf("scratchpad") > -1) {			
+			JSButton.css("display", "inline-block");			
+			JSButton.click(function() {
+				fire("run.scratchpad.script");
+			});	
+		}
 
 		hintButton.click(function() {
 			if (m.showHint) {				
@@ -94,8 +102,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		startOrStopHintBlink()
 		wholeClassLoaded && loadedCallback();
 	};
-
-	$iframe[0].src = 'about:blank';	
+	
 	$(document.body).prepend($iframe);	
 	
 	function startLoginMode() {

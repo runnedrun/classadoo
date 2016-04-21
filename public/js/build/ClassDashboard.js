@@ -103,7 +103,7 @@
 		var state = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
 		state.on("value", function (snapshot) {
 			var filteredSnapshot = {};
-			var snap = snapshot.val();
+			var snap = snapshot.val() || {};
 			Object.keys(snap).forEach(function (key) {
 				if (snap[key] && snap[key].state && snap[key].state.global && snap[key].state.global.studentName) {
 					filteredSnapshot[key] = snap[key];
@@ -111,7 +111,7 @@
 			});
 
 			$.extend(students, filteredSnapshot);
-			trackScratchInputs(students);
+			// trackScratchInputs(students);
 
 			updateDisplaysOnChanges();
 		});
@@ -21603,6 +21603,10 @@
 	    return self.timestampedUrl("http://scratchpad.io/" + self.createScratchId(name));
 	  };
 
+	  this.createFiddleUrl = function (name) {
+	    return self.timestampedUrl("https://jsfiddle.net/#&togetherjs=" + self.createScratchId(name));
+	  };
+
 	  this.createScratchId = function (name) {
 	    return "classadoo-" + self.nonAlpaToUnderscore(name);
 	  };
@@ -21720,8 +21724,20 @@
 	    });
 	  },
 
-	  createScratchUrl: function (name) {
-	    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.nonAlpaToUnderscore(name));
+	  gotoScratchPadUrls: function () {
+	    var self = this;
+	    this.props.classUpdater.updateBasedOnStudent("gotoUrl", function (student) {
+	      var name = student.state.global.studentName;
+	      return Util.createScratchUrl(name);
+	    });
+	  },
+
+	  gotoFiddleUrls: function () {
+	    var self = this;
+	    this.props.classUpdater.updateBasedOnStudent("gotoUrl", function (student) {
+	      var name = student.state.global.studentName;
+	      return Util.createFiddleUrl(name);
+	    });
 	  },
 
 	  appendToScratch: function (e) {
@@ -21775,6 +21791,11 @@
 	            "button",
 	            { className: "btn btn-primary", onClick: this.gotoScratchPadUrls },
 	            "Scratchpad"
+	          ),
+	          React.createElement(
+	            "button",
+	            { className: "btn btn-primary", onClick: this.gotoFiddleUrls },
+	            "JsFiddle"
 	          )
 	        ),
 	        React.createElement(
@@ -21862,13 +21883,37 @@
 	    return false;
 	  },
 
+	  hideAllButTask: function (taskIndex) {
+	    var self = this;
+	    var cssString = ".student-state.task-" + taskIndex + " { display: block; }\n .student-state { display: none }";
+	    return function (e) {
+	      var tag;
+	      if ($(".task-hide-style").length) {
+	        tag = $(".task-hide-style");
+	      } else {
+	        console.log("creating new tag");
+	        tag = $("<style class='task-hide-style'>");
+	        $("head").append(tag);
+	      }
+
+	      if ($(e.currentTarget).hasClass("only-shown")) {
+	        tag.remove();
+	        $(e.currentTarget).removeClass("only-shown");
+	      } else {
+	        tag.html(cssString);
+	        $(".only-shown").removeClass("only-shown");
+	        $(e.currentTarget).addClass("only-shown");
+	      }
+	    };
+	  },
+
 	  render: function () {
 	    return React.createElement(
 	      "tr",
 	      { className: "task-row", "data-index": this.props.index },
 	      React.createElement(
 	        "td",
-	        { className: "task-index text-center" },
+	        { className: "task-index text-center", onClick: this.hideAllButTask(this.props.index) },
 	        this.props.index
 	      ),
 	      React.createElement(
@@ -21877,7 +21922,7 @@
 	        React.createElement(
 	          "a",
 	          { onClick: this.openSampleInNewWindow },
-	          this.props.task.description
+	          this.props.task.name
 	        )
 	      ),
 	      React.createElement(
@@ -22046,7 +22091,7 @@
 
 	    return React.createElement(
 	      "div",
-	      { className: "student-state col-md-3 " + doneWithTasks },
+	      { className: "task-" + this.props.state.global.taskIndex + " student-state col-md-3 " + doneWithTasks },
 	      React.createElement(
 	        "h4",
 	        { className: "name text-center" },
@@ -22062,6 +22107,11 @@
 	        "div",
 	        { className: "elapsed-time" },
 	        this.props.state.global.elapsedTime
+	      ),
+	      React.createElement(
+	        "a",
+	        { href: Util.createFiddleUrl(this.props.state.global.studentName), target: "_blank" },
+	        "jsfiddle"
 	      ),
 	      activeUrlLink,
 	      helpIndicator,
@@ -22081,12 +22131,12 @@
 	      ),
 	      React.createElement(
 	        "div",
-	        { className: "input-group" },
-	        React.createElement("input", { className: "form-control scratchpad-append-input", type: "text", onKeyDown: this.appendToScratchDisplay })
-	      ),
-	      React.createElement(
-	        "div",
 	        { className: "scratch-input", ref: ref => this.scratchDisplay = ref },
+	        React.createElement(
+	          "div",
+	          { className: "input-group" },
+	          React.createElement("input", { className: "form-control scratchpad-append-input", type: "text", onKeyDown: this.appendToScratchDisplay })
+	        ),
 	        React.createElement(
 	          "pre",
 	          { className: "editable", onKeyUp: this.syncScratchDisplay, onKeyDown: this.makeScratchDisplayStatic, contentEditable: "true" },

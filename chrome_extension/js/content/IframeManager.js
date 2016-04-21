@@ -16,7 +16,7 @@ function IframeManager($iframe) {
         iDoc.close();
         var headTag  = iDoc.getElementsByTagName("head")[0];        
         return $iframe[0].contentWindow.document;
-    };    
+    };
 
     this.$ = function(selector) {
         return self.getIDoc().find(selector);

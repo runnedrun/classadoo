@@ -59,8 +59,8 @@ scratchUpdater = new AllClassScratchUpdater(students, scratchTrackers)
 $(function() {	
 	var state = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
 	state.on("value", function(snapshot) {
-		var filteredSnapshot = {}
-		var snap = snapshot.val()
+		var filteredSnapshot = {};
+		var snap = snapshot.val() || {};
 		Object.keys(snap).forEach(function(key) {
 			if (snap[key] && snap[key].state && snap[key].state.global && snap[key].state.global.studentName) {				
 				filteredSnapshot[key] = snap[key];
@@ -68,7 +68,7 @@ $(function() {
 		})
 
 		$.extend(students, filteredSnapshot);	
-		trackScratchInputs(students);
+		// trackScratchInputs(students);
 
 		updateDisplaysOnChanges();			
 	})

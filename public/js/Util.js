@@ -182,6 +182,10 @@ Util = new function() {
     return self.timestampedUrl("http://scratchpad.io/" + self.createScratchId(name));
   }
 
+  this.createFiddleUrl = function(name) {
+    return self.timestampedUrl("https://jsfiddle.net/#&togetherjs=" + self.createScratchId(name));
+  }
+
   this.createScratchId = function(name) {
     return "classadoo-" + self.nonAlpaToUnderscore(name)
   }

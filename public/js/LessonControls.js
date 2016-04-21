@@ -31,14 +31,38 @@ TaskDisplay = React.createClass({
     return false
   },
 
+  hideAllButTask: function(taskIndex) {    
+    var self = this;
+    var cssString = ".student-state.task-" + taskIndex + " { display: block; }\n .student-state { display: none }";
+    return function(e) {
+      var tag;
+      if ($(".task-hide-style").length) {
+        tag = $(".task-hide-style");
+      } else {
+        console.log("creating new tag")
+        tag = $("<style class='task-hide-style'>");
+        $("head").append(tag);
+      }
+
+      if ($(e.currentTarget).hasClass("only-shown")) {
+        tag.remove();   
+        $(e.currentTarget).removeClass("only-shown");
+      } else {
+        tag.html(cssString);
+        $(".only-shown").removeClass("only-shown");
+        $(e.currentTarget).addClass("only-shown");
+      }
+    }    
+  },
+
   render: function() {
     return (
       <tr className="task-row" data-index={this.props.index}>      
-        <td className="task-index text-center">
+        <td className="task-index text-center" onClick={this.hideAllButTask(this.props.index)}>
           {this.props.index}
         </td>
         <td className="task-description">
-          <a onClick={this.openSampleInNewWindow}>{this.props.task.description}</a>
+          <a onClick={this.openSampleInNewWindow}>{this.props.task.name}</a>
         </td>
         <td className={ "set-stop text-center " + (this.props.isCurrentStop ? "active" : "") } onClick={this.updateStopIndex}>
           <span className="glyphicon glyphicon-stop" aria-hidden="true"></span>

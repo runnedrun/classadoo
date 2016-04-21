@@ -48,6 +48,10 @@
     padding: 5px;
 }
 
+.only-shown {
+	background: lightblue;
+}
+
 .task-list {
 	table-layout:fixed;
     width: 100%; 
@@ -57,7 +61,7 @@
 	/*border: 1px solid black;*/
 	width: 8%;
 	font-weight: bold;
-
+	cursor: pointer;
 }
 
 .task-description {

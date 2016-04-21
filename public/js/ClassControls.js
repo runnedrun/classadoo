@@ -11,8 +11,20 @@ ClassControls = React.createClass({
     })
   },
 
-  createScratchUrl: function(name) {
-    return Util.timestampedUrl("http://scratchpad.io/classadoo-" + Util.nonAlpaToUnderscore(name))
+  gotoScratchPadUrls: function() {
+    var self = this
+    this.props.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
+      var name = student.state.global.studentName;      
+      return Util.createScratchUrl(name)
+    })
+  },
+
+  gotoFiddleUrls: function() {
+    var self = this
+    this.props.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
+      var name = student.state.global.studentName;      
+      return Util.createFiddleUrl(name)
+    })
   },
 
   appendToScratch: function(e) {
@@ -52,7 +64,9 @@ ClassControls = React.createClass({
           </div>        
           <div className="col-md-2">
             <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>
-          </div>
+            <button className="btn btn-primary" onClick={this.gotoFiddleUrls}>JsFiddle</button>
+          </div>          
+
           <div className="col-md-4">
               <div className="input-group">
                 <span className="input-group-addon">

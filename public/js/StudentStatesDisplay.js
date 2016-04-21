@@ -110,7 +110,7 @@ var StudentState = React.createClass({
       var doneWithTasks  = (Number(this.props.state.global.taskIndex) > Number(this.props.state.global.stopIndex)) ? "done" : ""
 
       return(
-        <div className={"student-state col-md-3 " + doneWithTasks}>       
+        <div className={"task-" + this.props.state.global.taskIndex + " student-state col-md-3 " + doneWithTasks}>       
             <h4 className="name text-center">
               {this.props.state.global.studentName}                          
             </h4>
@@ -123,6 +123,9 @@ var StudentState = React.createClass({
               {this.props.state.global.elapsedTime}
             </div> 
 
+            <a href={Util.createFiddleUrl(this.props.state.global.studentName)} target="_blank">
+              jsfiddle
+            </a>
             {activeUrlLink}
             {helpIndicator}
 
@@ -135,12 +138,11 @@ var StudentState = React.createClass({
                 toggle
               </a>
             </div>   
-
-            <div className="input-group">
-              <input className="form-control scratchpad-append-input" type="text" onKeyDown={this.appendToScratchDisplay}/>
-            </div>         
-
+            
             <div className="scratch-input" ref={(ref) => this.scratchDisplay = ref}>
+              <div className="input-group">
+                <input className="form-control scratchpad-append-input" type="text" onKeyDown={this.appendToScratchDisplay}/>
+              </div>         
               <pre className="editable" onKeyUp={this.syncScratchDisplay} onKeyDown={this.makeScratchDisplayStatic} contentEditable="true">{this.props.state.scratchInput}</pre>
               <pre className="static" onClick={this.showEditableScratchDisplay}><code>{this.props.state.scratchInput}</code></pre>
             </div>
