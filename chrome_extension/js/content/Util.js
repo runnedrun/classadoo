@@ -106,7 +106,7 @@ Util = new function() {
     
     // return false if any of the values are different
     for (var i = 0; i < keys1.length; i++) {
-      var valuesEqual = obj1[keys1[i]] == obj2[keys1[i]];
+      var valuesEqual = self.equivalent(obj1[keys1[i]], obj2[keys1[i]]);
       if (!valuesEqual) return false
     }
 
