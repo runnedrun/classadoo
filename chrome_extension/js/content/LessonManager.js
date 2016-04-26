@@ -3,6 +3,16 @@ LessonManager = function(manager) {
 	var m = manager;
 	var paused = false;	
 
+	var hintPrompted = false;
+
+	function promptHint()  {
+		if (!hintPrompted) {
+			m.setHintAllowed(true);
+			m.setPromptHint(true);
+			hintPrompted = true
+		}
+	}	
+
 	function checkForTaskCompletion() {
 		if (!paused && currentTask()) {			
 			var atCorrectLocation = RegExp(currentTask().location).test(location.href);			
@@ -13,14 +23,9 @@ LessonManager = function(manager) {
 			}	
 
 			if ((Date.now() - m.startTime) > 45000) {
-				m.setHintAllowed(true);
-				m.setPromptHint(true);
+				promptHint();
 			} else if ((Date.now() - m.startTime) > 30000) {
-				m.setHintAllowed(true);
-				m.setPromptHint(false);
-			} else {				
-				m.setHintAllowed(false);
-				m.setPromptHint(false);
+				m.setHintAllowed(true);	
 			}
 		}
 	}
@@ -56,8 +61,10 @@ LessonManager = function(manager) {
 				console.log("setting the new task!");
 				paused = false;
 				setStartTime();
-				currentTask().start && currentTask().start();
-				fire("task.text", currentTask().description); 	
+				currentTask().start && currentTask().start();							
+				fire("task.text", currentTask().description);
+				m.setPromptHint(false); 	
+				m.setHintAllowed(false); 	
 			}			
 		}
 	}

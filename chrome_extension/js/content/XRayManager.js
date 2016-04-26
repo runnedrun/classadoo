@@ -1,21 +1,20 @@
-XRayManager = new function() {
-	var scriptUrl = chrome.extension.getURL("/x-ray/static-files/webxray.js")
-	var cssUrl = chrome.extension.getURL("/x-ray/static-files/webxray.css");
+XRayManager = function(dataManager) {
+	var m = dataManager
 
-	var scriptInserted = false;
-
-	respond("xray", function() {
-		if (!scriptInserted) {			
+	respond("xray", function(shouldInsert) {		
+		if (shouldInsert) {			
 			console.log("INSERTING SCRIPT");
-			$("head").append("<link href='" + cssUrl + "' rel='stylesheet' type='text/css'></link>");
-			$("head").append("<script src='" + scriptUrl + "'></script>");
-
-			if ('webxrayPreferences' in localStorage)
-  				window.parent.postMessage(localStorage.webxrayPreferences, "*");
-			else
-				window.parent.postMessage("{}", "*");
-
-			scriptInserted = true;
+			insertGoggles();			
+			m.setXray(false);
 		}		
 	})
+
+	function insertGoggles() {
+		var script = document.createElement('script');
+		script.src='https://goggles.mozilla.org'+'/webxray.js';
+		script.className='webxray';
+		script.setAttribute('data-lang','en-US');
+		script.setAttribute('data-baseuri','https://goggles.mozilla.org');
+		document.body.appendChild(script);
+	}
 }

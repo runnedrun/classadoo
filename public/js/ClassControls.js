@@ -50,6 +50,10 @@ ClassControls = React.createClass({
     $(".scratch-input").toggle();
   },
 
+  insertXrayGoggles: function() {
+    this.props.classUpdater.update({xray: Date.now()});
+  },
+
   render: function() {
     return(
       <div className="div">       
@@ -63,8 +67,8 @@ ClassControls = React.createClass({
               </div>            
           </div>        
           <div className="col-md-2">
-            <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>
-            <button className="btn btn-primary" onClick={this.gotoFiddleUrls}>JsFiddle</button>
+            <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>    
+            <button className="btn btn-primary" onClick={this.insertXrayGoggles}>Xray</button>                
           </div>          
 
           <div className="col-md-4">
@@ -79,12 +83,7 @@ ClassControls = React.createClass({
             <button className="btn btn-warning warn-btn" onClick={this.warnClass}>Warn</button>
             <button className="btn btn-danger call-back-btn" onClick={this.callClassBack}>Call Back</button>          
           </div>        
-        </div>
-        <div className="row">       
-          <div className="col-md-2">
-            <button className="btn btn-primary" onClick={this.closeAllScratchDisplays}>Toggle scratch displays</button>
-          </div>
-        </div>
+        </div>        
       </div>         
     )
   }

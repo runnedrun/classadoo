@@ -7,7 +7,8 @@ DataManager = function(startingState) {
 	var globalProps = 
 		["lessonName", "taskIndex", "studentName", "stopIndex", 
 		"startTime", "connectedToBackend", "needsHelp", "promptHint",
-		"showHint", "hintAllowed"];		
+		"showHint", "hintAllowed", "taskNames", "xray", "syncClick", 
+		"syncHover", "syncHighlight", "backSyncClick"];
 	var staticProps = ["url"];
 	var tabProps = ["toolbarOpen", "active"];
 
@@ -15,14 +16,16 @@ DataManager = function(startingState) {
 	function set(key, storage, getState) {
 		return function (value) {				
 			var dataObj = {}
-			dataObj[key] = value
-			return storage.set(dataObj);			
+			if (!Util.equivalent(self[key], value)) {
+				dataObj[key] = value
+				return storage.set(dataObj);			
+			}			
 		}	
 	}	
 
 	// this updates the local data when background storage changes
 	function localUpdate(prop, value) {						
-		if (self[prop] !== value || (staticProps.indexOf(prop) > -1)) {
+		if (!Util.equivalent(self[prop], value) || (staticProps.indexOf(prop) > -1)) {
 			self[prop] = value;
 			fire(prop, value);
 			fire("dataUpdate", {});

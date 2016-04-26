@@ -24,6 +24,8 @@ DataManager = function() {
 
 	var syncCache = false	
 
+	var tasks  = [];
+
 	var tabListeners = {}
 	function listenOnTabData(tabId) {
 		return tabStorage.child(tabId).on("value", function(snapshot){
@@ -57,6 +59,8 @@ DataManager = function() {
 
 		var diff = Util.objectDiff(previous, update)
 		var diffKeys = Object.keys(diff);
+
+		console.log("jeys are diff", diffKeys, previous, update);
 
 		if (diffKeys.length) {	
 			console.log("updating global")		

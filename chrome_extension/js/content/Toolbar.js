@@ -76,15 +76,16 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 
 		hintButton.click(function() {
 			if (m.showHint) {				
-				m.setShowHint(null);
+				m.setShowHint(false);
 			} else {
-				m.setShowHint(m.tasks[m.taskIndex].name);
+				m.setShowHint(true);
 			}			
 		})
 
 		inspectButton.click(function() {
-			fire("xray");
+			m.setXray(Date.now());
 		})		
+
 		helpButton.click(function() {			
 			fire("help");
 		})
@@ -310,6 +311,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 			stopHintBlinking();
 			hintButton.html("Hide").removeClass("btn-primary").addClass("btn-danger")
 		} else {
+			console.log("changing hint button")
 			hintButton.html("Hint").removeClass("btn-danger").addClass("btn-primary")
 		}
 	}

@@ -56,5 +56,5 @@ AllClassUpdater = function(students) {
 				event.preventDefault();         
 			}     
 		}		
-	}
+	}	
 }

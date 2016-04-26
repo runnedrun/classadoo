@@ -1,26 +1,26 @@
 var $ = require("jquery");
 var React = require('react');
 require("./Util.js");
-require("./StudentUpdater.js");
 require("./ScratchUpdater.js");
 
 var StudentState = React.createClass({  
     componentWillMount: function() {
-      this.updater = new StudentUpdater(this.props.state.id);
+      this.studentUpdater = this.props.studentUpdaters[this.props.state.id];
       this.scratchUpdater = new ScratchUpdater(this.props.state.global.studentName);
     },
 
-    componentDidUpdate: function() {      
-      var staticDisplay = $(this.scratchDisplay).find(".static")      
-      hljs.highlightBlock(staticDisplay[0]);
-    },
+    // componentDidUpdate: function() {      
+    //   var staticDisplay = $(this.scratchDisplay).find(".static")      
+    //   hljs.highlightBlock(staticDisplay[0]);
+    // },
 
     getActiveTab: function() {
       var allTabs = this.props.state.tab;
       var activeTab;
       Object.keys(allTabs).forEach(function(tabId) {        
         if (allTabs[tabId].active) {
-          activeTab = allTabs[tabId]            
+          activeTab = allTabs[tabId]
+          activeTab.id = tabId            
         }         
       })      
       return activeTab;
@@ -32,11 +32,11 @@ var StudentState = React.createClass({
 
     gotoScratchPadUrl: function(e) {      
       var url = Util.createScratchUrl(this.props.state.global.studentName)
-      this.updater.update({"gotoUrl": url});
+      this.studentUpdater.update({"gotoUrl": url});
     }, 
 
     resolveHelp: function(e) {
-      this.updater.update({needsHelp: false})
+      this.studentUpdater.update({needsHelp: false})
     },
 
     toggleScratchDisplay: function() {
@@ -80,10 +80,33 @@ var StudentState = React.createClass({
 
     completeTask: function() {
       var nextTask = this.props.state.global.taskIndex + 1; 
-      this.updater.update({taskIndex: nextTask});
+      this.studentUpdater.update({taskIndex: nextTask});
+    },
+
+    showScreenshot: function() {      
+      this.props.streamManager.screenshot(this.props.state.id);
+    },
+
+    startStream: function() {
+      this.props.streamManager.start(this.props.state.id);
+    },
+
+    stopStream: function() {
+      this.props.streamManager.stop(this.props.state.id);
+    },
+
+    screenshot: function() {
+      this.props.streamManager.screenshot(this.props.state.id)
+    },
+
+    setActiveTabFun: function(props) {
+      var self = this;
+      return function() { self.studentUpdater.updateTab(self.getActiveTab().id, props) }
     },
 
     render: function() {      
+      var self = this; 
+
       var helpIndicator;
       if (this.props.state.global.needsHelp) {        
         helpIndicator = (
@@ -107,7 +130,70 @@ var StudentState = React.createClass({
         </div>)
       }
 
+      var toggleHintButton;
+      var hintShown = this.props.state.global.showHint
+      if (hintShown) {
+        toggleHintButton = 
+            <a className="hide-hint" href="#" onClick={ this.studentUpdater.updateFun({showHint: false}) }>Hide Hint</a>
+      } else {
+        toggleHintButton = 
+            <a className="show-hint" href="#" onClick={ this.studentUpdater.updateFun({showHint: true, hintAllowed: true}) }>Show Hint</a>
+      }
+
+      var toggleHintPromptButton;
+      var promptHint = this.props.state.global.promptHint
+      if (promptHint) {
+        toggleHintPromptButton = 
+            <a className="stop-prompting-hint" href="#" onClick={ this.studentUpdater.updateFun({promptHint: false}) }>Stop Prompt</a>
+        
+      } else {
+        toggleHintPromptButton = 
+            <a className="prompt-hint" href="#" onClick={ this.studentUpdater.updateFun({promptHint: true, hintAllowed: true}) }>Prompt Hint</a>
+      }
+
+
+      var startOrStopStream;
+      var streamStarted = this.props.state.global.doScreenshare;      
+      console.log("stpooppo", streamStarted );
+      if (streamStarted) {
+        startOrStopStream = 
+            <a className="start-stream-button" href="#" onClick={this.stopStream}>stop</a>                    
+      } else {        
+        startOrStopStream = 
+            <a className="start-stream-button" href="#" onClick={this.startStream}>stream</a>                    
+      }
+
+      takeScreenshotButton = 
+          <a className="take-screenshot-button" href="#" onClick={ this.screenshot }>screenshot</a>              
+
+      var toggleToolbar;
+      if (this.getActiveTab().toolbarOpen) {
+        toggleToolbar = 
+            <a className="start-stream-button" href="#" onClick={this.setActiveTabFun({toolbarOpen: false})}>close</a>                    
+      } else {        
+        toggleToolbar = 
+            <a className="start-stream-button" href="#" onClick={this.setActiveTabFun({toolbarOpen: true})}>open</a>                    
+      }
+
       var doneWithTasks  = (Number(this.props.state.global.taskIndex) > Number(this.props.state.global.stopIndex)) ? "done" : ""
+
+      var clickIndicatorClass = ""
+      var click = this.props.state.global.backSyncClick
+      var text = "..."
+  
+      if (click && ((Date.now() - click.timestamp) < 2000)) {        
+        clickIndicatorClass = "recent-click" 
+        text = "clicked!"
+        setTimeout(function() {        
+          self.forceUpdate();
+        }, 2000)
+      }      
+
+      console.log("cli", clickIndicatorClass)
+      var clickIndicator = 
+        <div>
+          <span className={"click-indicator " + clickIndicatorClass} ref={(ref) => this.clickIndicator = ref}>{text} </span>
+        </div>      
 
       return(
         <div className={"task-" + this.props.state.global.taskIndex + " student-state col-md-3 " + doneWithTasks}>       
@@ -116,47 +202,30 @@ var StudentState = React.createClass({
             </h4>
 
             <div className="task-number">
-              Current Task: {this.props.state.global.taskIndex}
+              Current Task: {this.props.state.global.taskIndex} | {this.props.state.global.elapsedTime}
             </div>            
-
-            <div className="elapsed-time">
-              {this.props.state.global.elapsedTime}
+            <div>
+              {toggleHintButton} | {toggleHintPromptButton}
             </div> 
-
-            <a href={Util.createFiddleUrl(this.props.state.global.studentName)} target="_blank">
-              jsfiddle
-            </a>
-            {activeUrlLink}
-            {helpIndicator}
-
-            <div className="scratch-display-buttons">
-              <a href="#" className="complete-task" onClick={this.completeTask}>
-                complete
-              </a>
-
-              <a href="#" className="toggle-scratch-input" onClick={this.toggleScratchDisplay}>
-                toggle
-              </a>
-            </div>   
             
-            <div className="scratch-input" ref={(ref) => this.scratchDisplay = ref}>
-              <div className="input-group">
-                <input className="form-control scratchpad-append-input" type="text" onKeyDown={this.appendToScratchDisplay}/>
-              </div>         
-              <pre className="editable" onKeyUp={this.syncScratchDisplay} onKeyDown={this.makeScratchDisplayStatic} contentEditable="true">{this.props.state.scratchInput}</pre>
-              <pre className="static" onClick={this.showEditableScratchDisplay}><code>{this.props.state.scratchInput}</code></pre>
-            </div>
+            {activeUrlLink}
+            {toggleToolbar}
+            {clickIndicator}
+            {helpIndicator}                                   
 
             <div className="hidden-toggle text-center" onClick={this.toggleDisplay}>
               more...
             </div>
 
             <div className="hidden-fields" ref={(ref) => this.hiddenFields = ref}>
+              <div>
+                {startOrStopStream} | {takeScreenshotButton}
+              </div>            
               <div className="input-group url-input-group">
                 <label>
                   URL:
                 </label>
-                <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.updater.updateOnEnter}/>
+                <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.studentUpdater.updateOnEnter}/>
               </div>
 
               <button className="btn btn-primary goto-scratchpad" onClick={this.gotoScratchPadUrl}>Scratchpad</button>
@@ -168,11 +237,11 @@ var StudentState = React.createClass({
 
 StudentStatesDisplayRow = React.createClass({
     render: function() {
-      var classUpdater = this.props.classUpdater
+      var props = this.props
       return(
         <div className="row">
             {this.props.states.map(function(state) { 
-              return <StudentState classUpdater={classUpdater} key={state.global.studentName} state={state} />
+              return <StudentState {...props} key={state.global.studentName} state={state} />
             })}        	  
         </div>         
       )
@@ -193,12 +262,12 @@ StudentStatesDisplay = React.createClass({
       return rows
     },
 
-    render: function() {
-      var classUpdater = this.props.classUpdater
+    render: function() {      
+      var props = this.props;
       return(
         <div>
             {this.statesObjToRows().map(function(stateRow, i) {               
-              return <StudentStatesDisplayRow classUpdater={classUpdater} key={i} states={stateRow} />              
+              return <StudentStatesDisplayRow {...props} key={i} states={stateRow} />              
             })}           
         </div>         
       )

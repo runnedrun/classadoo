@@ -1,11 +1,11 @@
 LessonLoader = function(lessonRequest, dataManager) {
 	var self = this;	
-	var m = dataManager;
+	var m = dataManager;	
 
 	function loadAndSendLesson(lessonName, tabId) {		
 		loadLesson(lessonName) 		
-		.then(function(lessonText) {
-			Message.send(tabId, {lesson: lessonText});
+		.then(function(lessonText) {					
+			Message.send(tabId, {lesson: lessonText});			
 			// now that we know the lesson exists, set it in state			
 			m.globalSet({ lessonName: lessonName });			
 		})

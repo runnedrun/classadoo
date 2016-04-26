@@ -15,6 +15,8 @@ $(function() {
 		var backgroundDisplay = new BackgroundDisplay(manager);		
 		var helpManager = new HelpManager(manager);				
 		var scratchPadSJsRunner = new ScratchPadJsRunner();				
+		var xrayManager = new XRayManager(manager);
+		var pageSyncManager = new PageSyncManager(manager);
 
 		chrome.runtime.sendMessage({getToolbarHtml: true});
     	chrome.runtime.onMessage.addListener(

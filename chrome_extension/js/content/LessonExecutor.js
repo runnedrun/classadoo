@@ -12,5 +12,6 @@ LessonExecutor = function(dataManager) {
 		// this exec will set the var __importedLesson		
 		m.setTasks(__importedLesson);
 		!m.taskIndex && m.setTaskIndex(0);
+		m.setTaskNames(__importedLesson.map(function(t){ return t.name }))
 	}
 }

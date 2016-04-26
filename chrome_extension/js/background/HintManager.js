@@ -1,7 +1,7 @@
 HintManager = function(dataManager, hintPrefix) {
 	var m = dataManager
 	var hintWindow;
-	var savedWindowState = {};	
+	var savedWindowState = {};
 
 	function showHint(taskName) {
 		var hintUrl = hintPrefix + taskName + ".html"		
@@ -19,7 +19,7 @@ HintManager = function(dataManager, hintPrefix) {
 		})
 	}	
 
-	function openHintWindow(url) {
+function openHintWindow(url) {
 		chrome.system.display.getInfo(function(infos) {
 		 	// arbitarily select the first display
 		 	var info = infos[0];
@@ -52,20 +52,27 @@ HintManager = function(dataManager, hintPrefix) {
 	} 
 
 	function closeHint() {
-		if (savedWindowState)
-			console.log('updatingthis stufff', "Asdfss");
+		if (savedWindowState.id)			
 			chrome.windows.update(savedWindowState.id, {width: savedWindowState.width, left: savedWindowState.left});
 
 		if (hintWindow)
 			chrome.windows.remove(hintWindow.id);		
 	}
 
-	m.listenOnGlobalProp("showHint", function(taskName) {
-		console.log("showing hint!", taskName);
-		if (taskName) {
-			showHint(taskName)
+	m.listenOnGlobalProp("showHint", function(show) {		
+		var state = m.globalGet()
+
+		if (show && state.taskNames) {
+			showHint(state.taskNames[state.taskIndex || 0])
 		} else {
 			closeHint()
 		}
 	})	
+
+	chrome.windows.onRemoved.addListener(function(windowId) {		
+		if (windowId == hintWindow.id) {			
+			hintWindow = false;
+			m.globalSet({showHint: false});
+		}
+	})
 }

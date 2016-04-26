@@ -110,3 +110,11 @@
 .done {
 	background: lightgreen;
 }
+
+.screenshot-display {
+	width: 500px;
+}
+
+.recent-click {
+	background: lightblue;
+}

@@ -9,8 +9,6 @@ while (!chrome.runtime.getPlatformInfo) {
   // just putting this in here to make sure everything is ready before moving on    
 }
 
-var deferred = $.Deferred();
-
 var dataManager;
 
 chrome.management.getSelf(function(info) {  
@@ -36,6 +34,7 @@ chrome.management.getSelf(function(info) {
   new GotoUrlManger(dataManager);
   new ScratchpadAppendManager(dataManager);
   new PopupMessageManager(dataManager);  
+  new ScreenshotManager(dataManager);  
 })
 
 chrome.runtime.onMessage.addListener(

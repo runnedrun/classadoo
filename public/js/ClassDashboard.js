@@ -10,6 +10,10 @@ require("./Request.js");
 require("./firebase.min.js");
 require("./AllClassUpdater.js");
 require("./ScratchUpdater.js");
+require("./StudentUpdater.js");
+require("./ScreenshotDisplay.js");
+require("./State.js");
+require("./StreamManager.js");
 
 var students = {};
 // klass is defined globally by the template
@@ -24,8 +28,20 @@ if (location.host.indexOf("localhost") > -1) {
   	samplePrefix = "https://classadoo.github.io/lessons/samples/";  	
 }
 
+scratchTrackers = {
+
+}
+
+scratchUpdater = new AllClassScratchUpdater(students, scratchTrackers)
+
+var studentUpdaters = {
+
+}
+
 var LessonRequest = new Request(lessonsPrefix, "text", true);
 var SampleRequest = new Request(samplePrefix, "html", true);
+var DisplayState = new State(["screenshot", "screenshotId"], bigRender)
+var streamManager = new StreamManager(DisplayState, studentUpdaters);
 
 klass.update = function() {	
 	$.ajax({
@@ -49,13 +65,6 @@ klass.update = function() {
 	klass.updateCallback && klass.updateCallback(klass);
 }
 
-scratchTrackers = {
-
-}
-
-scratchUpdater = new AllClassScratchUpdater(students, scratchTrackers)
-
-
 $(function() {	
 	var state = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
 	state.on("value", function(snapshot) {
@@ -68,6 +77,12 @@ $(function() {
 		})
 
 		$.extend(students, filteredSnapshot);	
+
+		Object.keys(students).forEach(function(id) {
+			if (!studentUpdaters[id]) {
+				studentUpdaters[id] = new StudentUpdater(id);
+			} 
+		})
 		// trackScratchInputs(students);
 
 		updateDisplaysOnChanges();			
@@ -77,9 +92,8 @@ $(function() {
 })
 
 function updateDisplaysOnChanges() {
-	renderStudentStatesAndClassDisplay();
-	fetchAndRenderLesson(klass);		
-	renderClassControls();
+	bigRender();
+	fetchAndRenderLesson(klass);			
 }
 
 function trackScratchInputs(students) {	
@@ -100,7 +114,7 @@ function trackScratchInputs(students) {
 	})	
 }
 
-function renderStudentStatesAndClassDisplay() {	
+function bigRender() {	
 	var ids = Object.keys(students);
 
 	var statesWithIds = ids.map(function(id) {
@@ -123,15 +137,13 @@ function renderStudentStatesAndClassDisplay() {
 		if (obj.global.startTime) {			
 			obj.global["elapsedTime"] = Math.ceil((Date.now() - obj.global.startTime) / 1000);
 		}			
-		return obj	
+		return obj
 	})	
-	
-	ReactDOM.render(<ClassInfoDisplay numberOfStudents={alphaStates.length} klass={klass} />, document.getElementById("class-info-container"))   
-  	ReactDOM.render(<StudentStatesDisplay classUpdater={classUpdater} studentStates={alphaStates} />, document.getElementById("student-state-wrapper"))   
-}
 
-function renderClassControls() {
-	ReactDOM.render(<ClassControls scratchUpdater={scratchUpdater} classUpdater={classUpdater} students={students} />, document.getElementById("class-controls"));
+	ReactDOM.render(<ClassInfoDisplay numberOfStudents={alphaStates.length} klass={klass} />, document.getElementById("class-info-container"))   
+  	ReactDOM.render(<StudentStatesDisplay streamManager={streamManager} studentUpdaters={studentUpdaters} classUpdater={classUpdater} studentStates={alphaStates} />, document.getElementById("student-state-wrapper"))   
+  	ReactDOM.render(<ScreenshotDisplay students={students} displayState={DisplayState} />, document.getElementById("screenshot-display"));
+  	ReactDOM.render(<ClassControls scratchUpdater={scratchUpdater} classUpdater={classUpdater} students={students} />, document.getElementById("class-controls"));
 }
 
 function renderLessonControls(lesson) {

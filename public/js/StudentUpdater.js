@@ -4,6 +4,12 @@ StudentUpdater = function(studentId) {
 	var self = this
 	var ref = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
 
+	self.updateFun = function(props) {
+		return function() {
+			self.update(props);
+		}
+	}
+
 	self.update = function(props) {	  	  			
 		var state = ref.child("" + studentId + "/state/global");      		
 		state.update(props)		
@@ -36,4 +42,10 @@ StudentUpdater = function(studentId) {
 			event.preventDefault();         
 		}     
 	}
+
+	self.updateTab = function(tabId, props) {	  	  			
+		console.log("asdfas", tabId, props)
+		var state = ref.child("" + studentId + "/state/tab/" + tabId);      		
+		state.update(props)		
+	}  	
 }
