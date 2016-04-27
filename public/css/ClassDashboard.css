@@ -103,8 +103,8 @@
 	cursor: pointer;
 }
 
-.call-back-btn {
-	margin-top:10px;
+.class-controls .btn {
+	margin-top: 5px;
 }
 
 .done {

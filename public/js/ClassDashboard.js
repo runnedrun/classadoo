@@ -83,7 +83,7 @@ $(function() {
 				studentUpdaters[id] = new StudentUpdater(id);
 			} 
 		})
-		// trackScratchInputs(students);
+		// buildSratchTrackers(students);
 
 		updateDisplaysOnChanges();			
 	})
@@ -96,23 +96,23 @@ function updateDisplaysOnChanges() {
 	fetchAndRenderLesson(klass);			
 }
 
-function trackScratchInputs(students) {	
-	Object.keys(students).forEach(function(id) {
-		var student = students[id];
-		var scratchId = Util.createScratchId(student.state.global.studentName);
-		if (!scratchTrackers[id]) {
-			var ref = new Firebase("scratchpad.firebaseio.com/" + scratchId);
-			ref.on("value", function(snapshot) {
-				var val = snapshot.val();
-				scratchTrackers[id].input = val.editor.code;				
-				updateDisplaysOnChanges()				
-			})
+// function trackScratchInputs(students) {	
+// 	Object.keys(students).forEach(function(id) {
+// 		var student = students[id];
+// 		var scratchId = Util.createScratchId(student.state.global.studentName);
+// 		if (!scratchTrackers[id]) {
+// 			var ref = new Firebase("scratchpad.firebaseio.com/" + scratchId);
+// 			ref.on("value", function(snapshot) {
+// 				var val = snapshot.val();
+// 				scratchTrackers[id].input = val.editor.code;				
+// 				updateDisplaysOnChanges()				
+// 			})
 
-			scratchTrackers[id] = {}
-			scratchTrackers[id].ref = ref			
-		}					
-	})	
-}
+// 			scratchTrackers[id] = {}
+// 			scratchTrackers[id].ref = ref			
+// 		}					
+// 	})	
+// }
 
 function bigRender() {	
 	var ids = Object.keys(students);
@@ -143,7 +143,7 @@ function bigRender() {
 	ReactDOM.render(<ClassInfoDisplay numberOfStudents={alphaStates.length} klass={klass} />, document.getElementById("class-info-container"))   
   	ReactDOM.render(<StudentStatesDisplay streamManager={streamManager} studentUpdaters={studentUpdaters} classUpdater={classUpdater} studentStates={alphaStates} />, document.getElementById("student-state-wrapper"))   
   	ReactDOM.render(<ScreenshotDisplay students={students} displayState={DisplayState} />, document.getElementById("screenshot-display"));
-  	ReactDOM.render(<ClassControls scratchUpdater={scratchUpdater} classUpdater={classUpdater} students={students} />, document.getElementById("class-controls"));
+  	ReactDOM.render(<ClassControls classUpdater={classUpdater} students={students} />, document.getElementById("class-controls"));
 }
 
 function renderLessonControls(lesson) {

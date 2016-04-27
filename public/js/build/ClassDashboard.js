@@ -125,7 +125,7 @@
 					studentUpdaters[id] = new StudentUpdater(id);
 				}
 			});
-			// trackScratchInputs(students);
+			// buildSratchTrackers(students);
 
 			updateDisplaysOnChanges();
 		});
@@ -138,23 +138,23 @@
 		fetchAndRenderLesson(klass);
 	}
 
-	function trackScratchInputs(students) {
-		Object.keys(students).forEach(function (id) {
-			var student = students[id];
-			var scratchId = Util.createScratchId(student.state.global.studentName);
-			if (!scratchTrackers[id]) {
-				var ref = new Firebase("scratchpad.firebaseio.com/" + scratchId);
-				ref.on("value", function (snapshot) {
-					var val = snapshot.val();
-					scratchTrackers[id].input = val.editor.code;
-					updateDisplaysOnChanges();
-				});
+	// function trackScratchInputs(students) {	
+	// 	Object.keys(students).forEach(function(id) {
+	// 		var student = students[id];
+	// 		var scratchId = Util.createScratchId(student.state.global.studentName);
+	// 		if (!scratchTrackers[id]) {
+	// 			var ref = new Firebase("scratchpad.firebaseio.com/" + scratchId);
+	// 			ref.on("value", function(snapshot) {
+	// 				var val = snapshot.val();
+	// 				scratchTrackers[id].input = val.editor.code;				
+	// 				updateDisplaysOnChanges()				
+	// 			})
 
-				scratchTrackers[id] = {};
-				scratchTrackers[id].ref = ref;
-			}
-		});
-	}
+	// 			scratchTrackers[id] = {}
+	// 			scratchTrackers[id].ref = ref			
+	// 		}					
+	// 	})	
+	// }
 
 	function bigRender() {
 		var ids = Object.keys(students);
@@ -185,7 +185,7 @@
 		ReactDOM.render(React.createElement(ClassInfoDisplay, { numberOfStudents: alphaStates.length, klass: klass }), document.getElementById("class-info-container"));
 		ReactDOM.render(React.createElement(StudentStatesDisplay, { streamManager: streamManager, studentUpdaters: studentUpdaters, classUpdater: classUpdater, studentStates: alphaStates }), document.getElementById("student-state-wrapper"));
 		ReactDOM.render(React.createElement(ScreenshotDisplay, { students: students, displayState: DisplayState }), document.getElementById("screenshot-display"));
-		ReactDOM.render(React.createElement(ClassControls, { scratchUpdater: scratchUpdater, classUpdater: classUpdater, students: students }), document.getElementById("class-controls"));
+		ReactDOM.render(React.createElement(ClassControls, { classUpdater: classUpdater, students: students }), document.getElementById("class-controls"));
 	}
 
 	function renderLessonControls(lesson) {
@@ -21770,6 +21770,10 @@
 	    this.props.classUpdater.update({ popupMessage: message });
 	  },
 
+	  openToolbars: function () {
+	    this.props.classUpdater.updateForActiveTab({ toolbarOpen: true });
+	  },
+
 	  closeAllScratchDisplays: function () {
 	    $(".scratch-input").toggle();
 	  },
@@ -21781,7 +21785,7 @@
 	  render: function () {
 	    return React.createElement(
 	      "div",
-	      { className: "div" },
+	      { className: "class-controls" },
 	      React.createElement(
 	        "div",
 	        { className: "row" },
@@ -21824,7 +21828,7 @@
 	              { className: "input-group-addon" },
 	              "Write:"
 	            ),
-	            React.createElement("textarea", { className: "form-control scratch-append", type: "text", "data-field": "appendToScratchpad", onKeyDown: this.appendToScratch })
+	            React.createElement("textarea", { className: "form-control scratch-append", type: "text", "data-field": "appendToScratchpad", onKeyDown: this.props.classUpdater.updateOnEnter() })
 	          )
 	        ),
 	        React.createElement(
@@ -21839,6 +21843,11 @@
 	            "button",
 	            { className: "btn btn-danger call-back-btn", onClick: this.callClassBack },
 	            "Call Back"
+	          ),
+	          React.createElement(
+	            "button",
+	            { className: "btn btn-primary open-toolbar-btn", onClick: this.openToolbars },
+	            "Open"
 	          )
 	        )
 	      )
@@ -21975,14 +21984,13 @@
 	var $ = __webpack_require__(1);
 	var React = __webpack_require__(2);
 	__webpack_require__(160);
-	__webpack_require__(168);
+	// require("./ScratchUpdater.js");
 
 	var StudentState = React.createClass({
 	  displayName: "StudentState",
 
 	  componentWillMount: function () {
 	    this.studentUpdater = this.props.studentUpdaters[this.props.state.id];
-	    this.scratchUpdater = new ScratchUpdater(this.props.state.global.studentName);
 	  },
 
 	  // componentDidUpdate: function() {     
@@ -22035,23 +22043,6 @@
 	      e.preventDefault();
 	      e.stopPropagation();
 	    };
-	  },
-
-	  syncScratchDisplay: function (e) {
-	    var content = $(e.currentTarget).text();
-	    this.scratchUpdater.update(content);
-	  },
-
-	  appendToScratchDisplay: function (e) {
-	    var enterKeyCode = 13;
-	    console.log(e);
-
-	    if (e.keyCode === enterKeyCode && !e.shiftKey) {
-	      var content = $(e.currentTarget).val();
-	      var currentContent = this.props.state.scratchInput;
-
-	      this.scratchUpdater.update(content + "\n\n" + this.props.state.scratchInput);
-	    }
 	  },
 
 	  completeTask: function () {
@@ -22150,7 +22141,6 @@
 
 	    var startOrStopStream;
 	    var streamStarted = this.props.state.global.doScreenshare;
-	    console.log("stpooppo", streamStarted);
 	    if (streamStarted) {
 	      startOrStopStream = React.createElement(
 	        "a",
@@ -22172,7 +22162,7 @@
 	    );
 
 	    var toggleToolbar;
-	    if (this.getActiveTab().toolbarOpen) {
+	    if (this.getActiveTab() && this.getActiveTab().toolbarOpen) {
 	      toggleToolbar = React.createElement(
 	        "a",
 	        { className: "start-stream-button", href: "#", onClick: this.setActiveTabFun({ toolbarOpen: false }) },
@@ -22200,7 +22190,6 @@
 	      }, 2000);
 	    }
 
-	    console.log("cli", clickIndicatorClass);
 	    var clickIndicator = React.createElement(
 	      "div",
 	      null,
@@ -22227,6 +22216,15 @@
 	        this.props.state.global.taskIndex,
 	        " | ",
 	        this.props.state.global.elapsedTime
+	      ),
+	      React.createElement(
+	        "div",
+	        null,
+	        React.createElement(
+	          "a",
+	          { onClick: this.completeTask },
+	          "complete Task"
+	        )
 	      ),
 	      React.createElement(
 	        "div",
@@ -22395,7 +22393,7 @@
 			return function (event) {
 				var enterKeyCode = 13;
 
-				if (event.keyCode === enterKeyCode) {
+				if (event.keyCode === enterKeyCode && !event.shiftKey) {
 					console.log("updating on enter");
 					var target = $(event.target);
 					var field = target.data("field");
@@ -22416,6 +22414,25 @@
 				}
 			};
 		};
+
+		self.updateForActiveTab = function (prop) {
+			Object.keys(students).forEach(function (id) {
+				var activeTabId = getActiveTab(id).id;
+				ref.child("" + id + "/state/tab/" + activeTabId).update(prop);
+			});
+		};
+
+		function getActiveTab(id) {
+			var allTabs = students[id].state.tab;
+			var activeTab;
+			Object.keys(allTabs).forEach(function (tabId) {
+				if (allTabs[tabId].active) {
+					activeTab = allTabs[tabId];
+					activeTab.id = tabId;
+				}
+			});
+			return activeTab;
+		}
 	};
 
 /***/ },
@@ -22567,12 +22584,25 @@
 	  displayName: "ScreenshotDisplay",
 
 	  render: function () {
+	    var self = this;
 	    var dataUrl;
 
 	    var display;
-	    var screenShotStudent = this.props.students[this.props.displayState.screenshotId];
-	    if (screenShotStudent) {
-	      display = React.createElement("img", { className: "screenshot-display", src: screenShotStudent.state.global.screenshot });
+	    var screenShots = Object.keys(this.props.students).map(function (id) {
+	      var student = self.props.students[id];
+	      if (student.state.global.screenshot && student.state.global.screenshot.timestamp) {
+	        return student.state.global.screenshot;
+	      }
+	    });
+
+	    screenShots.sort(function (a, b) {
+	      return b - a;
+	    });
+
+	    var screenshotToShow = screenShots[0];
+
+	    if (screenshotToShow) {
+	      display = React.createElement("img", { className: "screenshot-display", src: screenshotToShow.img });
 	    } else {
 	      display = React.createElement("img", null);
 	    }
@@ -22623,11 +22653,13 @@
 		var currentStudent;
 
 		this.start = function (studentId) {
+			console.log(currentStudent, studentId);
 			if (currentStudent && currentStudent != studentId) {
-				studentUpdaters[studentId].update({ doScreenshare: false, screenshot: false });
+				studentUpdaters[currentStudent].update({ doScreenshare: false, screenshot: false });
 			}
 
 			studentUpdaters[studentId].update({ doScreenshare: 1000 });
+			currentStudent = studentId;
 			displayState.setScreenshotId(studentId);
 		};
 

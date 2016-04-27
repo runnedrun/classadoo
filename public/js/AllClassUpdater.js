@@ -36,7 +36,7 @@ AllClassUpdater = function(students) {
 		return function(event) {
 			var enterKeyCode = 13;  
 
-			if (event.keyCode === enterKeyCode) {
+			if (event.keyCode === enterKeyCode && !event.shiftKey) {
 				console.log("updating on enter");
 				var target = $(event.target);
 				var field = target.data("field");
@@ -57,4 +57,23 @@ AllClassUpdater = function(students) {
 			}     
 		}		
 	}	
+
+	self.updateForActiveTab = function(prop) {
+		Object.keys(students).forEach(function(id) {
+			var activeTabId = getActiveTab(id).id;
+			ref.child("" + id + "/state/tab/" + activeTabId).update(prop);
+		})		
+	}
+
+	function getActiveTab(id) {
+      var allTabs = students[id].state.tab;
+      var activeTab;
+      Object.keys(allTabs).forEach(function(tabId) {        
+        if (allTabs[tabId].active) {
+          activeTab = allTabs[tabId]
+          activeTab.id = tabId            
+        }         
+      })      
+      return activeTab;
+    }
 }

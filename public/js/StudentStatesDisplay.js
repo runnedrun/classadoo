@@ -1,12 +1,11 @@
 var $ = require("jquery");
 var React = require('react');
 require("./Util.js");
-require("./ScratchUpdater.js");
+// require("./ScratchUpdater.js");
 
 var StudentState = React.createClass({  
     componentWillMount: function() {
-      this.studentUpdater = this.props.studentUpdaters[this.props.state.id];
-      this.scratchUpdater = new ScratchUpdater(this.props.state.global.studentName);
+      this.studentUpdater = this.props.studentUpdaters[this.props.state.id];      
     },
 
     // componentDidUpdate: function() {      
@@ -59,23 +58,6 @@ var StudentState = React.createClass({
         e.preventDefault();
         e.stopPropagation();
       };
-    },
-
-    syncScratchDisplay: function(e) {                      
-      var content = $(e.currentTarget).text();
-      this.scratchUpdater.update(content);
-    },    
-
-    appendToScratchDisplay: function(e) {
-      var enterKeyCode = 13;  
-      console.log(e);
-
-      if (e.keyCode === enterKeyCode && !e.shiftKey) {
-        var content = $(e.currentTarget).val();
-        var currentContent = this.props.state.scratchInput
-
-        this.scratchUpdater.update(content + "\n\n" + this.props.state.scratchInput);
-      }
     },
 
     completeTask: function() {
@@ -154,7 +136,6 @@ var StudentState = React.createClass({
 
       var startOrStopStream;
       var streamStarted = this.props.state.global.doScreenshare;      
-      console.log("stpooppo", streamStarted );
       if (streamStarted) {
         startOrStopStream = 
             <a className="start-stream-button" href="#" onClick={this.stopStream}>stop</a>                    
@@ -167,7 +148,7 @@ var StudentState = React.createClass({
           <a className="take-screenshot-button" href="#" onClick={ this.screenshot }>screenshot</a>              
 
       var toggleToolbar;
-      if (this.getActiveTab().toolbarOpen) {
+      if (this.getActiveTab() && this.getActiveTab().toolbarOpen) {
         toggleToolbar = 
             <a className="start-stream-button" href="#" onClick={this.setActiveTabFun({toolbarOpen: false})}>close</a>                    
       } else {        
@@ -189,7 +170,6 @@ var StudentState = React.createClass({
         }, 2000)
       }      
 
-      console.log("cli", clickIndicatorClass)
       var clickIndicator = 
         <div>
           <span className={"click-indicator " + clickIndicatorClass} ref={(ref) => this.clickIndicator = ref}>{text} </span>
@@ -203,10 +183,13 @@ var StudentState = React.createClass({
 
             <div className="task-number">
               Current Task: {this.props.state.global.taskIndex} | {this.props.state.global.elapsedTime}
-            </div>            
+            </div> 
+            <div>
+              <a onClick={this.completeTask}>complete Task</a>
+            </div>                      
             <div>
               {toggleHintButton} | {toggleHintPromptButton}
-            </div> 
+            </div>           
             
             {activeUrlLink}
             {toggleToolbar}

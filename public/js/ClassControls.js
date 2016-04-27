@@ -46,6 +46,10 @@ ClassControls = React.createClass({
     this.props.classUpdater.update({popupMessage: message})
   },  
 
+  openToolbars: function() {
+    this.props.classUpdater.updateForActiveTab({toolbarOpen: true});
+  },
+
   closeAllScratchDisplays: function() {
     $(".scratch-input").toggle();
   },
@@ -56,7 +60,7 @@ ClassControls = React.createClass({
 
   render: function() {
     return(
-      <div className="div">       
+      <div className="class-controls">       
         <div className="row">       
           <div className="col-md-4">
               <div className="input-group">
@@ -76,12 +80,13 @@ ClassControls = React.createClass({
                 <span className="input-group-addon">
                   Write:
                 </span>
-                <textarea className="form-control scratch-append" type="text" data-field="appendToScratchpad" onKeyDown={this.appendToScratch}/>
+                <textarea className="form-control scratch-append" type="text" data-field="appendToScratchpad" onKeyDown={this.props.classUpdater.updateOnEnter()}/>
               </div>            
           </div>
           <div className="col-md-2">
             <button className="btn btn-warning warn-btn" onClick={this.warnClass}>Warn</button>
-            <button className="btn btn-danger call-back-btn" onClick={this.callClassBack}>Call Back</button>          
+            <button className="btn btn-danger call-back-btn" onClick={this.callClassBack}>Call Back</button>
+            <button className="btn btn-primary open-toolbar-btn" onClick={this.openToolbars}>Open</button>
           </div>        
         </div>        
       </div>         
