@@ -7,6 +7,7 @@ DataManager = function(parentRef, classRef) {
 
 	var tabCache = {}
 	var globalCache = {}	
+	var classCache = {}	
 
 	var syncCache = false	
 
@@ -47,13 +48,40 @@ DataManager = function(parentRef, classRef) {
 			diffKeys.forEach(function(key) {
 				fire("global-" + key, diff[key]);
 			})			
-						
-			// if (diffKeys.indexOf("chatOpen") > -1) {
-			Message.sendToAllTabs({ storageUpdate: { type: "global", data: update } });				
+
+			sendGlobalUpdateMessage()
+			// if (diffKeys.indexOf("chatOpen") > -1) {									
 			// } else {
 				// Message.sendToOpenTabs({ storageUpdate: { type: "global", data: update } });
 			// }
 		}
+	}
+
+	function localClassUpdate(update) {		
+		var previous = classCache || {}
+
+		var diff = Util.objectDiff(previous, update)
+		var diffKeys = Object.keys(diff);		
+
+		if (diffKeys.length) {			
+			classCache = update;
+
+			diffKeys.forEach(function(key) {
+				fire("global-" + key, diff[key]);
+			})			
+
+
+			sendGlobalUpdateMessage()
+			// if (diffKeys.indexOf("chatOpen") > -1) {						
+			
+			// } else {
+				// Message.sendToOpenTabs({ storageUpdate: { type: "global", data: update } });
+			// }
+		}
+	}
+
+	function sendGlobalUpdateMessage() {
+		Message.sendToAllTabs({ storageUpdate: { type: "global", data: Util.extend(globalCache, classCache) } });					
 	}
 	
 
@@ -61,9 +89,8 @@ DataManager = function(parentRef, classRef) {
 		localGlobalUpdate(snapshot.val());
 	})
 
-	classStorage.on("value", function(snapshot) {				
-		console.log("udpating class prop", snapshot.val());
-		localGlobalUpdate(snapshot.val());
+	classStorage.on("value", function(snapshot) {					
+		localClassUpdate(snapshot.val());
 	})
 
 	function listenOnTabData(tabId) {
@@ -100,16 +127,17 @@ DataManager = function(parentRef, classRef) {
 
 	self.globalClear = function(tabId) {		
 		localGlobalUpdate({});
+		localClassUpdate({});
 		globalStorage.remove();
+		classStorage.remove();
 	}
 
 	self.globalSet = function(props) {		
 		localGlobalUpdate(Util.extend(globalCache, props));
-
 		if (globalCache.studentName || props.studentName) {					
 			if (syncCache) {
 				syncCaches()
-			} else{				
+			} else{								
 				globalStorage.update(props);					
 			}
 		} else {
@@ -129,6 +157,10 @@ DataManager = function(parentRef, classRef) {
 
 	self.globalGet = function() {
 		return globalCache || {}
+	}
+
+	self.classGet = function() {
+		return classCache || {}
 	}
  
 	self.getAllTabs = function() { return tabCache }

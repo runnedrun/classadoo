@@ -22260,13 +22260,13 @@
 						if (message.isStudent) {
 							return React.createElement(
 								"div",
-								{ className: "theirs" },
+								{ key: message.timestamp, className: "theirs" },
 								message.text
 							);
 						} else {
 							return React.createElement(
 								"div",
-								{ className: "yours" },
+								{ key: message.timestamp, className: "yours" },
 								message.text
 							);
 						}
@@ -22341,7 +22341,7 @@
 	    });
 
 	    screenShots.sort(function (a, b) {
-	      return b - a;
+	      return b.timestamp - a.timestamp;
 	    });
 
 	    var screenshotToShow = screenShots[0];

@@ -9,7 +9,7 @@ DataManager = function(startingState) {
 		"startTime", "connectedToBackend", "needsHelp", "promptHint",
 		"showHint", "hintAllowed", "taskNames", "xray", "syncClick", 
 		"syncHover", "syncHighlight", "backSyncClick", "chatOpen",
-		"chatHistory"];
+		"chatHistory", "scratchPreviewShown", "lockScratch"];
 	var staticProps = ["url"];
 	var tabProps = ["toolbarOpen", "active"];
 	var readOnlyProps = ["syncedScratchInput", "syncingScratch"]; 
@@ -18,14 +18,14 @@ DataManager = function(startingState) {
 	function set(key, storage, getState) {
 		return function (value) {				
 			var dataObj = {}			
-			dataObj[key] = value			
+			dataObj[key] = value				
 			return storage.set(dataObj);						
 		}	
 	}	
 
 	// this updates the local data when background storage changes
-	function localUpdate(prop, value) {				
-		if (!Util.equivalent(self[prop], value) || (staticProps.indexOf(prop) > -1)) {
+	function localUpdate(prop, value) {
+		if (!Util.equivalent(self[prop], value) || (staticProps.indexOf(prop) > -1)) {			
 			self[prop] = value;
 			fire(prop, value);
 			fire("dataUpdate", {});

@@ -8,8 +8,11 @@ $(function() {
     			var data = request.initData
     			var toolbarIframe = $("<iframe>");
     			var chatIframe = $("<iframe>");
+    			var scratchPreviewIframe = $("<iframe>");
     			var toolbarHtml = data.toolbarHtml;
-    			var chatHtml = data.chatHtml;
+    			var chatHtml = data.chatHtml;    			
+    			var scratchPreviewHtml = data.scratchPreviewHtml;
+
     			var globalData = data.globalData;
     			var tabData = data.tabData;
 
@@ -24,10 +27,12 @@ $(function() {
     			var scratchPadSJsRunner = new ScratchPadJsRunner();				
     			var xrayManager = new XRayManager(manager);
     			var pageSyncManager = new PageSyncManager(manager);	  
-    			var scratchSyncManager = new ScratchSyncManager(manager);	  
+
 
     			var toolbarDeferred = new $.Deferred()
     			var chatDeferred = new $.Deferred()
+    			var scratchPreviewDeferred = new $.Deferred()
+
     			new Toolbar(toolbarIframe, toolbarHtml, manager, function() {
     				toolbarDeferred.resolve();   				
     			});	
@@ -35,8 +40,17 @@ $(function() {
     			new ChatWindow(chatIframe, chatHtml, manager, function() {
     				chatDeferred.resolve();
     			});	
+
+    			if (window.location.href.indexOf("scratchpad.io")) {
+    				new ScratchSyncManager(scratchPreviewIframe, scratchPreviewHtml, manager, function() {
+    					scratchPreviewDeferred.resolve()
+    				});
+    			} else {
+    				scratchPreviewDeferred.resolve()
+    			}
     			
-    			$.when(toolbarDeferred, chatDeferred).then(function() {
+    			$.when(toolbarDeferred, chatDeferred, scratchPreviewDeferred).then(function() {    				
+    				console.log("init", data);
     				manager.initialEvents();    			
     			})
 			}								

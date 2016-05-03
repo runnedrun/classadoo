@@ -21,18 +21,17 @@
             "js/background/BackgroundDataManager.js", "js/background/main.js"            
         ]
     },
-    "content_scripts": [
+    "content_scripts": [        
         {
             "matches": ["<all_urls>"],            
-            "js": ["third_party/jquery.js",
-                "js/content/StorageAccess.js",
-                "js/content/DefaultCss.js", "js/content/IframeManager.js", "js/content/Util.js",
+            "js": ["third_party/jquery.js", "js/content/StorageAccess.js",
+                "js/content/DefaultCss.js", "js/content/IframeManager.js", "js/content/Util.js", "third_party/highlight.pack.js",
                 "js/content/LessonManager.js", "js/content/ProgressBar.js", "js/content/PageSyncManager.js",
                 "js/content/LessonExecutor.js", "js/content/BackgroundDisplay.js", "js/content/HelpManager.js",
                 "js/content/BindingUtils.js", "js/content/RemoteUpdateManager.js", "js/content/DataManager.js",
                 "js/content/LoginManager.js", "js/content/XRayManager.js", "js/content/ModifyPageForToolbar.js",
-                "js/content/Toolbar.js", "js/content/ChatWindow.js", "js/content/ScratchSyncManager.js",
-                 "js/content/ButterBar.js", "js/content/ScratchPadJsRunner.js", "js/content/main.js"
+                "js/content/Toolbar.js", "js/content/ChatWindow.js", "js/content/ScratchSyncManager.js",                
+                 "js/content/ButterBar.js", "js/content/ScratchPadJsRunner.js", "js/content/main.js" 
                 ],
             "run_at": "document_start"            
         }, 
@@ -40,7 +39,7 @@
             "matches": ["*://classadoo.github.io/lessons/samples/*", "http://localhost:8000/samples/*"],
             "js": ["third_party/jquery.js", "js/content/HintModifier.js"],
             "run_at": "document_start" 
-        }        
+        }
     ],
     "permissions": [
         "<all_urls>", "*://*/*", "tabs", "cookies", "storage", "desktopCapture",  "tabCapture", "system.display"
@@ -48,6 +47,6 @@
     "externally_connectable": {
         "matches": ["*://*.classadoo.com/*", "http://localhost:3000/*"]
     },
-    "web_accessible_resources": ["css/*", "fonts/*", "x-ray/static-files/*"],
+    "web_accessible_resources": ["css/*", "fonts/*", "x-ray/static-files/*",  "third_party/*"],
     "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'"
 }

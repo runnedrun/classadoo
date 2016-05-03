@@ -57,11 +57,24 @@ chrome.runtime.onMessage.addListener(
    function(request, sender, sendResponse) {              
       if (request.init) {        
         var tabId = sender.tab.id
-        var globalData = dataManager.globalGet();
+        var globalData = dataManager.globalGet();        
+        var classData = dataManager.classGet();
         var tabData = dataManager.tabGet(tabId);
 
-        $.when(getIframeHtml("toolbar"), getIframeHtml("chat")).then(function(toolbarHtml, chatHtml) {
-          chrome.tabs.sendMessage(tabId, {initData: { toolbarHtml: toolbarHtml, chatHtml: chatHtml, globalData: globalData, tabData: tabData } });          
+        $.when(
+          getIframeHtml("toolbar", ["bootstrap.min", "toolbar"]), 
+          getIframeHtml("chat", ["bootstrap.min", "chat"]), 
+          getIframeHtml("scratch-preview", ["scratch-preview"])
+        ).then(function(toolbarHtml, chatHtml, previewHtml) {
+          chrome.tabs.sendMessage(tabId, {
+            initData: { 
+              toolbarHtml: toolbarHtml,
+              chatHtml: chatHtml, 
+              scratchPreviewHtml: previewHtml,
+              globalData: Util.extend(globalData, classData), 
+              tabData: tabData 
+            } 
+          });          
         })        
         
         return true
@@ -77,13 +90,23 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   }  
 })
 
-function getIframeHtml(fileName) {
+function getIframeHtml(fileName, cssFiles, jsFiles) {
   var doc = document.implementation.createHTMLDocument().documentElement;    
-  var bootstrapCss = $("<link rel='stylesheet'></link>");
-  var css = $("<link rel='stylesheet'></link>");
-  bootstrapCss.attr("href", chrome.extension.getURL("css/bootstrap.min.css"));
-  css.attr("href", chrome.extension.getURL("css/" + fileName + ".css"));    
+  var cssFiles = cssFiles || []
+  var jsFiles = jsFiles || []
 
+  var cssTags = cssFiles.map(function(fileName) {
+    var tag = $("<link rel='stylesheet'></link>");
+    tag.attr("href", chrome.extension.getURL("css/" + fileName + ".css"));  
+    return tag
+  })
+  
+  var jsTags = jsFiles.map(function(fileName) {
+    var tag = $("<script type='text/javascript'></script>");
+    tag.attr("src", chrome.extension.getURL("third_party/" + fileName + ".js"));  
+    return tag
+  })
+  
   var deferredHtml = $.ajax({
       url: "/html/" + fileName + ".html",
       type: "get"      
@@ -92,7 +115,8 @@ function getIframeHtml(fileName) {
   return deferredHtml.then(function(html){
       doc.innerHTML = html;
       var $html = $(doc);
-      addTagsToHead($html, [bootstrapCss, css])
+      var tags = cssTags.concat(jsTags);
+      addTagsToHead($html, tags)
       return doc.outerHTML;      
   }); 
 }
