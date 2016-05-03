@@ -9,14 +9,24 @@ VolatileProperties = function(dataManager) {
 		var self = this;
 
 		chrome.tabs.onActivated.addListener(function(activeInfo) {
+			setActiveTab(activeInfo.tabId)						
+		})			
+
+		chrome.tabs.onUpdated.addListener(function(tabId, changeInfo){
+		  if (changeInfo.url === undefined){
+		    setActiveTab(tabId)
+		  }
+		});
+
+		function setActiveTab(tabId) {
 			var allTabs = m.getAllTabs()
 			Object.keys(allTabs).map(function(tabId) {
 				if (allTabs[tabId] && allTabs[tabId].active && !(lastRemovedTab == tabId)) {												
 					m.tabSet(tabId, {active: false})
 				}					
 			})				
-			m.tabSet(activeInfo.tabId, { "active": true });							
-		})			
+			m.tabSet(tabId, { "active": true });	
+		}
 	}
 
 	TabRemoved = function() {

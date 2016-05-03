@@ -21700,8 +21700,19 @@
 	    this.classUpdater.update({ xray: Date.now() });
 	  },
 
+	  remoteRestart: function () {
+	    this.classUpdater.update({ remoteRestart: Date.now() });
+	  },
+
+	  refreshActiveTabs: function () {
+	    Util.objectValues(this.studentUpdaters).forEach(function (updater) {
+	      updater.updateActiveTab({ remoteRefresh: Date.now() });
+	    });
+	  },
+
 	  render: function () {
 	    this.classUpdater = this.props.classState.allClassUpdater();
+	    this.studentUpdaters = this.props.classState.studentUpdaters();
 
 	    return React.createElement(
 	      "div",
@@ -21768,6 +21779,24 @@
 	            "button",
 	            { className: "btn btn-primary open-toolbar-btn", onClick: this.openToolbars },
 	            "Open"
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "row" },
+	        React.createElement(
+	          "div",
+	          { className: "col-md-2" },
+	          React.createElement(
+	            "button",
+	            { className: "btn btn-danger call-back-btn", onClick: this.remoteRestart },
+	            "Remote Restart"
+	          ),
+	          React.createElement(
+	            "button",
+	            { className: "btn btn-danger call-back-btn", onClick: this.refreshActiveTabs },
+	            "Refresh Active Tabs"
 	          )
 	        )
 	      )
@@ -21950,7 +21979,7 @@
 	  setActiveTabFun: function (props) {
 	    var self = this;
 	    return function () {
-	      self.studentUpdater.updateActiveTab(self.tab, props);
+	      self.studentUpdater.updateActiveTab(props);
 	    };
 	  },
 
@@ -22154,6 +22183,11 @@
 	          "button",
 	          { className: "btn btn-primary goto-scratchpad", onClick: this.gotoScratchPadUrl },
 	          "Scratchpad"
+	        ),
+	        React.createElement(
+	          "button",
+	          { className: "btn btn-primary goto-scratchpad", onClick: this.setActiveTabFun({ remoteRefresh: Date.now() }) },
+	          "Refresh"
 	        )
 	      )
 	    );
@@ -22234,7 +22268,7 @@
 				if (value != "") {
 					this.studentUpdater.push("chatHistory", { text: value, isStudent: false, timestamp: Firebase.ServerValue.TIMESTAMP });
 					this.studentUpdater.update({ "chatOpen": true });
-					this.studentUpdater.updateActiveTab(this.props.state.tab, { "toolbarOpen": true });
+					this.studentUpdater.updateActiveTab({ "toolbarOpen": true });
 				}
 
 				event.preventDefault();
@@ -22416,15 +22450,17 @@
 					simpleObj.tab = snap[key].state.tab;
 					simpleObj.id = key;
 
-					filteredSnapshot[key] = simpleObj;
+					if (students[key]) {
+						$.extend(students[key], simpleObj);
+					} else {
+						students[key] = simpleObj;
+					}
 				}
 			});
 
-			$.extend(students, filteredSnapshot);
-
 			Object.keys(students).forEach(function (id) {
 				if (!studentUpdaters[id]) {
-					studentUpdaters[id] = new StudentUpdater(ref, id);
+					studentUpdaters[id] = new StudentUpdater(ref, students[id]);
 				}
 			});
 
@@ -22433,6 +22469,10 @@
 
 		this.studentUpdater = function (id) {
 			return studentUpdaters[id];
+		};
+
+		this.studentUpdaters = function () {
+			return studentUpdaters;
 		};
 
 		this.allClassUpdater = function () {
@@ -22472,8 +22512,9 @@
 
 	$ = __webpack_require__(1);
 
-	StudentUpdater = function (parentRef, studentId) {
+	StudentUpdater = function (parentRef, student) {
 		var self = this;
+		var studentId = student.id;
 
 		var ref = parentRef.child(studentId);
 
@@ -22520,11 +22561,11 @@
 			state.update(props);
 		};
 
-		self.updateActiveTab = function (allTabs, props) {
+		self.updateActiveTab = function (props) {
 			var activeTabId;
-			Object.keys(allTabs).forEach(function (tabId) {
-				if (allTabs[tabId].active) {
-					activeTab = allTabs[tabId];
+			Object.keys(student.tab).forEach(function (tabId) {
+				if (student.tab[tabId].active) {
+					activeTab = student.tab[tabId];
 					activeTabId = tabId;
 				}
 			});

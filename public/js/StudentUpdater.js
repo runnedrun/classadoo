@@ -1,7 +1,8 @@
 $ = require("jquery")
 
-StudentUpdater = function(parentRef, studentId) {
+StudentUpdater = function(parentRef, student) {
 	var self = this
+	var studentId = student.id;
 
 	var ref = parentRef.child(studentId);
 
@@ -48,11 +49,11 @@ StudentUpdater = function(parentRef, studentId) {
 		state.update(props)		
 	}  	
 
-	self.updateActiveTab = function(allTabs, props) {		
+	self.updateActiveTab = function(props) {		
 		var activeTabId;
-		Object.keys(allTabs).forEach(function(tabId) {        
-		  if (allTabs[tabId].active) {
-		    activeTab = allTabs[tabId]
+		Object.keys(student.tab).forEach(function(tabId) {        
+		  if (student.tab[tabId].active) {
+		    activeTab = student.tab[tabId]
 		    activeTabId = tabId
 		  }         
 		})      

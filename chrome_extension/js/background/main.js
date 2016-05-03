@@ -51,6 +51,7 @@ chrome.management.getSelf(function(info) {
   new ScratchpadAppendManager(dataManager);
   new PopupMessageManager(dataManager);  
   new ScreenshotManager(dataManager);     
+  new RemoteRestartManager(dataManager);       
 })
 
 chrome.runtime.onMessage.addListener(

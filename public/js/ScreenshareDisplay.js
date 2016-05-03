@@ -1,7 +1,5 @@
 var $ = require("jquery");
 require("./RTCMultiConnection.js");
-// require("./websockets.min.js");
-require("./pubnub-socket.io.js");
 
 module.exports = function() {
     var params = {},

@@ -119,7 +119,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		fire("login", {lessonName: lessonName, studentName: studentName});				
 	}
 
-	function shrinkLeftSide() {				
+	function shrinkLeftSide() {						
 		initialDisplayWrapper.removeClass("col-xs-10").addClass("col-xs-6");				
 		logoWrapper.removeClass("col-xs-2").addClass("col-xs-6");
 		leftSideWrapper.removeClass("col-xs-12").addClass("col-xs-2");				
@@ -180,7 +180,8 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	}
 
 	// Called when we are continuing an existing lesson
-	function startLessonMode() {		
+	function startLessonMode() {			
+		console.log("what?");
 		initialDisplay.css({width: 0});
 		shrinkLeftSide();
 		classToggle.html("Leave").removeClass("btn-success").addClass("btn-danger")				

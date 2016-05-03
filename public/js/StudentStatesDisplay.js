@@ -52,7 +52,7 @@ var StudentState = React.createClass({
 
     setActiveTabFun: function(props) {
       var self = this;
-      return function() { self.studentUpdater.updateActiveTab(self.tab, props) }
+      return function() { self.studentUpdater.updateActiveTab(props) }
     },
 
     render: function() {   
@@ -190,6 +190,7 @@ var StudentState = React.createClass({
               </div>
 
               <button className="btn btn-primary goto-scratchpad" onClick={this.gotoScratchPadUrl}>Scratchpad</button>
+              <button className="btn btn-primary goto-scratchpad" onClick={this.setActiveTabFun({remoteRefresh: Date.now()})}>Refresh</button>
             </div>
         </div>         
       )

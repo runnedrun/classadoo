@@ -27,6 +27,7 @@ $(function() {
     			var scratchPadSJsRunner = new ScratchPadJsRunner();				
     			var xrayManager = new XRayManager(manager);
     			var pageSyncManager = new PageSyncManager(manager);	  
+    			var remoteRefreshManager = new RemoteRefreshManager(manager);	  
 
 
     			var toolbarDeferred = new $.Deferred()
@@ -41,11 +42,11 @@ $(function() {
     				chatDeferred.resolve();
     			});	
 
-    			if (window.location.href.indexOf("scratchpad.io")) {
+    			if (window.location.href.indexOf("scratchpad.io") > -1) {    				
     				new ScratchSyncManager(scratchPreviewIframe, scratchPreviewHtml, manager, function() {
     					scratchPreviewDeferred.resolve()
     				});
-    			} else {
+    			} else {    				
     				scratchPreviewDeferred.resolve()
     			}
     			

@@ -46,8 +46,19 @@ ClassControls = React.createClass({
     this.classUpdater.update({xray: Date.now()});
   },
 
+  remoteRestart: function() {
+    this.classUpdater.update({remoteRestart: Date.now()});
+  },
+
+  refreshActiveTabs: function() {    
+    Util.objectValues(this.studentUpdaters).forEach(function(updater) {
+      updater.updateActiveTab({remoteRefresh: Date.now()});
+    });
+  },
+
   render: function() {
-    this.classUpdater = this.props.classState.allClassUpdater();
+    this.classUpdater = this.props.classState.allClassUpdater();    
+    this.studentUpdaters = this.props.classState.studentUpdaters(); 
 
     return(
       <div className="class-controls">       
@@ -62,7 +73,7 @@ ClassControls = React.createClass({
           </div>        
           <div className="col-md-2">
             <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>    
-            <button className="btn btn-primary" onClick={this.insertXrayGoggles}>Xray</button>                
+            <button className="btn btn-primary" onClick={this.insertXrayGoggles}>Xray</button>                        
           </div>          
 
           <div className="col-md-4">
@@ -76,9 +87,15 @@ ClassControls = React.createClass({
           <div className="col-md-2">
             <button className="btn btn-warning warn-btn" onClick={this.warnClass}>Warn</button>
             <button className="btn btn-danger call-back-btn" onClick={this.callClassBack}>Call Back</button>
-            <button className="btn btn-primary open-toolbar-btn" onClick={this.openToolbars}>Open</button>
+            <button className="btn btn-primary open-toolbar-btn" onClick={this.openToolbars}>Open</button>            
           </div>        
         </div>        
+        <div className="row">       
+          <div className="col-md-2">
+            <button className="btn btn-danger call-back-btn" onClick={this.remoteRestart}>Remote Restart</button>
+            <button className="btn btn-danger call-back-btn" onClick={this.refreshActiveTabs}>Refresh Active Tabs</button>
+          </div>
+        </div>
       </div>         
     )
   }

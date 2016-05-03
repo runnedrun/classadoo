@@ -11,7 +11,7 @@ DataManager = function(startingState) {
 		"syncHover", "syncHighlight", "backSyncClick", "chatOpen",
 		"chatHistory", "scratchPreviewShown", "lockScratch"];
 	var staticProps = ["url"];
-	var tabProps = ["toolbarOpen", "active"];
+	var tabProps = ["toolbarOpen", "active", "remoteRefresh"];
 	var readOnlyProps = ["syncedScratchInput", "syncingScratch"]; 
 
 	// this fires off requests to background storage
@@ -89,6 +89,7 @@ DataManager = function(startingState) {
 	// respond to storage updates from the background	
 	chrome.runtime.onMessage.addListener(function(request) {		
 		var stateObj = request.storageUpdate
+		
 		if (stateObj) {										
 			if (stateObj.type == "tab") {
 				if (stateObj.data) {

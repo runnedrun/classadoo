@@ -13,6 +13,7 @@ LoginManager = function(dataManager) {
 	respond("toolbarOpen", checkIfLessonShouldLoad)
 
 	function checkIfLessonShouldLoad() {		
+		console.log("checking if lesson should load", m.lessonName, m.tasks);
 		if (m.lessonName && !m.tasks && m.toolbarOpen) {									
 			chrome.runtime.sendMessage({loadLesson: m.lessonName});
 		}

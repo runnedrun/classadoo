@@ -80,6 +80,17 @@ DataManager = function(parentRef, classRef) {
 		}
 	}
 
+	function update(ref, props) {
+		var d = new $.Deferred();
+		ref.update(props, function(error) {
+			if (!error) {
+				d.resolve();
+			}
+		})
+
+		return d.promise();
+	}
+
 	function sendGlobalUpdateMessage() {
 		Message.sendToAllTabs({ storageUpdate: { type: "global", data: Util.extend(globalCache, classCache) } });					
 	}
@@ -126,22 +137,24 @@ DataManager = function(parentRef, classRef) {
 	}
 
 	self.globalClear = function(tabId) {		
-		localGlobalUpdate({});
-		localClassUpdate({});
-		globalStorage.remove();
-		classStorage.remove();
+		localGlobalUpdate({});		
+		globalStorage.remove();		
 	}
 
 	self.globalSet = function(props) {		
 		localGlobalUpdate(Util.extend(globalCache, props));
+		
 		if (globalCache.studentName || props.studentName) {					
 			if (syncCache) {
-				syncCaches()
-			} else{								
-				globalStorage.update(props);					
+				return syncCaches()
+			} else{												
+				return update(globalStorage, props)
 			}
 		} else {
 			syncCache = true;
+			var d = new $.Deferred();
+			d.resolve();
+			return d.promise()
 		}
 	}
 
@@ -150,9 +163,10 @@ DataManager = function(parentRef, classRef) {
 	}	
 
 	function syncCaches() {			
-		globalStorage.update(globalCache);
-		tabStorage.update(tabCache);
+		var p1 = update(globalStorage, globalCache);
+		var p2 = update(tabStorage, tabCache);
 		syncCache = false;
+		return Promise.all([p1, p2]);
 	}
 
 	self.globalGet = function() {
