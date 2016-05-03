@@ -1,8 +1,7 @@
 $ = require("jquery")
 
-AllClassUpdater = function(students) {
-	var self = this
-	var ref = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
+AllClassUpdater = function(students, ref) {
+	var self = this	
 
 	self.update = function(props) {	  	  	
 		Object.keys(students).forEach(function(id) {

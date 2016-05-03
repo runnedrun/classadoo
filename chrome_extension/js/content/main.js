@@ -1,68 +1,47 @@
 console.log("running the main!");
 
-$(function() {		
-	var globalRequest = (new StorageAccess("globalStorage")).getAll()
-	var tabRequest = (new StorageAccess("tabStorage")).getAll()
-		
-	$.when(globalRequest, tabRequest).then(function(globalState, tabState){	
-		console.log("loaded!");
-		var intialState = $.extend(globalState, tabState);				
-		var manager = new DataManager(intialState);
-		var lessonManager = new LessonManager(manager);
-		// var updateManager = new RemoteUpdateManager(manager);
-		var loginManager = new LoginManager(manager);
-		var lessonExecutor = new LessonExecutor(manager);
-		var backgroundDisplay = new BackgroundDisplay(manager);		
-		var helpManager = new HelpManager(manager);				
-		var scratchPadSJsRunner = new ScratchPadJsRunner();				
-		var xrayManager = new XRayManager(manager);
-		var pageSyncManager = new PageSyncManager(manager);
+$(function() {				
+	chrome.runtime.onMessage.addListener(
+  		function(request, sender, sendResponse) {    	  			
 
-		chrome.runtime.sendMessage({getToolbarHtml: true});
-    	chrome.runtime.onMessage.addListener(
-	  		function(request, sender, sendResponse) {    	  			
-	    		if (request.html) {
-	    			var iframe = $("<iframe>");
-	    			new Toolbar(iframe, request.html, manager, function() {
-	    				manager.initialEvents();    				    			
-	    			});		    			
-				}
+    		if (request.initData) {    			
+    			var data = request.initData
+    			var toolbarIframe = $("<iframe>");
+    			var chatIframe = $("<iframe>");
+    			var toolbarHtml = data.toolbarHtml;
+    			var chatHtml = data.chatHtml;
+    			var globalData = data.globalData;
+    			var tabData = data.tabData;
 
-				if (request.streamId) {
-					console.log("about to get the mediaaaa");
-					console.log("streamIDDD", request.streamId);
+    			var initialState = $.extend(globalData, tabData);				    			
+    			var manager = new DataManager(initialState);
+    			var lessonManager = new LessonManager(manager);
+    			// var updateManager = new RemoteUpdateManager(manager);
+    			var loginManager = new LoginManager(manager);
+    			var lessonExecutor = new LessonExecutor(manager);
+    			var backgroundDisplay = new BackgroundDisplay(manager);		
+    			var helpManager = new HelpManager(manager);				
+    			var scratchPadSJsRunner = new ScratchPadJsRunner();				
+    			var xrayManager = new XRayManager(manager);
+    			var pageSyncManager = new PageSyncManager(manager);	  
+    			var scratchSyncManager = new ScratchSyncManager(manager);	  
 
-					window.postMessage({type: "openStream", streamId: request.streamId}, "*");
-					// navigator.webkitGetUserMedia({
-				 //        audio: false,
-				 //        video: {
-				 //            mandatory: {
-				 //               chromeMediaSource: "desktop",
-				 //               chromeMediaSourceId: request.streamId,
-				 //               maxWidth: 1920,
-				 //               maxHeight: 1080
-				 //           },
-				 //           optional: [{
-				 //               googTemporalLayeredScreencast: true
-				 //           }]
-				 //        }   
-					// },
-					// function(stream) {
-					//     console.log("STREEEAM", stream)
-					// },
-					// function onError(errors) {
-					//     console.log('Failed to get user media.', errors);
-					// }) 
-				}				
-			}      		
-		)			
+    			var toolbarDeferred = new $.Deferred()
+    			var chatDeferred = new $.Deferred()
+    			new Toolbar(toolbarIframe, toolbarHtml, manager, function() {
+    				toolbarDeferred.resolve();   				
+    			});	
 
-		// KeyBinding.keydown(KeyCode.escape, $(document), function(e) {						
-		// 	if (manager.toolbarOpen) {
-		// 		manager.setToolbarOpen(false);
-		// 	} else {
-		// 		manager.setToolbarOpen(true);
-		// 	}			
-		// })
-	})	
+    			new ChatWindow(chatIframe, chatHtml, manager, function() {
+    				chatDeferred.resolve();
+    			});	
+    			
+    			$.when(toolbarDeferred, chatDeferred).then(function() {
+    				manager.initialEvents();    			
+    			})
+			}								
+		}      		
+	)
+
+	chrome.runtime.sendMessage({init: true});		
 })

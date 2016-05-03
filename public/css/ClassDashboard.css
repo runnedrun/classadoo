@@ -113,8 +113,40 @@
 
 .screenshot-display {
 	width: 500px;
+	display: none;
 }
 
 .recent-click {
 	background: lightblue;
+}
+
+.chat-window {
+	border: 1px solid black;
+	height: 150px;
+	position: relative;
+	font-size: 10px;
+	padding: 5px;
+}
+
+.chat-window .theirs {
+	padding: 1px;
+}
+
+.chat-window .yours {
+	padding: 1px;
+	background: rgb(230, 230, 230);	
+}
+
+.chat-window .history-window {
+	margin: 0 4% 0 4%;
+	overflow: scroll;
+	height: 75%;
+}
+
+.chat-window .input-area {
+	width: 90%;
+	position: absolute;
+	bottom: 5px;
+	left: 5%;
+	height: 20%;
 }

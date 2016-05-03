@@ -8,21 +8,23 @@ DataManager = function(startingState) {
 		["lessonName", "taskIndex", "studentName", "stopIndex", 
 		"startTime", "connectedToBackend", "needsHelp", "promptHint",
 		"showHint", "hintAllowed", "taskNames", "xray", "syncClick", 
-		"syncHover", "syncHighlight", "backSyncClick"];
+		"syncHover", "syncHighlight", "backSyncClick", "chatOpen",
+		"chatHistory"];
 	var staticProps = ["url"];
 	var tabProps = ["toolbarOpen", "active"];
+	var readOnlyProps = ["syncedScratchInput", "syncingScratch"]; 
 
 	// this fires off requests to background storage
 	function set(key, storage, getState) {
 		return function (value) {				
 			var dataObj = {}			
-			dataObj[key] = value
+			dataObj[key] = value			
 			return storage.set(dataObj);						
 		}	
 	}	
 
 	// this updates the local data when background storage changes
-	function localUpdate(prop, value) {						
+	function localUpdate(prop, value) {				
 		if (!Util.equivalent(self[prop], value) || (staticProps.indexOf(prop) > -1)) {
 			self[prop] = value;
 			fire(prop, value);
@@ -44,6 +46,10 @@ DataManager = function(startingState) {
 
 		localProps.forEach(function(prop) {			
 			self["set" + Util.capitalizeFirstLetter(prop)] = function(value) { localUpdate(prop,value) };				
+		})
+
+		readOnlyProps.forEach(function(prop) {
+			self[prop] = startingState[prop];
 		})
 
 		// update tab storage with the static values, if we're logged in
@@ -69,8 +75,8 @@ DataManager = function(startingState) {
 	}	
 
 	self.initialEvents = function() {
-		(globalProps.concat(tabProps)).forEach(function(prop) {					
-			(startingState[prop] !== undefined) && fire(prop, startingState[prop]);
+		(globalProps.concat(tabProps).concat(readOnlyProps)).forEach(function(prop) {					
+			fire(prop, startingState[prop]);
 		})		
 	}
 
@@ -89,20 +95,18 @@ DataManager = function(startingState) {
 					tabProps.forEach(function(prop) {				
 						localUpdate(prop, stateObj.data[prop]);
 					})					
-				} else {
-					console.log("deleting locally");
+				} else {					
 					tabProps.forEach(function(prop) {				
 						localUpdate(prop, null);
 					})					
 				}				
-			} else {
+			} else {				
 				if (stateObj.data) {					
-					globalProps.forEach(function(prop) {	
+					globalProps.concat(readOnlyProps).forEach(function(prop) {	
 						localUpdate(prop, stateObj.data[prop]);
 					})								
-				} else {
-					console.log("deleting locally global");
-					globalProps.forEach(function(prop) {				
+				} else {					
+					globalProps.concat(readOnlyProps).forEach(function(prop) {				
 						localUpdate(prop, null);
 					})					
 				}				

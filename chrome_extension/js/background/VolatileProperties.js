@@ -14,8 +14,7 @@ VolatileProperties = function(dataManager) {
 				if (allTabs[tabId] && allTabs[tabId].active && !(lastRemovedTab == tabId)) {												
 					m.tabSet(tabId, {active: false})
 				}					
-			})	
-
+			})				
 			m.tabSet(activeInfo.tabId, { "active": true });							
 		})			
 	}

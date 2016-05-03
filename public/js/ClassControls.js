@@ -5,25 +5,17 @@ require("./Util.js");
 ClassControls = React.createClass({  
   gotoScratchPadUrls: function() {
     var self = this
-    this.props.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
-      var name = student.state.global.studentName;      
+    this.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
+      var name = student.global.studentName;      
       return self.createScratchUrl(name)
     })
   },
 
   gotoScratchPadUrls: function() {
     var self = this
-    this.props.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
-      var name = student.state.global.studentName;      
+    this.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
+      var name = student.global.studentName;      
       return Util.createScratchUrl(name)
-    })
-  },
-
-  gotoFiddleUrls: function() {
-    var self = this
-    this.props.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
-      var name = student.state.global.studentName;      
-      return Util.createFiddleUrl(name)
     })
   },
 
@@ -32,33 +24,31 @@ ClassControls = React.createClass({
 
     if (e.keyCode === enterKeyCode && !e.shiftKey) {
       var input = $(e.currentTarget);
-      this.props.scratchUpdater.append(input.val());
+      this.classUpdater.update({appendToScratchpad: input.val()});
     }
   },
 
   warnClass: function() {
     var message = Util.timestampedMessage("Hi! Class will be starting again in a minute. Try to finish up what you're working on, then look front.")
-    this.props.classUpdater.update({popupMessage: message})
+    this.classUpdater.update({popupMessage: message})
   },
 
   callClassBack: function() {
     var message = Util.timestampedMessage("Hi! Class is starting again, stop your work and look front please.")
-    this.props.classUpdater.update({popupMessage: message})
+    this.classUpdater.update({popupMessage: message})
   },  
 
   openToolbars: function() {
-    this.props.classUpdater.updateForActiveTab({toolbarOpen: true});
-  },
-
-  closeAllScratchDisplays: function() {
-    $(".scratch-input").toggle();
+    this.classUpdater.updateForActiveTab({toolbarOpen: true});
   },
 
   insertXrayGoggles: function() {
-    this.props.classUpdater.update({xray: Date.now()});
+    this.classUpdater.update({xray: Date.now()});
   },
 
   render: function() {
+    this.classUpdater = this.props.classState.allClassUpdater();
+
     return(
       <div className="class-controls">       
         <div className="row">       
@@ -67,7 +57,7 @@ ClassControls = React.createClass({
                 <span className="input-group-addon">
                   URL:
                 </span>
-                <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.props.classUpdater.updateOnEnter(Util.timestampedUrl)}/>
+                <input className="form-control url-input" type="text" data-field="gotoUrl" onKeyDown={this.classUpdater.updateOnEnter(Util.timestampedUrl)}/>
               </div>            
           </div>        
           <div className="col-md-2">
@@ -80,7 +70,7 @@ ClassControls = React.createClass({
                 <span className="input-group-addon">
                   Write:
                 </span>
-                <textarea className="form-control scratch-append" type="text" data-field="appendToScratchpad" onKeyDown={this.props.classUpdater.updateOnEnter()}/>
+                <textarea className="form-control scratch-append" type="text" data-field="appendToScratchpad" onKeyDown={this.classUpdater.updateOnEnter()}/>
               </div>            
           </div>
           <div className="col-md-2">

@@ -1,6 +1,6 @@
 {
 "name": "Classadoo",
-    "version": "0.0.0.20",
+    "version": "0.0.0.21",
     "manifest_version": 2,
     "description": "The chrome extension for classadoo",
     "browser_action": {
@@ -17,7 +17,7 @@
             "js/background/TabCaptureManager.js", "js/background/LessonLoader.js", "js/background/VolatileProperties.js",
             "js/background/GotoUrlManager.js", "js/background/ScratchpadAppendManager.js", "js/background/PopupMessageManager.js",
             "js/background/HintManager.js", "js/background/Display.js", "js/background/Message.js", "js/background/ScreenshareManager.js",
-            "js/background/ScreenshotManager.js",
+            "js/background/ScreenshotManager.js", "js/background/ChatManager.js",
             "js/background/BackgroundDataManager.js", "js/background/main.js"            
         ]
     },
@@ -31,7 +31,8 @@
                 "js/content/LessonExecutor.js", "js/content/BackgroundDisplay.js", "js/content/HelpManager.js",
                 "js/content/BindingUtils.js", "js/content/RemoteUpdateManager.js", "js/content/DataManager.js",
                 "js/content/LoginManager.js", "js/content/XRayManager.js", "js/content/ModifyPageForToolbar.js",
-                "js/content/Toolbar.js", "js/content/ButterBar.js", "js/content/ScratchPadJsRunner.js", "js/content/main.js"
+                "js/content/Toolbar.js", "js/content/ChatWindow.js", "js/content/ScratchSyncManager.js",
+                 "js/content/ButterBar.js", "js/content/ScratchPadJsRunner.js", "js/content/main.js"
                 ],
             "run_at": "document_start"            
         }, 
@@ -39,7 +40,7 @@
             "matches": ["*://classadoo.github.io/lessons/samples/*", "http://localhost:8000/samples/*"],
             "js": ["third_party/jquery.js", "js/content/HintModifier.js"],
             "run_at": "document_start" 
-        }
+        }        
     ],
     "permissions": [
         "<all_urls>", "*://*/*", "tabs", "cookies", "storage", "desktopCapture",  "tabCapture", "system.display"

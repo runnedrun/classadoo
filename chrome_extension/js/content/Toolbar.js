@@ -1,9 +1,7 @@
 var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	var self = this;	
 	var i = new IframeManager($iframe);
-	var m = dataManager;	
-	var wholeClassLoaded;
-	var iframeLoaded;
+	var m = dataManager;		
 	var lessonInProgress = false;
 
 	// the number which to compare progress against for the current task set.
@@ -44,9 +42,8 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 
 	applyDefaultCSS($iframe).css(CSS.frame)
 
-	$iframe[0].onload = function() {    				    				    				
-		var html = decodeURI(content);	      				
-		i.setIframeContent(html);
+	$iframe[0].onload = function() {    				    				    						
+		i.setIframeContent(content);
 
 		inspectButton = i.$(".inspect-button");
 		helpButton = i.$(".help-button");
@@ -101,7 +98,8 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		disableOrEnableHintButton();
 		changeHintButtonText();
 		startOrStopHintBlink()
-		wholeClassLoaded && loadedCallback();
+
+		loadedCallback();		
 	};
 	
 	$(document.body).prepend($iframe);	
@@ -190,16 +188,14 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		sideButtons.show();
 	}
 
-	function displayNewTaskDescription(description) {	
-		console.log("displaying task text", description);
-
-		if (inProgressDisplay.html()) {
+	function displayNewTaskDescription(description) {			
+		if (inProgressDisplay.text()) {
 			// there is currently something displayed, flash it
 			flashTaskDisplay(2, function() {
-				inProgressDisplay.html(description);	
+				inProgressDisplay.text(description);	
 			})		
 		} else {
-			inProgressDisplay.html(description);	
+			inProgressDisplay.text(description);	
 		}
 	}	
 
@@ -280,11 +276,9 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 
 	function expandOrShrink() {
 		if (lessonInProgress) {
-			if ($(window).width() < 950) {
-				console.log('srhining');			
+			if ($(window).width() < 950) {				
 				shrinkElements()
 			} else  {
-				console.log('expand');			
 				expandElements()
 			} 
 		}		
@@ -311,7 +305,6 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 			stopHintBlinking();
 			hintButton.html("Hide").removeClass("btn-primary").addClass("btn-danger")
 		} else {
-			console.log("changing hint button")
 			hintButton.html("Hint").removeClass("btn-danger").addClass("btn-primary")
 		}
 	}
@@ -340,10 +333,6 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	respond("toolbarOpen", hideOrShow);
 	respond("needsHelp", highlightHelpButton);
 	respond("promptHint", startOrStopHintBlink);
-	respond("showHint", changeHintButtonText);
-
-	// run the laoded callback only if the iframe has already loaded. Otherwise, wait for it to load;
-	wholeClassLoaded = true
-	!iframeLoaded && loadedCallback();
+	respond("showHint", changeHintButtonText);	
 }
 

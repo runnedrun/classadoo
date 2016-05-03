@@ -1,37 +1,18 @@
-DataManager = function() {
-	var storedClientId = localStorage.getItem("clientId");	
+DataManager = function(parentRef, classRef) {	
+	var self = this;	
 
-	var clientId;
-	if (!storedClientId) {
-		var clientId = Util.guid();	
-		localStorage.setItem("clientId", clientId)
-	} else {
-		clientId = storedClientId;
-	}
-
-	var ref = new Firebase("vivid-inferno-6534.firebaseIO.com/users/" + clientId);
-
-	var self = this;
-
-	// var globalStorage = new Storage("state");
-	// var tabStorage = new TabStorage("tabState");	
-
-	var globalStorage = ref.child("state/global");
-	var tabStorage = ref.child("state/tab");	
+	var globalStorage = parentRef.child("state/global");
+	var tabStorage = parentRef.child("state/tab");	
+	var classStorage = classRef
 
 	var tabCache = {}
-	var globalCache = {}
+	var globalCache = {}	
 
 	var syncCache = false	
 
 	var tasks  = [];
 
 	var tabListeners = {}
-	function listenOnTabData(tabId) {
-		return tabStorage.child(tabId).on("value", function(snapshot){
-			localTabUpdate(tabId, snapshot.val())
-		})
-	}	
 
 	function localTabUpdate(tabId, update) {
 		var previous = tabCache[tabId] || {}
@@ -58,25 +39,38 @@ DataManager = function() {
 		var previous = globalCache || {}
 
 		var diff = Util.objectDiff(previous, update)
-		var diffKeys = Object.keys(diff);
+		var diffKeys = Object.keys(diff);		
 
-		console.log("jeys are diff", diffKeys, previous, update);
-
-		if (diffKeys.length) {	
-			console.log("updating global")		
+		if (diffKeys.length) {			
 			globalCache = update;
 
 			diffKeys.forEach(function(key) {
 				fire("global-" + key, diff[key]);
 			})			
-
-			Message.sendToOpenTabs({ storageUpdate: { type: "global", data: update } });
+						
+			// if (diffKeys.indexOf("chatOpen") > -1) {
+			Message.sendToAllTabs({ storageUpdate: { type: "global", data: update } });				
+			// } else {
+				// Message.sendToOpenTabs({ storageUpdate: { type: "global", data: update } });
+			// }
 		}
 	}
+	
 
 	globalStorage.on("value", function(snapshot) {		
 		localGlobalUpdate(snapshot.val());
 	})
+
+	classStorage.on("value", function(snapshot) {				
+		console.log("udpating class prop", snapshot.val());
+		localGlobalUpdate(snapshot.val());
+	})
+
+	function listenOnTabData(tabId) {
+		return tabStorage.child(tabId).on("value", function(snapshot){
+			localTabUpdate(tabId, snapshot.val())
+		})
+	}	
 
 
 	self.tabSet = function(tabId, props) {								
@@ -125,7 +119,7 @@ DataManager = function() {
 
 	self.tabGet = function(tabId) {		
 		return tabCache[tabId] || {}
-	}
+	}	
 
 	function syncCaches() {			
 		globalStorage.update(globalCache);

@@ -6,7 +6,7 @@ ScratchpadAppendManager = function(dataManager) {
 			chrome.tabs.query({active: true}, function(tabs) {			
 				var textInserterString = genTextInserter(appendToScratchpad);
 				var scriptInserterString = genScriptInserter(textInserterString);				
-				chrome.tabs.executeScript(tabs[0].id, { code: scriptInserterString })
+				chrome.tabs.executeScript(tabs[0].id, { code: scriptInserterString })				
 			})		
 		}		
 	})	

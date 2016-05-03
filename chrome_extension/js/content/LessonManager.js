@@ -41,8 +41,7 @@ LessonManager = function(manager) {
 		m.setTaskIndex(taskIndex + 1);								
 	}		
 
-	function newTask() {				
-		console.log("stop", m.stopIndex);
+	function newTask() {						
 		if (m.tasks && (typeof m.taskIndex !== undefined) && m.taskIndex !== null) {
 			if (m.taskIndex > (m.tasks.length - 1)) {
 				// the lesson is complete

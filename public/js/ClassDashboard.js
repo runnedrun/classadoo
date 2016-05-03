@@ -8,16 +8,14 @@ require("./LessonControls.js");
 require("./StudentStatesDisplay.js");
 require("./Request.js");
 require("./firebase.min.js");
-require("./AllClassUpdater.js");
-require("./ScratchUpdater.js");
-require("./StudentUpdater.js");
 require("./ScreenshotDisplay.js");
 require("./State.js");
+require("./ClassState.js");
 require("./StreamManager.js");
 
-var students = {};
-// klass is defined globally by the template
-var classUpdater = new AllClassUpdater(students);
+var classState;
+var firebasePrefix  = "classadoo-dev.firebaseio.com/"
+// var firebasePrefix = "classadoo-prod.firebaseIO.com/"
 
 var lessonsPrefix
 if (location.host.indexOf("localhost") > -1) {
@@ -28,21 +26,12 @@ if (location.host.indexOf("localhost") > -1) {
   	samplePrefix = "https://classadoo.github.io/lessons/samples/";  	
 }
 
-scratchTrackers = {
-
-}
-
-scratchUpdater = new AllClassScratchUpdater(students, scratchTrackers)
-
-var studentUpdaters = {
-
-}
-
 var LessonRequest = new Request(lessonsPrefix, "text", true);
 var SampleRequest = new Request(samplePrefix, "html", true);
 var DisplayState = new State(["screenshot", "screenshotId"], bigRender)
-var streamManager = new StreamManager(DisplayState, studentUpdaters);
+var streamManager;
 
+// klass is defined globally by the template
 klass.update = function() {	
 	$.ajax({
 	  url: "/classes?_method=PUT",
@@ -66,29 +55,9 @@ klass.update = function() {
 }
 
 $(function() {	
-	var state = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
-	state.on("value", function(snapshot) {
-		var filteredSnapshot = {};
-		var snap = snapshot.val() || {};
-		Object.keys(snap).forEach(function(key) {
-			if (snap[key] && snap[key].state && snap[key].state.global && snap[key].state.global.studentName) {				
-				filteredSnapshot[key] = snap[key];
-			}
-		})
-
-		$.extend(students, filteredSnapshot);	
-
-		Object.keys(students).forEach(function(id) {
-			if (!studentUpdaters[id]) {
-				studentUpdaters[id] = new StudentUpdater(id);
-			} 
-		})
-		// buildSratchTrackers(students);
-
-		updateDisplaysOnChanges();			
-	})
-
-	// setInterval(renderStudentStatesAndClassDisplay, 5000);
+	var firebaseRef = new Firebase(firebasePrefix + "users");
+	classState = new ClassState(firebaseRef, updateDisplaysOnChanges)
+	streamManager = new StreamManager(DisplayState, classState); 
 })
 
 function updateDisplaysOnChanges() {
@@ -96,61 +65,18 @@ function updateDisplaysOnChanges() {
 	fetchAndRenderLesson(klass);			
 }
 
-// function trackScratchInputs(students) {	
-// 	Object.keys(students).forEach(function(id) {
-// 		var student = students[id];
-// 		var scratchId = Util.createScratchId(student.state.global.studentName);
-// 		if (!scratchTrackers[id]) {
-// 			var ref = new Firebase("scratchpad.firebaseio.com/" + scratchId);
-// 			ref.on("value", function(snapshot) {
-// 				var val = snapshot.val();
-// 				scratchTrackers[id].input = val.editor.code;				
-// 				updateDisplaysOnChanges()				
-// 			})
-
-// 			scratchTrackers[id] = {}
-// 			scratchTrackers[id].ref = ref			
-// 		}					
-// 	})	
-// }
-
 function bigRender() {	
-	var ids = Object.keys(students);
-
-	var statesWithIds = ids.map(function(id) {
-		var state = students[id].state
-		state.id = id;
-		state.scratchInput = scratchTrackers[id] && scratchTrackers[id].input;
-		return state
-	})	
-
-	var studentsByName = {}
-	statesWithIds.forEach(function(state) { 				
-   		studentsByName[state.global.studentName] = state;		   		
-	});
-
-	var studentNames = Object.keys(studentsByName);
-	studentNames.sort();      
-
-	var alphaStates = studentNames.map(function(name) {
-		var obj = studentsByName[name];		
-		if (obj.global.startTime) {			
-			obj.global["elapsedTime"] = Math.ceil((Date.now() - obj.global.startTime) / 1000);
-		}			
-		return obj
-	})	
-
-	ReactDOM.render(<ClassInfoDisplay numberOfStudents={alphaStates.length} klass={klass} />, document.getElementById("class-info-container"))   
-  	ReactDOM.render(<StudentStatesDisplay streamManager={streamManager} studentUpdaters={studentUpdaters} classUpdater={classUpdater} studentStates={alphaStates} />, document.getElementById("student-state-wrapper"))   
-  	ReactDOM.render(<ScreenshotDisplay students={students} displayState={DisplayState} />, document.getElementById("screenshot-display"));
-  	ReactDOM.render(<ClassControls classUpdater={classUpdater} students={students} />, document.getElementById("class-controls"));
+	ReactDOM.render(<ClassInfoDisplay numberOfStudents={classState.sortedStudents().length} klass={klass} />, document.getElementById("class-info-container"))   
+  	ReactDOM.render(<StudentStatesDisplay streamManager={streamManager} classState={classState} />, document.getElementById("student-state-wrapper"))   
+  	ReactDOM.render(<ScreenshotDisplay classState={classState} displayState={DisplayState} />, document.getElementById("screenshot-display"));
+  	ReactDOM.render(<ClassControls classState={classState} />, document.getElementById("class-controls"));
 }
 
 function renderLessonControls(lesson) {
 	lesson = lesson;
-	var firstStudent = Util.objectValues(students)[0];
-	var currentStopIndex = (firstStudent && firstStudent.state && firstStudent.state.global && firstStudent.state.global.stopIndex) || (lesson.length - 1);	
-	ReactDOM.render(<LessonControls samplePrefix={samplePrefix} currentStopIndex={currentStopIndex} studentIds={Object.keys(students)} tasks={lesson} />, document.getElementById("lesson-controls"));	
+	var firstStudent = Util.objectValues(classState.students())[0];	
+	var currentStopIndex = (firstStudent &&  firstStudent.global.stopIndex) || (lesson.length - 1);	
+	ReactDOM.render(<LessonControls classState={classState} samplePrefix={samplePrefix} currentStopIndex={currentStopIndex} tasks={lesson} />, document.getElementById("lesson-controls"));	
 }
 
 function fetchAndRenderLesson(klass) {

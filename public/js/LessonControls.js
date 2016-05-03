@@ -1,21 +1,13 @@
 var React = require('react');
 var $ = require("jquery");
 
-TaskDisplay = React.createClass({
-  update: function(props) {
-    var fb = this.props.fbRef;
-    this.props.studentIds.forEach(function(id) {
-      var state = fb.child("" + id + "/state/global");      
-      state.update(props);
-    })
-  },  
-
+TaskDisplay = React.createClass({  
   updateStopIndex: function(event) {          
     var target = $(event.currentTarget);    
     var index = target.parent().data("index");    
     $(".set-stop").removeClass("active");
     target.addClass("active");
-    this.update({stopIndex: index});
+    this.classUpdater.update({stopIndex: index});
   },
 
   updateTaskIndex: function(event) {  
@@ -23,7 +15,7 @@ TaskDisplay = React.createClass({
     var index = target.parent().data("index");    
     $(".set-task").removeClass("active");
     target.addClass("active");
-    this.update({taskIndex: index});
+    this.classUpdater.update({taskIndex: index});
   },
 
   openSampleInNewWindow: function() {
@@ -56,6 +48,8 @@ TaskDisplay = React.createClass({
   },
 
   render: function() {
+    this.classUpdater = this.props.classState.allClassUpdater();
+    
     return (
       <tr className="task-row" data-index={this.props.index}>      
         <td className="task-index text-center" onClick={this.hideAllButTask(this.props.index)}>
@@ -76,10 +70,6 @@ TaskDisplay = React.createClass({
 })
 
 LessonControls = React.createClass({
-  componentWillMount: function() {
-    this.firebaseRef = new Firebase("vivid-inferno-6534.firebaseIO.com/users");
-  },
-
   render: function() {
     var self = this;
     return(
@@ -88,7 +78,7 @@ LessonControls = React.createClass({
           {this.props.tasks.map(function(task, i) {            
             var isCurrentStop = self.props.currentStopIndex == i            
 
-            return <TaskDisplay samplePrefix={self.props.samplePrefix} isCurrentStop={isCurrentStop} key={i} index={i} task={task} fbRef={self.firebaseRef} studentIds={self.props.studentIds} />
+            return <TaskDisplay {...self.props} isCurrentStop={isCurrentStop} key={i} index={i} task={task} />
           })}                                                    
         </tbody>
       </table>         
