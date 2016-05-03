@@ -17,7 +17,7 @@ ScratchpadAppendManager = function(dataManager) {
 		var fun = function() {
 			if (editor) {				
 				var session = editor.session
-				console.log("editinging!", session, editor);								
+				
 				session.insert({
 				   row: 0,
 				   column: 0

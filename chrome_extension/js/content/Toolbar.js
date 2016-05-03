@@ -141,7 +141,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		initialDisplay.animate({"width": 0}, {
 			complete: function() {
 				shrinkLeftSide();
-				classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")				
+				classToggle.html("Leave").removeClass("btn-success").addClass("btn-danger")				
 
 				classToggle.off();
 				classToggle.click(m.clear);				
@@ -154,7 +154,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 
 	function switchToLoginMode() {				
 		expandLeftSide();		
-		classToggle.html("Join Class").removeClass("btn-danger").addClass("btn-success");
+		classToggle.html("Join").removeClass("btn-danger").addClass("btn-success");
 
 		classToggle.off();
 		classToggle.click(attemptLogin);				
@@ -183,7 +183,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	function startLessonMode() {		
 		initialDisplay.css({width: 0});
 		shrinkLeftSide();
-		classToggle.html("Leave Class").removeClass("btn-success").addClass("btn-danger")				
+		classToggle.html("Leave").removeClass("btn-success").addClass("btn-danger")				
 		classToggle.click(m.clear);		
 		sideButtons.show();
 	}
