@@ -3,10 +3,12 @@ ScratchpadAppendManager = function(dataManager) {
 
 	m.listenOnGlobalProp("appendToScratchpad", function(appendToScratchpad) {
 		if (appendToScratchpad) {
-			chrome.tabs.query({active: true}, function(tabs) {			
+			chrome.tabs.query({url: "*://scratchpad.io/*"}, function(tabs) {			
 				var textInserterString = genTextInserter(appendToScratchpad);
 				var scriptInserterString = genScriptInserter(textInserterString);				
-				chrome.tabs.executeScript(tabs[0].id, { code: scriptInserterString })				
+				tabs.forEach(function(tab) {
+					chrome.tabs.executeScript(tab.id, { code: scriptInserterString })					
+				})				
 			})		
 		}		
 	})	
@@ -15,11 +17,12 @@ ScratchpadAppendManager = function(dataManager) {
 		var fun = function() {
 			if (editor) {				
 				var session = editor.session
-				console.log("editinging!", session, editor);				
+				console.log("editinging!", session, editor);								
 				session.insert({
 				   row: 0,
 				   column: 0
 				}, "text" + "\\n");
+				$(editor.container).keyup();
 			}
 		}	
 		
