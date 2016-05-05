@@ -1,0 +1,47 @@
+.letter-1 {
+
+}
+
+.letter-container {
+	margin-top: 200px;
+}
+
+.letter {
+	 font-size: 30px;
+}
+
+.letter-1 {
+	 visibility: hidden;
+}
+
+.row .letter-2 {
+	 font-size: 0px;
+}
+
+.row .letter-3 {
+	 border: 60px solid white
+}
+
+.letter-3-wrapper {
+	position: relative;
+	left: -50px;
+	z-index: -1;
+}
+
+.row .letter-4 {
+	color: white;
+}
+
+.letter-5 {
+	position: relative;
+	top: 10000px;
+}
+
+.letter-6 {
+	;
+	top: 10000px;
+}
+
+.letter-8 {
+
+}
