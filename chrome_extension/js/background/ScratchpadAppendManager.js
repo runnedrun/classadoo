@@ -3,7 +3,7 @@ ScratchpadAppendManager = function(dataManager) {
 
 	m.listenOnGlobalProp("appendToScratchpad", function(appendToScratchpad) {
 		if (appendToScratchpad) {
-			chrome.tabs.query({url: "*://scratchpad.io/*"}, function(tabs) {			
+			chrome.tabs.query({url:[ "*://scratchpad.io/*", "*://*/scratchpad.html*" ]}, function(tabs) {			
 				var textInserterString = genTextInserter(appendToScratchpad);
 				var scriptInserterString = genScriptInserter(textInserterString);				
 				tabs.forEach(function(tab) {

@@ -2,8 +2,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	var self = this;	
 	var i = new IframeManager($iframe);
 	var m = dataManager;		
-	var lessonInProgress = false;
-	var toolbarOpened = false;
+	var lessonInProgress = false;	
 
 	// the number which to compare progress against for the current task set.
 	var progressStart = 0;
@@ -65,7 +64,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		progressBarContainer = i.$(".progress-bar-wrapper");
 		JSButton = i.$(".js-button");
 
-		if (window.location.host.indexOf("scratchpad") > -1) {			
+		if (window.location.host.indexOf("scratchpad") > -1 || location.pathname.indexOf("scratchpad.html") > -1) {			
 			JSButton.css("display", "inline-block");			
 			JSButton.click(function() {
 				fire("run.scratchpad.script");
