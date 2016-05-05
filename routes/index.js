@@ -1,8 +1,5 @@
 
-/*
- * GET home page.
- */
-
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+exports.showSite = function(req, res){
+	console.log("site", req.param("siteName"))
+  res.render('show-site', {siteId: req.param("siteName")});
 };

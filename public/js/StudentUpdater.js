@@ -4,6 +4,7 @@ StudentUpdater = function(parentRef, student) {
 	var self = this
 	var studentId = student.id;
 
+	console.log("wtf", parentRef, student)
 	var ref = parentRef.child(studentId);
 
 	self.updateFun = function(props) {

@@ -9,7 +9,6 @@ var StudentState = React.createClass({
       var activeTab;
       Object.keys(allTabs).forEach(function(tabId) {                
         if (allTabs[tabId].active) {
-          console.log("this tab is active", allTabs[tabId]);
           activeTab = allTabs[tabId]
           activeTab.id = tabId            
         }         

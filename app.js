@@ -168,6 +168,8 @@ app.get("/classes", classes.index);
 app.post("/classes", classes.create);
 app.put("/classes", classes.update);
 
+app.get("/sites/:siteName*", routes.showSite);
+
 app.get("/screenshare", function(req, res) {
   res.render("screenshare-display");
 })

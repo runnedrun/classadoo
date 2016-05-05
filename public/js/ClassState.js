@@ -36,9 +36,14 @@ ClassState = function(ref, onUpdateCallback) {
 		var id = childSnapshot.key()
 		var state = student.state
 
-		students[id] = {global: (state && state.global) || {}, tab: (state && state.tab) || {}};
+		students[id] = {global: (state && state.global) || {}, tab: (state && state.tab) || {}, id: id};
 
 		var studentRef = ref.child(id);
+
+		if (!studentUpdaters[id]) {					
+			studentUpdaters[id] = new StudentUpdater(ref, students[id]);
+
+		}  		
 
 		globalProps.forEach(function(prop) {
 			studentRef.child("/state/global/" + prop).on("value", function(snapshot) {
@@ -61,48 +66,12 @@ ClassState = function(ref, onUpdateCallback) {
 					onUpdateCallback();			
 				})
 			})		
-		})
-
-		if (!studentUpdaters[id]) {
-			studentUpdaters[id] = new StudentUpdater(ref, students[id]);
-		}  		
+		})		
 
 		onUpdateCallback();				
-	})	
+	})		
 
-	// ref.on("value", function(snapshot) {
-	// 	var filteredSnapshot = {};
-	// 	var snap = snapshot.val() || {};				
-
-	// 	Object.keys(snap).forEach(function(key) {
-	// 		console.log("got this new stuff!");
-	// 		if (snap[key] && snap[key].state && snap[key].state.global && snap[key].state.global.studentName) {				
-	// 			var simpleObj = {}
-	// 			simpleObj.global = snap[key].state.global || {};
-	// 			simpleObj.tab = snap[key].state.tab || {};				
-	// 			simpleObj.id = key
-								
-				
-	// 			if (students[key]) {
-	// 				$.extend(students[key], simpleObj);	
-	// 			} else {
-	// 				students[key] = simpleObj;
-	// 			}			
-	// 		}
-	// 	})		
-
-		Object.keys(students).forEach(function(id) {
-			if (!studentUpdaters[id]) {
-				studentUpdaters[id] = new StudentUpdater(ref, students[id]);
-			} 
-		})	
-
-	// 	console.log(students);
-
-	// 	onUpdateCallback();			
-	// })
-
-	this.studentUpdater = function(id) {		
+	this.studentUpdater = function(id) {						
 		return studentUpdaters[id]
 	}
 

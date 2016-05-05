@@ -21541,7 +21541,7 @@
 	  };
 
 	  this.createScratchUrl = function (name) {
-	    return self.timestampedUrl("http://scratchpad.io/" + self.createScratchId(name));
+	    return self.timestampedUrl("https://www.classadoo.com/scratchpad.html#" + self.createScratchId(name));
 	  };
 
 	  this.createFiddleUrl = function (name) {
@@ -21948,7 +21948,6 @@
 	    var activeTab;
 	    Object.keys(allTabs).forEach(function (tabId) {
 	      if (allTabs[tabId].active) {
-	        console.log("this tab is active", allTabs[tabId]);
 	        activeTab = allTabs[tabId];
 	        activeTab.id = tabId;
 	      }
@@ -22476,9 +22475,13 @@
 			var id = childSnapshot.key();
 			var state = student.state;
 
-			students[id] = { global: state && state.global || {}, tab: state && state.tab || {} };
+			students[id] = { global: state && state.global || {}, tab: state && state.tab || {}, id: id };
 
 			var studentRef = ref.child(id);
+
+			if (!studentUpdaters[id]) {
+				studentUpdaters[id] = new StudentUpdater(ref, students[id]);
+			}
 
 			globalProps.forEach(function (prop) {
 				studentRef.child("/state/global/" + prop).on("value", function (snapshot) {
@@ -22503,43 +22506,8 @@
 				});
 			});
 
-			if (!studentUpdaters[id]) {
-				studentUpdaters[id] = new StudentUpdater(ref, students[id]);
-			}
-
 			onUpdateCallback();
 		});
-
-		// ref.on("value", function(snapshot) {
-		// 	var filteredSnapshot = {};
-		// 	var snap = snapshot.val() || {};				
-
-		// 	Object.keys(snap).forEach(function(key) {
-		// 		console.log("got this new stuff!");
-		// 		if (snap[key] && snap[key].state && snap[key].state.global && snap[key].state.global.studentName) {				
-		// 			var simpleObj = {}
-		// 			simpleObj.global = snap[key].state.global || {};
-		// 			simpleObj.tab = snap[key].state.tab || {};				
-		// 			simpleObj.id = key
-
-		// 			if (students[key]) {
-		// 				$.extend(students[key], simpleObj);	
-		// 			} else {
-		// 				students[key] = simpleObj;
-		// 			}			
-		// 		}
-		// 	})		
-
-		Object.keys(students).forEach(function (id) {
-			if (!studentUpdaters[id]) {
-				studentUpdaters[id] = new StudentUpdater(ref, students[id]);
-			}
-		});
-
-		// 	console.log(students);
-
-		// 	onUpdateCallback();			
-		// })
 
 		this.studentUpdater = function (id) {
 			return studentUpdaters[id];
@@ -22592,6 +22560,7 @@
 		var self = this;
 		var studentId = student.id;
 
+		console.log("wtf", parentRef, student);
 		var ref = parentRef.child(studentId);
 
 		self.updateFun = function (props) {
