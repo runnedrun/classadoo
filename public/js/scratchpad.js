@@ -61,7 +61,7 @@ $(function(){
   
   // Base firebase ref
   //--------------------------------------------------------------------------------
-  var scratchpadRef = new Firebase('https://scratchpad.firebaseio.com/' + Scratchpad.document_id);
+  var scratchpadRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/' + Scratchpad.document_id);
   var now = new Date();
   scratchpadRef.child('updatedAt').set(now.toString());
   
