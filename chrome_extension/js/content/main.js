@@ -44,7 +44,7 @@ $(function() {
     				chatDeferred.resolve();
     			});	
 
-    			if (window.location.href.indexOf("scratchpad.io") > -1) {    				
+    			if (window.location.href.indexOf("scratchpad.io") > -1 || location.pathname.indexOf("scratchpad.html") > -1) {    				    				
     				new ScratchSyncManager(scratchPreviewIframe, scratchPreviewHtml, manager, function() {
     					scratchPreviewDeferred.resolve()
     				});

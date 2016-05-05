@@ -18,7 +18,8 @@ ScratchSyncManager = function($iframe, content, dataManager, loadedCallback) {
 			color: "black",
 			"text-align": "center",
 			"padding": "5px",
-			cursor: "pointer"
+			cursor: "pointer",
+			height: "20px"
 		}
 	}
 
@@ -38,6 +39,8 @@ ScratchSyncManager = function($iframe, content, dataManager, loadedCallback) {
 	if (editor.length) {
 		editor.prepend($iframe.css(CSS.iframe));
 		editor.prepend(togglePreviewButton);	
+		$(".ace_gutter").css({"top": "20px"})
+		$(".ace_scroller").css({"top": "20px"})
 	} else {
 		// create a fake preview in case the editor doesn't exist, we don't want to break 
 		preview = $("#code-preview");
@@ -45,14 +48,17 @@ ScratchSyncManager = function($iframe, content, dataManager, loadedCallback) {
 	}
 	
 
-	function togglePreview() {
-		console.log("toggline?", m.scratchPreviewShown);
+	function togglePreview() {		
 		if (m.scratchPreviewShown) {
 			$iframe.show();	
 			togglePreviewButton.html("Hide Preview");					
+			$(".ace_gutter").css({"top": "320px"})
+			$(".ace_scroller").css({"top": "320px"})
 		} else {
 			togglePreviewButton.html("Show Preview");
 			$iframe.hide();
+			$(".ace_gutter").css({"top": "20px"})
+			$(".ace_scroller").css({"top": "20px"})
 		}
 	}
 
