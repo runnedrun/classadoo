@@ -56,6 +56,10 @@ ClassControls = React.createClass({
     });
   },
 
+  hideAllChats: function() {
+    $(".chat-window").hide();
+  },
+
   render: function() {
     this.classUpdater = this.props.classState.allClassUpdater();    
     this.studentUpdaters = this.props.classState.studentUpdaters(); 
@@ -73,7 +77,7 @@ ClassControls = React.createClass({
           </div>        
           <div className="col-md-2">
             <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>    
-            <button className="btn btn-primary" onClick={this.insertXrayGoggles}>Xray</button>                        
+            <button className="btn btn-primary" onClick={this.insertXrayGoggles}>Xray</button>                                    
           </div>          
 
           <div className="col-md-4">
@@ -94,6 +98,10 @@ ClassControls = React.createClass({
           <div className="col-md-2">
             <button className="btn btn-danger call-back-btn" onClick={this.remoteRestart}>Remote Restart</button>
             <button className="btn btn-danger call-back-btn" onClick={this.refreshActiveTabs}>Refresh Active Tabs</button>
+          </div>
+
+          <div className="col-md-2">
+            <button className="btn btn-primary call-back-btn" onClick={this.hideAllChats}>Hide Chats</button>            
           </div>
         </div>
       </div>         

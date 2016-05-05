@@ -19,14 +19,16 @@ $(function() {
     			var initialState = $.extend(globalData, tabData);				    			
     			var manager = new DataManager(initialState);
     			var lessonManager = new LessonManager(manager);
-    			// var updateManager = new RemoteUpdateManager(manager);
     			var loginManager = new LoginManager(manager);
     			var lessonExecutor = new LessonExecutor(manager);
     			var backgroundDisplay = new BackgroundDisplay(manager);		
     			var helpManager = new HelpManager(manager);				
     			var scratchPadSJsRunner = new ScratchPadJsRunner();				
     			var xrayManager = new XRayManager(manager);
-    			var pageSyncManager = new PageSyncManager(manager);	  
+
+    			// not enabling this for now, it's too expensive, and not being used
+    			// var pageSyncManager = new PageSyncManager(manager);	  
+
     			var remoteRefreshManager = new RemoteRefreshManager(manager);	  
 
 

@@ -104,18 +104,21 @@ DataManager = function(parentRef, classRef) {
 		localClassUpdate(snapshot.val());
 	})
 
+	tabStorage.on("child_added", function(childSnapshot) {
+		var tabId = childSnapshot.key();
+		if (!tabListeners[tabId]) {
+			tabListeners[tabId] = listenOnTabData(tabId)
+		} 		
+	})
+
 	function listenOnTabData(tabId) {
-		return tabStorage.child(tabId).on("value", function(snapshot){
+		return tabStorage.child(tabId).on("value", function(snapshot) {
 			localTabUpdate(tabId, snapshot.val())
 		})
 	}	
 
 
-	self.tabSet = function(tabId, props) {								
-		if (!tabListeners[tabId]) {
-			tabListeners[tabId] = listenOnTabData(tabId)
-		} 		
-
+	self.tabSet = function(tabId, props) {										
 		localTabUpdate(tabId, Util.extend(tabCache[tabId], props));
 
 		if (globalCache.studentName) {					

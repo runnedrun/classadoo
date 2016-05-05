@@ -1,5 +1,6 @@
 function ModifyPageForToolbar(toolbarOpen) {
 	var host = location.host;
+	var path = location.pathname;
 	if (toolbarOpen) 
 		open();
 	else
@@ -7,7 +8,7 @@ function ModifyPageForToolbar(toolbarOpen) {
 	
 
 	function close() {
-		if (host == "scratchpad.io") {
+		if (host == "scratchpad.io" || path.indexOf("scratchpad.html") > -1) {
 			$("#preview").css("top", "0px");
 			$("#commandbar").css("top", "0px");
 			$("#editor").css("top", "32px");
@@ -17,7 +18,7 @@ function ModifyPageForToolbar(toolbarOpen) {
 	}
 
 	function open() {
-		if (host == "scratchpad.io") {
+		if (host == "scratchpad.io" || path.indexOf("scratchpad.html") > -1) {
 			$("#preview").css("top", "60px");
 			$("#commandbar").css("top", "60px");
 			$("#editor").css("top", "92px");

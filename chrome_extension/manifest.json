@@ -1,6 +1,6 @@
 {
 "name": "Classadoo",
-    "version": "0.0.0.22",
+    "version": "0.0.0.24",
     "manifest_version": 2,
     "description": "The chrome extension for classadoo",
     "browser_action": {
@@ -12,7 +12,7 @@
     },
     "background": {        
         "scripts": [
-            "third_party/jquery.js", "third_party/pubnub-socket.io.min.js", "js/content/Util.js", "js/background/Requests.js",
+            "third_party/jquery.js", "third_party/pubnub-socket.io.min.js", "js/content/Util.js", "third_party/HtmlTidy.js", "js/background/Requests.js",
             "js/content/BindingUtils.js", "third_party/RTCMultiConnection.min.js", "third_party/firebase.min.js", 
             "js/background/TabCaptureManager.js", "js/background/LessonLoader.js", "js/background/VolatileProperties.js",
             "js/background/GotoUrlManager.js", "js/background/ScratchpadAppendManager.js", "js/background/PopupMessageManager.js",
@@ -28,7 +28,7 @@
                 "js/content/DefaultCss.js", "js/content/IframeManager.js", "js/content/Util.js", "third_party/highlight.pack.js",
                 "js/content/LessonManager.js", "js/content/ProgressBar.js", "js/content/PageSyncManager.js",
                 "js/content/LessonExecutor.js", "js/content/BackgroundDisplay.js", "js/content/HelpManager.js",
-                "js/content/BindingUtils.js", "js/content/RemoteUpdateManager.js", "js/content/DataManager.js",
+                "js/content/BindingUtils.js", "js/content/DataManager.js",
                 "js/content/LoginManager.js", "js/content/XRayManager.js", "js/content/ModifyPageForToolbar.js",
                 "js/content/Toolbar.js", "js/content/ChatWindow.js", "js/content/ScratchSyncManager.js",                
                 "js/content/RemoteRefreshManager.js",
@@ -40,7 +40,7 @@
             "matches": ["*://classadoo.github.io/lessons/samples/*", "http://localhost:8000/samples/*"],
             "js": ["third_party/jquery.js", "js/content/HintModifier.js"],
             "run_at": "document_start" 
-        }
+        }         
     ],
     "permissions": [
         "<all_urls>", "*://*/*", "tabs", "cookies", "storage", "desktopCapture",  "tabCapture", "system.display"

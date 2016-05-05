@@ -19,13 +19,19 @@ VolatileProperties = function(dataManager) {
 		});
 
 		function setActiveTab(tabId) {
-			var allTabs = m.getAllTabs()
-			Object.keys(allTabs).map(function(tabId) {
-				if (allTabs[tabId] && allTabs[tabId].active && !(lastRemovedTab == tabId)) {												
-					m.tabSet(tabId, {active: false})
-				}					
-			})				
-			m.tabSet(tabId, { "active": true });	
+			chrome.tabs.query({active: true, lastFocusedWindow: true}, function(activeTabs) {								
+				var activeTab = activeTabs[0]
+
+				var allTabs = m.getAllTabs();
+				
+				Object.keys(allTabs).map(function(tabId) {				
+					if (Number(tabId) != activeTab.id) {												
+						m.tabSet(tabId, {active: false})
+					}
+				})				
+
+				m.tabSet(activeTab.id, { "active": true, url: activeTab.url });					
+			})			
 		}
 	}
 

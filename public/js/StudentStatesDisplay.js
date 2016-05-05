@@ -7,8 +7,9 @@ var StudentState = React.createClass({
     getActiveTab: function() {
       var allTabs = this.tab;
       var activeTab;
-      Object.keys(allTabs).forEach(function(tabId) {        
+      Object.keys(allTabs).forEach(function(tabId) {                
         if (allTabs[tabId].active) {
+          console.log("this tab is active", allTabs[tabId]);
           activeTab = allTabs[tabId]
           activeTab.id = tabId            
         }         
@@ -175,13 +176,14 @@ var StudentState = React.createClass({
               {startOrStopStream} | {takeScreenshotButton}
             </div>            
 
+            
+            <ChatWindow {...this.props} / >            
+
             <div className="hidden-toggle text-center" onClick={this.toggleDisplay}>
               more...
             </div>
 
             <div className="hidden-fields" ref={(ref) => this.hiddenFields = ref}>
-
-              <ChatWindow {...this.props} / >
               <div className="input-group url-input-group">
                 <label>
                   URL:

@@ -21710,6 +21710,10 @@
 	    });
 	  },
 
+	  hideAllChats: function () {
+	    $(".chat-window").hide();
+	  },
+
 	  render: function () {
 	    this.classUpdater = this.props.classState.allClassUpdater();
 	    this.studentUpdaters = this.props.classState.studentUpdaters();
@@ -21797,6 +21801,15 @@
 	            "button",
 	            { className: "btn btn-danger call-back-btn", onClick: this.refreshActiveTabs },
 	            "Refresh Active Tabs"
+	          )
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "col-md-2" },
+	          React.createElement(
+	            "button",
+	            { className: "btn btn-primary call-back-btn", onClick: this.hideAllChats },
+	            "Hide Chats"
 	          )
 	        )
 	      )
@@ -21935,6 +21948,7 @@
 	    var activeTab;
 	    Object.keys(allTabs).forEach(function (tabId) {
 	      if (allTabs[tabId].active) {
+	        console.log("this tab is active", allTabs[tabId]);
 	        activeTab = allTabs[tabId];
 	        activeTab.id = tabId;
 	      }
@@ -22160,6 +22174,7 @@
 	        " | ",
 	        takeScreenshotButton
 	      ),
+	      React.createElement(ChatWindow, this.props),
 	      React.createElement(
 	        "div",
 	        { className: "hidden-toggle text-center", onClick: this.toggleDisplay },
@@ -22168,7 +22183,6 @@
 	      React.createElement(
 	        "div",
 	        { className: "hidden-fields", ref: ref => this.hiddenFields = ref },
-	        React.createElement(ChatWindow, this.props),
 	        React.createElement(
 	          "div",
 	          { className: "input-group url-input-group" },
@@ -22276,8 +22290,22 @@
 			}
 		},
 
+		toggleChat: function () {
+			var $window = $(this.window);
+			var $toggle = $(this.toggle);
+			if ($window.is(":visible")) {
+				$window.hide();
+				$toggle.html("Show Chat");
+			} else {
+				$window.show();
+				$toggle.html("Hide Chat");
+			}
+		},
+
 		render: function () {
 			var chatHistory = this.props.state.global.chatHistory || {};
+			this.currentHistory = chatHistory;
+
 			this.studentUpdater = this.props.classState.studentUpdater(this.props.state.id);
 
 			var messages = Util.objectValues(chatHistory).sort(function (a, b) {
@@ -22286,30 +22314,34 @@
 
 			return React.createElement(
 				"div",
-				{ className: "row chat-window" },
+				null,
 				React.createElement(
 					"div",
-					{ className: "history-window", ref: ref => this.history = ref },
-					messages.map(function (message) {
-						if (message.isStudent) {
-							return React.createElement(
-								"div",
-								{ key: message.timestamp, className: "theirs" },
-								message.text
-							);
-						} else {
-							return React.createElement(
-								"div",
-								{ key: message.timestamp, className: "yours" },
-								message.text
-							);
-						}
-					})
-				),
-				React.createElement(
-					"div",
-					{ className: "input-window" },
-					React.createElement("textarea", { onKeyDown: this.sendMessage, className: "input-area" })
+					{ className: "row chat-window", ref: ref => this.window = ref },
+					React.createElement(
+						"div",
+						{ className: "history-window", ref: ref => this.history = ref },
+						messages.map(function (message) {
+							if (message.isStudent) {
+								return React.createElement(
+									"div",
+									{ key: message.timestamp, className: "theirs" },
+									message.text
+								);
+							} else {
+								return React.createElement(
+									"div",
+									{ key: message.timestamp, className: "yours" },
+									message.text
+								);
+							}
+						})
+					),
+					React.createElement(
+						"div",
+						{ className: "input-window" },
+						React.createElement("textarea", { onKeyDown: this.sendMessage, className: "input-area" })
+					)
 				)
 			);
 		}
@@ -22367,18 +22399,14 @@
 	    var students = this.props.classState.students();
 
 	    var display;
-	    var screenShots = Object.keys(students).map(function (id) {
-	      var student = students[id];
-	      if (student.global.screenshot && student.global.screenshot.timestamp) {
-	        return student.global.screenshot;
-	      }
+	    var studentIds = Object.keys(students);
+	    studentIds.sort(function (a, b) {
+	      var screenShotA = students[a].global.screenshot || {};
+	      var screenShotB = students[b].global.screenshot || {};
+	      (screenshotB.timestamp || 0) - (screenShotA.timestamp || 0);
 	    });
 
-	    screenShots.sort(function (a, b) {
-	      return b.timestamp - a.timestamp;
-	    });
-
-	    var screenshotToShow = screenShots[0];
+	    var screenshotToShow = students[studentIds[0]].global.screenshot;
 
 	    if (screenshotToShow) {
 	      display = React.createElement("img", { className: "screenshot-display", src: screenshotToShow.img });
@@ -22439,33 +22467,79 @@
 		var studentUpdaters = {};
 		var allClassUpdater = new AllClassUpdater(students, ref);
 
-		ref.on("value", function (snapshot) {
-			var filteredSnapshot = {};
-			var snap = snapshot.val() || {};
+		var globalProps = ["promptHint", "hintAllowed", "needsHelp", "showHint", "xray", "doScreenshot", "doScreenshare", "taskIndex", "chatHistory", "stopIndex", "startTime", "backSyncClick", "screenshot"];
 
-			Object.keys(snap).forEach(function (key) {
-				if (snap[key] && snap[key].state && snap[key].state.global && snap[key].state.global.studentName) {
-					var simpleObj = {};
-					simpleObj.global = snap[key].state.global;
-					simpleObj.tab = snap[key].state.tab;
-					simpleObj.id = key;
+		var tabProps = ["toolbarOpen", "active", "url"];
 
-					if (students[key]) {
-						$.extend(students[key], simpleObj);
-					} else {
-						students[key] = simpleObj;
-					}
-				}
+		ref.on("child_added", function (childSnapshot) {
+			var student = childSnapshot.val();
+			var id = childSnapshot.key();
+			var state = student.state;
+
+			students[id] = { global: state && state.global || {}, tab: state && state.tab || {} };
+
+			var studentRef = ref.child(id);
+
+			globalProps.forEach(function (prop) {
+				studentRef.child("/state/global/" + prop).on("value", function (snapshot) {
+					var student = students[id];
+					student.global[prop] = snapshot.val();
+					onUpdateCallback();
+				});
 			});
 
-			Object.keys(students).forEach(function (id) {
-				if (!studentUpdaters[id]) {
-					studentUpdaters[id] = new StudentUpdater(ref, students[id]);
-				}
+			studentRef.child("/state/tab").on("child_added", function (tabSnapshot) {
+				var tabId = tabSnapshot.key();
+				var tabRef = studentRef.child("/state/tab/" + tabId);
+				var tabs = students[id].tab;
+
+				tabs[tabId] = tabSnapshot.val();
+
+				tabProps.forEach(function (prop) {
+					tabRef.child(prop).on("value", function (snapshot) {
+						tabs[tabId][prop] = snapshot.val();
+						onUpdateCallback();
+					});
+				});
 			});
+
+			if (!studentUpdaters[id]) {
+				studentUpdaters[id] = new StudentUpdater(ref, students[id]);
+			}
 
 			onUpdateCallback();
 		});
+
+		// ref.on("value", function(snapshot) {
+		// 	var filteredSnapshot = {};
+		// 	var snap = snapshot.val() || {};				
+
+		// 	Object.keys(snap).forEach(function(key) {
+		// 		console.log("got this new stuff!");
+		// 		if (snap[key] && snap[key].state && snap[key].state.global && snap[key].state.global.studentName) {				
+		// 			var simpleObj = {}
+		// 			simpleObj.global = snap[key].state.global || {};
+		// 			simpleObj.tab = snap[key].state.tab || {};				
+		// 			simpleObj.id = key
+
+		// 			if (students[key]) {
+		// 				$.extend(students[key], simpleObj);	
+		// 			} else {
+		// 				students[key] = simpleObj;
+		// 			}			
+		// 		}
+		// 	})		
+
+		Object.keys(students).forEach(function (id) {
+			if (!studentUpdaters[id]) {
+				studentUpdaters[id] = new StudentUpdater(ref, students[id]);
+			}
+		});
+
+		// 	console.log(students);
+
+		// 	onUpdateCallback();			
+		// })
 
 		this.studentUpdater = function (id) {
 			return studentUpdaters[id];
@@ -22485,8 +22559,10 @@
 
 		this.sortedStudents = function () {
 			var studentsByName = {};
-			Util.objectValues(students).forEach(function (state) {
-				studentsByName[state.global.studentName] = state;
+			Util.objectValues(students).forEach(function (student) {
+				if (student.global.studentName) {
+					studentsByName[student.global.studentName] = student;
+				}
 			});
 
 			var studentNames = Object.keys(studentsByName);
@@ -22667,32 +22743,22 @@
 /***/ function(module, exports) {
 
 	StreamManager = function (displayState, classState) {
-		var currentStudent;
-
 		this.start = function (studentId) {
-			var studentUpdater = classState.studentUpdater(studentId);
+			classState.allClassUpdater().update({ doScreenshare: false, screenshot: null });
 
-			if (currentStudent && currentStudent != studentId) {
-				studentUpdater.update({ doScreenshare: false, screenshot: false });
-			}
-
-			studentUpdater.update({ doScreenshare: 1000 });
-			currentStudent = studentId;
-			displayState.setScreenshotId(studentId);
+			var newScreenshareStudent = classState.studentUpdater(studentId);
+			newScreenshareStudent.update({ doScreenshare: 1000 });
 		};
 
 		this.stop = function (studentId) {
 			var studentUpdater = classState.studentUpdater(studentId);
 
-			studentUpdater.update({ doScreenshare: false, screenshot: false });
-			displayState.setScreenshotId(false);
+			studentUpdater.update({ doScreenshare: false, screenshot: null });
 		};
 
 		this.screenshot = function (studentId) {
 			var studentUpdater = classState.studentUpdater(studentId);
-
 			studentUpdater.update({ doScreenshot: Date.now() });
-			displayState.setScreenshotId(studentId);
 		};
 	};
 
