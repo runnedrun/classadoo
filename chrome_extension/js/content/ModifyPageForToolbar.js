@@ -1,10 +1,17 @@
+var toolbarOpened = false;
+
 function ModifyPageForToolbar(toolbarOpen) {
 	var host = location.host;
 	var path = location.pathname;
-	if (toolbarOpen) 
+	if (toolbarOpen) {
 		open();
-	else
+		toolbarOpened = true;
+	} else if(toolbarOpened) {
 		 close();
+	} 
+		
+	
+		
 	
 
 	function close() {

@@ -3,6 +3,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	var i = new IframeManager($iframe);
 	var m = dataManager;		
 	var lessonInProgress = false;
+	var toolbarOpened = false;
 
 	// the number which to compare progress against for the current task set.
 	var progressStart = 0;
