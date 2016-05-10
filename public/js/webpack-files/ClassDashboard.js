@@ -38,7 +38,7 @@ klass.update = function() {
 	  url: "/classes?_method=PUT",
 	  method: "POST",
 	  data: klass.data,
-	  success: function() {	  	
+	  success: function() {	  
 	    $(".flash-success").show();
 	    setTimeout(function() {
 	      $(".flash-success").hide();          

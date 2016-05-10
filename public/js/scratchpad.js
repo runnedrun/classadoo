@@ -58,6 +58,8 @@ $(function(){
   var iframe = document.getElementById('preview'),
     iframedoc = iframe.contentDocument || iframe.contentWindow.document;
   iframedoc.body.setAttribute('tabindex', 0);
+
+  var previewPreview = new IframeManager($("#sync-preview-preview"));
   
   // Base firebase ref
   //--------------------------------------------------------------------------------
@@ -71,14 +73,15 @@ $(function(){
 
     syncPreviewRef.child("editor").on('value', function(dataSnapshot) {
       var previewEditor = syncPreview.editor       
-      previewEditor.setValue(dataSnapshot.child('code').val() || "");    
+      previewEditor.setValue(dataSnapshot.child('code').val() || ""); 
+      previewPreview.setIframeContent(dataSnapshot.child('code').val() || "")    
        
       previewEditor.clearSelection();    
       if (dataSnapshot.child('cursor').val() === null) {
         previewEditor.moveCursorToPosition({column: 0, row: 0});  
       } else {
         previewEditor.moveCursorToPosition(dataSnapshot.child('cursor').val());  
-      }    
+      }            
     });
   }
 

@@ -1,5 +1,19 @@
 /* My additions */
 
+#sync-preview-preview {
+  display: none;
+  background: white;
+  height: 342px; 
+  position: absolute;
+  top: 0px;
+  bottom: 290px;
+  right: 0px;
+  left: 40%;  
+  border: 0;
+  width: 60%;  
+  border-radius: 5px 0px 0px 5px;
+}
+
 #toggle-sync-preview {
   background: whitesmoke;
   color: #333;

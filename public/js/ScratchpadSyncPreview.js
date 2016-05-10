@@ -11,8 +11,10 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 	previewEditor.setReadOnly(true)
 
 	var previewEl = $("#sync-preview")
+	var previewIframe = $("#sync-preview-preview")
 	var togglePreviewEl = $("#toggle-sync-preview")
 	var liveEditorEl = $(liveEditor.container);
+	var livePreview = $("#preview")
 	var topBarHeight = 52;
 
 	togglePreviewEl.click(togglePreview);
@@ -30,13 +32,17 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 	function togglePreview() {
 		if (previewShown) {
 			previewEl.hide();		
-			togglePreviewEl.text("Show preview");
+
+			previewIframe.hide();
+			togglePreviewEl.text("Show preview");			
 			previewShown = false;
 			// liveEditorEl.css({"top": nonEditorHeight()});
 			resizeLiveEditor();
 			// setTimeout(resize, 200);
 		} else {
-			previewEl.show();		
+			previewEl.show();
+			console.log("asd", previewIframe)
+			previewIframe.show();		
 			togglePreviewEl.text("Hide preview");	
 			previewShown = true;
 			// liveEditorEl.css({"top": nonEditorHeight()});
@@ -54,7 +60,8 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 		var editorHeight = document.body.scrollHeight - nonEditorHeight();
 
 		console.log("changing editory heigh", editorHeight);
-		liveEditorEl.css({"top": nonEditorHeight(), height: editorHeight});
+		liveEditorEl.css({"top": nonEditorHeight(), height: editorHeight});		
+		livePreview.css({"top": nonEditorHeight(), height: editorHeight});		
 		setTimeout(resize, 200);		
 	}
 }
