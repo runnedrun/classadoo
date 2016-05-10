@@ -14,7 +14,7 @@ chrome.management.getSelf(function(info) {
   if (info.installType === "development") {
     lessonsPrefix = "http://localhost:8000/lib/dev/";  
     hintPrefix = "http://localhost:8000/samples/";      
-    firebasePrefix = "classadoo-dev.firebaseIO.com/"
+    firebasePrefix = "classadoo-dev.firebaseIO.com/";            
   } else {    
     lessonsPrefix = "https://classadoo.github.io/lessons/lib/prod/";
     hintPrefix = "https://classadoo.github.io/lessons/samples/";
@@ -44,8 +44,6 @@ chrome.management.getSelf(function(info) {
   Message = new Message(dataManager);
   new HintManager(dataManager, hintPrefix)
   new LessonLoader(LessonRequest, dataManager);
-  new ScreenshareManager();
-  new TabCaptureManager(dataManager);
   new VolatileProperties(dataManager);
   new GotoUrlManger(dataManager);
   new ScratchpadAppendManager(dataManager);

@@ -22,8 +22,7 @@ $(function() {
     			var loginManager = new LoginManager(manager);
     			var lessonExecutor = new LessonExecutor(manager);
     			var backgroundDisplay = new BackgroundDisplay(manager);		
-    			var helpManager = new HelpManager(manager);				
-    			var scratchPadSJsRunner = new ScratchPadJsRunner();				
+    			var helpManager = new HelpManager(manager);				    			
     			var xrayManager = new XRayManager(manager);
 
     			// not enabling this for now, it's too expensive, and not being used
@@ -42,17 +41,9 @@ $(function() {
 
     			new ChatWindow(chatIframe, chatHtml, manager, function() {
     				chatDeferred.resolve();
-    			});	
-
-    			if (window.location.href.indexOf("scratchpad.io") > -1 || location.pathname.indexOf("scratchpad.html") > -1) {    				    				
-    				new ScratchSyncManager(scratchPreviewIframe, scratchPreviewHtml, manager, function() {
-    					scratchPreviewDeferred.resolve()
-    				});
-    			} else {    				
-    				scratchPreviewDeferred.resolve()
-    			}
+    			});	    			
     			
-    			$.when(toolbarDeferred, chatDeferred, scratchPreviewDeferred).then(function() {    				
+    			$.when(toolbarDeferred, chatDeferred).then(function() {    				
     				console.log("init", data);
     				manager.initialEvents();    			
     			})

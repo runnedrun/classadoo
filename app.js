@@ -170,6 +170,8 @@ app.put("/classes", classes.update);
 
 app.get("/sites/:siteName*", routes.showSite);
 
+app.get("/scratchpad/:docId*", routes.showScratchPad);
+
 app.get("/screenshare", function(req, res) {
   res.render("screenshare-display");
 })

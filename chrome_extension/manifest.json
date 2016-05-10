@@ -12,11 +12,11 @@
     },
     "background": {        
         "scripts": [
-            "third_party/jquery.js", "third_party/pubnub-socket.io.min.js", "js/content/Util.js", "third_party/HtmlTidy.js", "js/background/Requests.js",
-            "js/content/BindingUtils.js", "third_party/RTCMultiConnection.min.js", "third_party/firebase.min.js", 
-            "js/background/TabCaptureManager.js", "js/background/LessonLoader.js", "js/background/VolatileProperties.js",
+            "third_party/jquery.js", "js/content/Util.js", "third_party/HtmlTidy.js", "js/background/Requests.js",
+            "js/content/BindingUtils.js", "third_party/firebase.min.js", 
+             "js/background/LessonLoader.js", "js/background/VolatileProperties.js",
             "js/background/GotoUrlManager.js", "js/background/ScratchpadAppendManager.js", "js/background/PopupMessageManager.js",
-            "js/background/HintManager.js", "js/background/Display.js", "js/background/Message.js", "js/background/ScreenshareManager.js",
+            "js/background/HintManager.js", "js/background/Display.js", "js/background/Message.js",
             "js/background/ScreenshotManager.js", "js/background/ChatManager.js", "js/background/RemoteRestartManager.js", 
             "js/background/BackgroundDataManager.js", "js/background/main.js"            
         ]
@@ -30,7 +30,7 @@
                 "js/content/LessonExecutor.js", "js/content/BackgroundDisplay.js", "js/content/HelpManager.js",
                 "js/content/BindingUtils.js", "js/content/DataManager.js",
                 "js/content/LoginManager.js", "js/content/XRayManager.js", "js/content/ModifyPageForToolbar.js",
-                "js/content/Toolbar.js", "js/content/ChatWindow.js", "js/content/ScratchSyncManager.js",                
+                "js/content/Toolbar.js", "js/content/ChatWindow.js", 
                 "js/content/RemoteRefreshManager.js",
                  "js/content/ButterBar.js", "js/content/ScratchPadJsRunner.js", "js/content/main.js" 
                 ],
@@ -49,5 +49,5 @@
         "matches": ["*://*.classadoo.com/*", "http://localhost:3000/*"]
     },
     "web_accessible_resources": ["css/*", "fonts/*", "x-ray/static-files/*",  "third_party/*"],
-    "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'"
+    "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://cdn.firebase.com; object-src 'self'"
 }

@@ -41,6 +41,8 @@
     "socket.io": "*",
     "socket.io-client": "*",
     "url": "*",
-    "webpack": "*"
+    "webpack": "*",
+    "firebase-client": "*",
+    "firebase-server": "*"
   }
 }

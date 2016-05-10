@@ -40,7 +40,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 	var sideButtons;
 	var progressBarContainer; 
 
-	applyDefaultCSS($iframe).css(CSS.frame)
+	applyDefaultCSS($iframe).css(CSS.frame).addClass("classadoo-toolbar");
 
 	$iframe[0].onload = function() {    				    				    						
 		i.setIframeContent(content);
@@ -62,14 +62,7 @@ var Toolbar = function($iframe, content, dataManager, loadedCallback) {
 		logo = i.$(".logo");
 		sideButtons = i.$(".side-buttons");
 		progressBarContainer = i.$(".progress-bar-wrapper");
-		JSButton = i.$(".js-button");
-
-		if (window.location.host.indexOf("scratchpad") > -1 || location.pathname.indexOf("scratchpad.html") > -1) {			
-			JSButton.css("display", "inline-block");			
-			JSButton.click(function() {
-				fire("run.scratchpad.script");
-			});	
-		}
+		JSButton = i.$(".js-button");		
 
 		hintButton.click(function() {
 			if (m.showHint) {				

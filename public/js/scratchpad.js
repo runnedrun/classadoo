@@ -64,8 +64,24 @@ $(function(){
   var scratchpadRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/' + Scratchpad.document_id);
   var now = new Date();
   scratchpadRef.child('updatedAt').set(now.toString());
-  
-  
+
+  if (Scratchpad.document_id != "classadoo-instructor") {
+    var syncPreviewRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/classadoo-instructor');
+    var syncPreview = new ScratchpadSyncPreview(editor, syncPreviewRef)
+
+    syncPreviewRef.child("editor").on('value', function(dataSnapshot) {
+      var previewEditor = syncPreview.editor       
+      previewEditor.setValue(dataSnapshot.child('code').val() || "");    
+       
+      previewEditor.clearSelection();    
+      if (dataSnapshot.child('cursor').val() === null) {
+        previewEditor.moveCursorToPosition({column: 0, row: 0});  
+      } else {
+        previewEditor.moveCursorToPosition(dataSnapshot.child('cursor').val());  
+      }    
+    });
+  }
+
   // Multiple client stuff
   //--------------------------------------------------------------------------------
   
@@ -114,14 +130,13 @@ $(function(){
   var scratchpadEditorRef = scratchpadRef.child('editor');
 
   scratchpadRef.once('value', function(dataSnapshot) {
-    if ( dataSnapshot.child('editor').val() === null ) {
+    if (dataSnapshot.child('editor').val() === null ) {
       editor.setValue(intro);
     }
   })
   
   // When code changes, put it into the editor
-  scratchpadEditorRef.on('value', function(dataSnapshot) {
-    
+  scratchpadEditorRef.on('value', function(dataSnapshot) { 
     var thisClientStatus;
     thisClientRef.once('value', function(dataSnapshot){
       thisClientStatus = dataSnapshot.val();
@@ -129,14 +144,12 @@ $(function(){
     
     // If this is a new scratchpad, put in our intro
     var clearReadOnlyMode;
-    if (dataSnapshot.child('code').val() == null) {
-      editor.setValue(intro);
-    } else if (thisClientStatus == 'typing') {
+    if (thisClientStatus == 'typing') {
       // do nothing, we're the ones typing in the first place
     } else {
       window.clearTimeout(clearReadOnlyMode);
       editor.setReadOnly(true);
-      editor.setValue(dataSnapshot.child('code').val());
+      editor.setValue(dataSnapshot.child('code').val() || "");
       clearReadOnlyMode = setTimeout(function(){
         editor.setReadOnly(false);
       }, 2000);
@@ -148,9 +161,8 @@ $(function(){
       editor.moveCursorToPosition({column: 0, row: 0});  
     } else {
       editor.moveCursorToPosition(dataSnapshot.child('cursor').val());  
-    }
-    
-  });
+    }    
+  });  
   
   // On keyup, save the code and cursor data to firebase
   var typingTimeout;
@@ -385,7 +397,8 @@ $(function(){
       $('#preview').css('width', window.innerWidth - e.pageX);
       $('#preview').css('left', e.pageX + 'px');
       $('#drag-handle').css('left', (e.pageX - 5) + 'px');
-      $('#commandbar, #editor, #footer').css('right', window.innerWidth - e.pageX);
+      $('#commandbar, #editor, #footer, #sync-preview').css('right', window.innerWidth - e.pageX);
+      $("#toggle-sync-preview").css({"width": e.pageX})
     }
 
   });

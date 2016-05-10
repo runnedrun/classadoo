@@ -1,3 +1,31 @@
+/* My additions */
+
+#toggle-sync-preview {
+  background: whitesmoke;
+  color: #333;
+  width: 100%;
+  position: absolute;
+  top: 32px;
+  height: 20px;
+  font-size: 14px;
+  text-align: center;
+  width: 40%; 
+  cursor: pointer; 
+}
+
+#sync-preview {
+  font-size: 11px;
+  display: none;
+  height: 290px;
+  position: absolute;
+  top: 52px;
+  bottom: 342px;
+  left: 0px;
+  right: 60%;  
+}
+
+/* Base css */
+
 body {
   background: #1C1C1C;
   font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
@@ -169,9 +197,9 @@ a {
 
 #editor {
   position: absolute;
-  top: 32px;
+  top: 52px;
   right: 60%;
-  bottom: 31px;
+  bottom: 0px;
   left: 0;
   transition: all 0.15s;
   -moz-transition: all 0.15s;

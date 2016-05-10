@@ -179,7 +179,7 @@ Util = new function() {
   }
 
   this.createScratchUrl = function(name) {
-    return self.timestampedUrl("https://www.classadoo.com/scratchpad.html#" + self.createScratchId(name));
+    return self.timestampedUrl("http://scratchpad.io/" + self.createScratchId(name));
   }
 
   this.createFiddleUrl = function(name) {

@@ -1,3 +1,3 @@
-cd public/js
+cd public/js/webpack-files
 webpack --watch
 cd -
