@@ -11,7 +11,7 @@
 			var letter6Height = $(".letter-6").height();
 			var letter6Width = $(".letter-6").width();
 
-			var hiderDiv = $("<div></div>")
+			var hiderDiv = $("<div>&nbsp;</div>")
 			$("body").append(hiderDiv)
 
 			hiderDiv.css({
@@ -23,57 +23,115 @@
 				"z-index": "1000",
 				background: "white",
 			})
-
-			
-			function nefariousHide() {				
-				$(".letter-7").css("display", "none")			
-				setTimeout(nefariousHide, 100)			
-			}
-
-			nefariousHide()			
 		})
 	</script>
 </head>
 
 <body>
 	<div class="container letter-container text-center">
-		<div class="row">
-			<div class="letter letter-1 col-md-2 col-md-offset-2">
-				D
+		<div class="row explanation">
+			<div class="col-md-8 col-md-offset-2">
+				<h3>
+					Below are 4 hidden letters, 3 hidden words, and one img with an incorrect URL. Use X-Ray goggles (the pencil icon in the toolbar) to modify the elements and make them visible!
+				</h3>	
+				<div>
+					Above each hidden element is a hint for how the element is hidden. There is also single a style tag above each element, which you can modify to unhide the elements. It's not enough to simply remove a CSS rule, you must change it to another value!	
+				</div>
+
+				<h4>
+					Start by using X-Ray goggles to inspect the first hint: "this letter is invisible!"
+				</h4>
+			</div>
+		</div>
+		<div class="row">			
+			<div class="col-md-2 col-md-offset-2">this letter is invisible!
+				<style type="text/css">
+					 #letter-1 {
+					 	/*try visibility: visible*/
+					 	visibility: hidden;
+					 }
+				</style>
+				<div class="letter letter-1" id="letter-1">
+					D
+				</div>				
 			</div>
 
-			<div class="letter letter-2 col-md-2">
-				O
+			<div class="col-md-2">this letter is too small to see!
+				<style type="text/css">
+					 #letter-2 {
+					 	font-size: 0;
+					 }
+				</style>
+				<div class="letter letter-2" id="letter-2">
+					O
+				</div>				
 			</div>
 
-			<div class="letter letter-3 col-md-2">
-				<span class="letter-3-wrapper">
-					G
-				</span>
+			<div class="col-md-2">this letter is outside of it's parent div!
+				<style type="text/css">
+					#letter-3-box {
+						overflow: hidden;
+					}
+
+					#letter-3 {
+						position: relative;
+						top: 500px;
+					}
+				</style>
+				<div class="letter-3-box" id="letter-3-box">
+					<div class="letter letter-3" id="letter-3">
+						G
+					</div>								
+				</div>
 			</div>
 
-			<div class="letter letter-4 col-md-2">
-				S
-			</div>			
+			<div class="col-md-2">this letter is the same color as it's background
+				<style type="text/css">
+					 #letter-4 {
+					 	color: white;
+					 }
+				</style>
+				<div class="letter letter-4" id="letter-4">
+					S
+				</div>				
+			</div>		
 		</div>	
 
 		<div class="row">			
-			<div class="letter letter-5 col-md-2 col-md-offset-3">
-				are
+			<div class="col-md-2 col-md-offset-3">height: 0px;
+				<style type="text/css">					
+					#letter-5 {
+						overflow: hidden;
+						height: 0px;
+					}
+				</style>
+				<div class="letter letter-5" id="letter-5">
+					are
+				</div>
 			</div>
 
-			<div class="letter letter-6 col-md-2">
-				the
+			<div class="col-md-2">
+				move the element on top of this word
+				<div class="letter letter-6">
+					the
+				</div>	
 			</div>
 
-			<div class="letter letter-7 col-md-2">
-				best
+			<div class="col-md-2">background:black				
+				<style type="text/css">
+					#letter-7 {
+						background: black;						
+					}
+				</style>
+				<div class="letter letter-7" id="letter-7">
+					best
+				</div>
 			</div>
 		</div>
 
 		<div class="row">			
-			<div class="letter letter-8 col-md-4 col-md-offset-4">
-				<img src="img/letter_what_number_goes_here?_dog_img.jpg">
+			<div class="col-md-4 col-md-offset-4 text-center">
+				<img id="dog_pic" src="img/replace_with_the_id_of_this_img.jpg">
 			</div>			
 		</div>
 

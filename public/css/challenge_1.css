@@ -1,47 +1,47 @@
-.letter-1 {
-
+.explanation {
+	margin-bottom: 100px;	
 }
 
 .letter-container {
-	margin-top: 200px;
+	margin-top: 50px;
 }
 
 .letter {
-	 font-size: 30px;
+	 font-size: 30px;	 
+	 margin-top: 20px;
 }
 
 .letter-1 {
 	 visibility: hidden;
 }
 
-.row .letter-2 {
+.letter-2 {
 	 font-size: 0px;
 }
 
-.row .letter-3 {
-	 border: 60px solid white
+.letter-3 {
+	 top: 500px;
+	 position: relative;
 }
 
-.letter-3-wrapper {
-	position: relative;
-	left: -50px;
-	z-index: -1;
+.letter-3-box {
+	overflow: hidden;
 }
 
-.row .letter-4 {
+.letter-4 {
 	color: white;
 }
 
 .letter-5 {
-	position: relative;
+	overflow: hidden;
+	height: 0px;
+}
+
+.letter-6 {	
 	top: 10000px;
 }
 
-.letter-6 {
-	;
-	top: 10000px;
-}
-
-.letter-8 {
-
+.letter-7 {
+	background: black;
+	color: black;
 }

@@ -14,8 +14,8 @@ require("./ClassState.js");
 require("./StreamManager.js");
 
 var classState;
-var firebasePrefix  = "classadoo-dev.firebaseio.com/"
-// var firebasePrefix = "classadoo-prod.firebaseIO.com/"
+// var firebasePrefix  = "classadoo-dev.firebaseio.com/"
+var firebasePrefix = "classadoo-prod.firebaseIO.com/"
 // var firebasePrefix = "ws://classadoo-test.firebaseio.com:5000/"
 
 var lessonsPrefix
