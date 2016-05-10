@@ -1,0 +1,49 @@
+doctype html
+html(lang='en')
+  head
+    title Scratchpad - Realtime HTML and CSS Editor
+    link(href='/css/scratchpad.css', rel='stylesheet', type='text/css')
+  body#scratchpad(tabindex='0')
+    #menu-pane
+      h1 Scratchpad
+      p.subtitle Instant HTML & CSS Editor
+      h2 About
+      p
+        | Scratchpad is an easy way to write HTML and CSS, created by 
+        a(href='http://twitter.com/intent/user?screen_name=nbashaw') @nbashaw
+        | .
+      h2 Recent
+      ul#recent-scratchpads
+        li Loading...
+    #commandbar
+      a#menu(href='javascript:void(0)')
+        span#menu-button  
+      a#title(href='javascript:void(0)') Loading...
+    #toggle-sync-preview Show Preview      
+    #sync-preview
+    #editor
+    //- #footer
+    //-   | Powered by 
+    //-   a#firebase(href='https://www.firebase.com/', target='_blank') Firebase
+    #drag-handle
+    iframe#preview
+    #help
+      h2 HTML & CSS Quick Reference
+      dl
+        dt Headings
+        dd
+          code <h1>, <h2>, <h3>, <h4>, <h5>, <h6>
+        dt Link
+        dd
+          code <a href="http://google.com">Google<a>
+    script.
+      var Scratchpad = {document_id: "#{docId}"}
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', type='text/javascript')
+    script(src='https://static.firebase.com/v0/firebase.js', type='text/javascript', charset='utf-8')
+    script(src='/js/ace/ace.js', type='text/javascript', charset='utf-8')
+    script(src='/js/ace/worker-html.js', type='text/javascript', charset='utf-8')
+    script(src='/js/underscore.js', type='text/javascript', charset='utf-8')
+    script(src='/js/keymaster.js', type='text/javascript', charset='utf-8')
+    script(src='/js/ScratchpadSyncPreview.js', type='text/javascript')
+    script(src='/js/scratchpad.js', type='text/javascript')
+
