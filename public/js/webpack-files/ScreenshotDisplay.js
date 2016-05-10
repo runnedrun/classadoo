@@ -9,7 +9,7 @@ ScreenshotDisplay = React.createClass({
     var display;    
     var studentIds = Object.keys(students)
     var filtered = studentIds.filter(function(id) {
-      return students[id].global.screenshot
+      return students[id].global && students[id].global.screenshot
     })
 
 
@@ -18,8 +18,8 @@ ScreenshotDisplay = React.createClass({
       var screenShotB = students[b].global.screenshot
       return screenShotB.timestamp - screenShotA.timestamp
     })    
-
-    var screenshotToShow = students[filtered[0]].global.screenshot;    
+    
+    var screenshotToShow = filtered[0] && students[filtered[0]].global.screenshot;    
     
 
     if (screenshotToShow) {

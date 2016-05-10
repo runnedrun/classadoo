@@ -43,6 +43,7 @@
     "url": "*",
     "webpack": "*",
     "firebase-client": "*",
-    "firebase-server": "*"
+    "firebase-server": "*",
+    "highlight.js": "*"
   }
 }
