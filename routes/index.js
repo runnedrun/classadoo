@@ -5,6 +5,8 @@ exports.showSite = function(req, res){
 };
 
 exports.showScratchPad = function(req, res){	
-  res.render('scratchpad', {docId: req.param("docId")});
+	var docId = req.param("docId") || Math.random().toString(36).substring(7);
+	
+  	res.render('scratchpad', {docId: req.param("docId")});
 };
 

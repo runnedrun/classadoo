@@ -165,6 +165,10 @@ app.put("/classes", classes.update);
 
 app.get("/sites/:siteName*", routes.showSite);
 
+app.get("/scratchpad", function(req, res) {
+  res.redirect("/scratchpad/" + Math.random().toString(36).substring(7))
+});
+
 app.get("/scratchpad/:docId*", routes.showScratchPad);
 
 app.get("/screenshare", function(req, res) {
