@@ -10,11 +10,9 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 	previewEditor.setShowPrintMargin(false);
 	previewEditor.setReadOnly(true)
 
-	var previewEl = $("#sync-preview")
-	var previewIframe = $("#sync-preview-preview")
+	var previewEl = $("#sync-preview")	
 	var togglePreviewEl = $("#toggle-sync-preview")
-	var liveEditorEl = $(liveEditor.container);
-	var livePreview = $("#preview")
+	var liveEditorEl = $(liveEditor.container);	
 	var topBarHeight = 52;
 
 	togglePreviewEl.click(togglePreview);
@@ -23,31 +21,31 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 
 	function nonEditorHeight() {
 		var classadooToolbar = $(".classadoo-toolbar");
-
-		var classadooToolbarHeight = classadooToolbar.is(":visible") ? $(".classadoo-toolbar").height() : 0;
-		console.log("heihg", classadooToolbarHeight);
+		var classadooToolbarHeight = classadooToolbar.is(":visible") ? $(".classadoo-toolbar").height() : 0;		
 		return (previewShown ? 300 : 0) + topBarHeight + classadooToolbarHeight;
 	}
 
 	function togglePreview() {
+		var previewIframe = $("#sync-preview-preview");
+		var livePreview = $("#preview");
+
 		if (previewShown) {
 			previewEl.hide();		
-
 			previewIframe.hide();
 			togglePreviewEl.text("Show preview");			
-			previewShown = false;
-			// liveEditorEl.css({"top": nonEditorHeight()});			
-			resizeLiveEditor();			
-			// setTimeout(resize, 200);
-		} else {
-			previewEl.show();
-			console.log("asd", previewIframe)
+			previewShown = false;			
+			livePreview.css({height: "100%", top: 0});			
+			resizeLiveEditor();						
+		} else {			
+			previewEl.show();			
 			previewIframe.show();		
 			togglePreviewEl.text("Hide preview");	
 			previewShown = true;
-			// liveEditorEl.css({"top": nonEditorHeight()});
-			resizeLiveEditor();
-			// setTimeout(resize, 200);		
+
+			var iframeHeight = window.innerHeight - nonEditorHeight();
+			
+			livePreview.css({height: iframeHeight, top:  nonEditorHeight()});			
+			resizeLiveEditor();			
 		}
 	}	
 
@@ -56,9 +54,10 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 		previewEditor.resize();
 	}
 
-	function resizeLiveEditor(){		
-		var editorHeight = document.body.scrollHeight - nonEditorHeight();
 
+
+	function resizeLiveEditor(){		
+		var editorHeight = window.innerHeight - nonEditorHeight();
 		console.log("changing editory heigh", editorHeight);
 		liveEditorEl.css({"top": nonEditorHeight(), height: editorHeight});				
 		setTimeout(resize, 200);		

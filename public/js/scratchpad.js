@@ -55,31 +55,60 @@ $(function(){
   });
 
   // Set up iframe.
-  var iframe = document.getElementById('preview'),
-  iframedoc = iframe.contentDocument || iframe.contentWindow.document;
-  iframedoc.body.setAttribute('tabindex', 0);
+  var frame = document.getElementById('preview');  
+  frame.contentWindow.document.body.setAttribute('tabindex', 0);
 
-  var previewPreview = new IframeManager($("#sync-preview-preview"));
+  var previewPreview = $("#sync-preview-preview")
   
-  $(".run-js-button").click(refreshJs)
+  $(".run-js-button").click(function() {
+    refreshPageWithJs($("#preview")[0]);
+  })
 
-  function refreshJs() {    
-    var newFrame = $("<iframe id='preview'>");
+  var firebase = '<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>'
+  var jquery = '<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>'
+  var currentlyInsertedJs = "" 
 
-    var doc = $("<html>")
-    // var head = $("<head>");
-    // var body = $("<body>");
+  function refresh(iframe) {    
+    refreshPage(iframe)
+    // var idoc = $(iframe.contentWindow.document);
+    // var scripts = idoc.find("script");
 
-    var firebase = '<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>'
-    jquery = '<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>'
+    // var scriptString = scripts.map(function(i, el) {      
+    //   return el && el.innerHTML;
+    // }).toArray().join("")
     
-    var html = jquery + "\n\n" + firebase + "\n\n" + editor.getValue();
+    // if (currentlyInsertedJs != scriptString) {
+    //   currentlyInsertedJs = scriptString;      
+    //   refreshPageWithJs(iframe);
+    // }
+  }
 
+  function refreshPage(iframe) { 
+    var iframedoc = iframe.contentWindow.document   
+    if (iframedoc.body) {
+      iframedoc.body.innerHTML =  jquery + "\n\n" + firebase + "\n\n" + editor.getValue();      
+    }    
+  }
+
+  function refreshPageWithJs(iframe) {
+  
+    var $iframe = $(iframe);
+
+    var newFrame = $("<iframe id='" + iframe.id + "'>");
+
+    var frameHeight = $iframe.height();
+    var frameWidth = $iframe.width();
+    var frameTop  = $iframe.offset().top
+
+    newFrame.css({"height": frameHeight, width: frameWidth, top: frameTop});
+    var code = editor.getValue();
+
+    var html = jquery + "\n\n" + firebase + "\n\n" + code;
     var manager = new IframeManager(newFrame);    
 
-    $("#preview").replaceWith(newFrame);    
-    manager.setIframeContent(html);    
-    iframedoc = manager.getIDoc()[0];
+    $iframe.replaceWith(newFrame);    
+    manager.setIframeContent(html);      
+    iframe = newFrame[0]; 
   }
   // Base firebase ref
   //--------------------------------------------------------------------------------
@@ -93,8 +122,8 @@ $(function(){
 
     syncPreviewRef.child("editor").on('value', function(dataSnapshot) {
       var previewEditor = syncPreview.editor       
-      previewEditor.setValue(dataSnapshot.child('code').val() || ""); 
-      previewPreview.setIframeContent(dataSnapshot.child('code').val() || "")    
+      previewEditor.setValue(dataSnapshot.child('code').val() || "");       
+      refresh($("#sync-preview-preview")[0]); 
        
       previewEditor.clearSelection();    
       if (dataSnapshot.child('cursor').val() === null) {
@@ -210,23 +239,11 @@ $(function(){
     typingTimeout = setTimeout(function(){
       thisClientRef.set('idle')
     }, 2000) ;
-    
   });
   
   // On data change, re-render the code in the iframe.
-  editor.getSession().on('change', function(e) {        
-    iframedoc.body.innerHTML = editor.getValue();
-    // Resize the menu icon if appropriate
-    var linesOfCode = editor.session.getLength();
-    if (linesOfCode < 10) {
-      $('#menu').attr('class', 'small')
-    } else if ( linesOfCode > 9 && linesOfCode < 99) {
-      $('#menu').attr('class', 'medium')
-    } else if ( linesOfCode > 99 && linesOfCode < 999) {
-      $('#menu').attr('class', 'large')
-    } else if (linesOfCode > 999){
-      $('#menu').attr('class', 'x-large')
-    }
+  editor.getSession().on('change', function(e) {            
+    refresh($("#preview")[0]);  
   });
   
   

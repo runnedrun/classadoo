@@ -7,6 +7,28 @@ Ok awesome, so let's get started with the good stuff. Today we'll be working wit
 Now this is pretty cool, but what's even cooler, are sycnhronized databases. Now a synchronized database allows us to chagne the title variable on my computer, write it to a database, so it's the same after a refresh, and magically have other databases on other computers update with the same value. So if I'm working on a google doc with __ and I change the title, his title will also change
 
 
+<h1 id="cool-title">
+  Cool Title
+</h1>
+
+<script>
+  function sendMessage(e) {
+    console.log("alalskjdlfkj");
+    var message = document.getElementById("cool-message").value
+    ref.set(messsage)
+  }
+  var ref = new Firebase("classadoo-game.firebaseIO.com/title")
+  
+  ref.on("value", function(snapshot) {
+    var title = snapshot.val();
+    $("#cool-title").html(title)
+  })
+  
+  ref.set("Lame title")
+</script>
+
+<input type="text" id="cool-message"> <button onclick="sendMessage()">Send Message</button>
+
 
 <script>
 var ref = new Firebase("classadoo-game.firebaseIO.com/title")
