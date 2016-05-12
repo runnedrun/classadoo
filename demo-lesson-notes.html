@@ -1,0 +1,58 @@
+<script>
+$(document.body).keydown(function(e) {		
+		var keyCode = e.keyCode;		
+
+		switch (keyCode) {
+			case 38:
+				movementRef.set("up");
+				break;
+			case 39:				
+				movementRef.set("right");
+				break;
+			case 40:
+				movementRef.set("down");
+				break;
+			case 37:
+				movementRef.set("left");
+				break;
+		}		
+	})
+
+	$(document.body).keyup(function(e) {
+		movementRef.set("still");
+	})	
+
+
+	ref.child("1").child("challenge").on("value", function(snapshot) {
+		var challenge = snapshot.val()
+		console.log("challenge received", challenge);
+
+		if (challenge.color == "red") {			
+			var answer = challenge.prompt.indexOf("batman");			
+			ref.child("1/answer/" + challenge.id).set(answer);
+		}
+
+		if (challenge.color == "orange") {
+			console.log("answering orange")
+			var numbers = challenge.prompt.split(" ");
+			var res = Number(numbers[0]) + Number(numbers[1]);
+			console.log("orange", res);
+			ref.child("1/answer/" + challenge.id).set(res);
+		}
+
+		if (challenge.color == "blue") {
+			console.log("answering blue");
+			ref.child("1/answer/" + challenge.id).set(challenge.prompt);
+		}
+
+		if (challenge.color == "black") {			
+			var node = $(challenge.prompt);						
+
+			var found = node.find("#" + challenge.id);
+
+			console.log("answering black", found.html());			
+
+			ref.child("1/answer/" + challenge.id).set(found.html());
+		}
+	})	
+</script>
