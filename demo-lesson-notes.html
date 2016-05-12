@@ -1,4 +1,21 @@
+Hi everyone, my name is David Gaynor, I am an engineer/teacher, I went to Olin College, the same place where George went, where I got a degree in robotics. I then worked for Twitter for a while, where I was, surprise, not working on robots, but still doing some really cool projects and many of which were just trying to deal with having 100 million people trying to use our stuff at once. I left twitter to found a nonprofit called schoolshaped, which I'm still running, and to teach entrepreneurship and coding classes. I'm here to see if I might be a good fit to teach here at Nueva, CS and entrepreneurship.
+
+So berfore we jump into todays's project, I'd like to just quickly get to know you all, so if we could go around the room, and everyone just say your name and one thing you wish you had a robot for. So I'll start. Hi I'm David, and I wish I had a robot which could talk to my parents on the phone. 
+
+Ok awesome, so let's get started with the good stuff. Today we'll be working with some software called Firebase. Firebase is what's called a synchronized database. Now what is a syncgrineuzed database? Well let's say we have a variable, call it title. Like let's say we're the team writing Google docs, we would have a variable called title, which the user can change. Now the problem with variables is, if you refresh the page, the variable is reset. So any changes the user might have made to the title would be gone, if we just stored it in a variable. To make the value stick around, we need to store it in a database instead. A database is a place you can put variables, like strings, and ints and other types of data, and they'll stay there, forever, until you remove them. So we can write the title to a database when the user changes it, then read back the title after the page refreshes, and it will still be the same. 
+
+Now this is pretty cool, but what's even cooler, are sycnhronized databases. Now a synchronized database allows us to chagne the title variable on my computer, write it to a database, so it's the same after a refresh, and magically have other databases on other computers update with the same value. So if I'm working on a google doc with __ and I change the title, his title will also change
+
+
+
 <script>
+var ref = new Firebase("classadoo-game.firebaseIO.com/title")
+  
+  ref.on("value", function(snapshot) {
+    var title = snapshot.val();
+    $(".title").html(title);
+  })
+
 $(document.body).keydown(function(e) {		
 		var keyCode = e.keyCode;		
 
@@ -6,7 +23,7 @@ $(document.body).keydown(function(e) {
 			case 38:
 				movementRef.set("up");
 				break;
-			case 39:				
+			case 39:				s
 				movementRef.set("right");
 				break;
 			case 40:

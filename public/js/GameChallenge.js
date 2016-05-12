@@ -3,7 +3,7 @@ var playerStarts = {}
 var currentStart = 0;
 var playerWidth = 100;
 var playerHeight = 100;
-var testUsers = ["1", "2", "3", "4", "5"];
+var testUsers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 
 var challengeHeight = 25;
 var challengeWidth = 50;
@@ -179,13 +179,13 @@ function completeChallenge(challenge) {
 $(function() {
 	var ref = new Firebase('https://classadoo-game.firebaseIO.com/players');		
 
-	ref.on("child_added", function(snap) {
-		players[snap.key()] = new Player(ref, snap.key(), snap.val());
-	})
+	// ref.on("child_added", function(snap) {
+	// 	players[snap.key()] = new Player(ref, snap.key(), snap.val());
+	// })
 
-	// testUsers.forEach(function(playerName) {
-	// 	players[playerName] = new Player(ref, playerName, {});
-	// })	
+	testUsers.forEach(function(playerName) {
+		players[playerName] = new Player(ref, playerName, {});
+	})	
 
 	generateChallenges(10)
 })
