@@ -56,16 +56,36 @@ $(function(){
 
   // Set up iframe.
   var iframe = document.getElementById('preview'),
-    iframedoc = iframe.contentDocument || iframe.contentWindow.document;
+  iframedoc = iframe.contentDocument || iframe.contentWindow.document;
   iframedoc.body.setAttribute('tabindex', 0);
 
   var previewPreview = new IframeManager($("#sync-preview-preview"));
   
+  $(".run-js-button").click(refreshJs)
+
+  function refreshJs() {    
+    var newFrame = $("<iframe id='preview'>");
+
+    var doc = $("<html>")
+    // var head = $("<head>");
+    // var body = $("<body>");
+
+    var firebase = '<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>'
+    jquery = '<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>'
+    
+    var html = jquery + "\n\n" + firebase + "\n\n" + editor.getValue();
+
+    var manager = new IframeManager(newFrame);    
+
+    $("#preview").replaceWith(newFrame);    
+    manager.setIframeContent(html);    
+    iframedoc = manager.getIDoc()[0];
+  }
   // Base firebase ref
   //--------------------------------------------------------------------------------
   var scratchpadRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/' + Scratchpad.document_id);
   var now = new Date();
-  scratchpadRef.child('updatedAt').set(now.toString());
+  scratchpadRef.child('updatedAt').set(now.toString());  
 
   if (Scratchpad.document_id != "classadoo-instructor") {
     var syncPreviewRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/classadoo-instructor');
@@ -194,7 +214,7 @@ $(function(){
   });
   
   // On data change, re-render the code in the iframe.
-  editor.getSession().on('change', function(e) {
+  editor.getSession().on('change', function(e) {        
     iframedoc.body.innerHTML = editor.getValue();
     // Resize the menu icon if appropriate
     var linesOfCode = editor.session.getLength();
@@ -360,13 +380,6 @@ $(function(){
   //--------------------------------------------------------------------------------
   
   // Toggle fullscreen mode on menu click
-  $('#menu').click(function(){
-    $('#scratchpad').toggleClass('menu');
-    mixpanel.track("Menu toggle");
-    if (Scratchpad.loadedRecentScratchpads != true) {
-      renderRecentScratchpads(getRecentScratchpads());
-    }
-  })
   
   // Show different tooltip for Windows users.
   var isMac = navigator.platform.toUpperCase().indexOf('MAC')!==-1;

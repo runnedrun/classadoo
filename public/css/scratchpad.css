@@ -71,11 +71,12 @@ a {
 }
 
 #menu {
-  text-indent: -999999px;
+  /*text-indent: -999999px;*/
   float: left;
   height: 31px;
   text-align: center;
-  opacity: 0.5;
+  /*opacity: 0.5;*/
+  font-size: 20px;
   width: 47px;
 }
 
@@ -85,11 +86,11 @@ a {
 }
 
 #menu-button {
-  background-image: url(/img/menu-icon.png);
-  width: 15px;
+  /*background-image: url(/img/menu-icon.png);*/
+  width: 30px;
   height: 13px;
   display: block;
-  margin: 9px auto 0px auto;
+  margin: 4px auto 0px auto;
 }
 
 .small#menu   {width: 40px;}

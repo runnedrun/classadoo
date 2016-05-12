@@ -27,11 +27,6 @@ var enforce = require('express-sslify');
 
 var app = express();
 
-if (process.env.ENV != "dev") {
-  console.log("enforcing https");
-  app.use(enforce.HTTPS({ trustProtoHeader: true }))  
-}    
-
 app.io = io;
 
 var redisClient;

@@ -36,8 +36,8 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 			previewIframe.hide();
 			togglePreviewEl.text("Show preview");			
 			previewShown = false;
-			// liveEditorEl.css({"top": nonEditorHeight()});
-			resizeLiveEditor();
+			// liveEditorEl.css({"top": nonEditorHeight()});			
+			resizeLiveEditor();			
 			// setTimeout(resize, 200);
 		} else {
 			previewEl.show();
@@ -60,8 +60,7 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 		var editorHeight = document.body.scrollHeight - nonEditorHeight();
 
 		console.log("changing editory heigh", editorHeight);
-		liveEditorEl.css({"top": nonEditorHeight(), height: editorHeight});		
-		livePreview.css({"top": nonEditorHeight(), height: editorHeight});		
+		liveEditorEl.css({"top": nonEditorHeight(), height: editorHeight});				
 		setTimeout(resize, 200);		
 	}
 }
