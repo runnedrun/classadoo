@@ -4,6 +4,14 @@ var hljs = require("highlight.js");
 
 ScratchDisplay = React.createClass({    
   componentDidMount: function() {    
+    var self = this;
+    $(document).click(function(e) {    
+      console.log(e.target, self.staticPreview, e.target == self.staticPreview)
+      if (!((e.target == self.editablePreview) || (e.target == self.staticPreview))) {
+        self.makeDisplayStaticAndSnapshot();          
+        self.setRemoteScratchToEditable();
+      }
+    })    
     hljs.highlightBlock(this.staticPreview);
   },
 
@@ -13,9 +21,9 @@ ScratchDisplay = React.createClass({
 
   handleEditableKeyDown: function(e) {
     // escape exits editable mode
-    if (e.keyCode == 27) {
-      console.log("making it static")
-      this.makeDisplayStaticAndSnapshot();
+    if (e.keyCode == 27) {    
+      self.setRemoteScratchToEditable();
+      $(self.editablePreview).blur()
     } else if (e.keyCode == 9) {      
       return false;
     } 
@@ -25,14 +33,21 @@ ScratchDisplay = React.createClass({
     this.scratchTracker.set(this.docId, this.editablePreview.innerText);     
   },
 
-  makeDisplayEditableAndRealtime: function() {    
-    console.log("back to real time")    
+  makeDisplayEditableAndRealtime: function(e) {    
+    console.log("back to real ssss")    
 
     $(this.staticPreview).hide();
-    $(this.editablePreview).show();
-    $(this.editablePreview).focus();
+    $(this.editablePreview).show();    
 
-    this.scratchTracker.trackRealtime(this.docId);    
+    this.scratchTracker.trackRealtime(this.docId);            
+  },
+
+  setRemoteScratchToReadOnly: function(e) {            
+    this.scratchTracker.setReadOnly(this.docId, true);            
+  },
+
+  setRemoteScratchToEditable: function(e) {    
+    this.scratchTracker.setReadOnly(this.docId, false);            
   },
 
   makeDisplayStaticAndSnapshot: function() {
@@ -58,7 +73,7 @@ ScratchDisplay = React.createClass({
             {this.newCode}
           </code>
         </pre>        
-        <pre className="editable-display" contentEditable='true' ref={(ref) => this.editablePreview = ref} onBlur={self.makeDisplayStaticAndSnapshot} onKeyUp={self.handleEditableKeyUp} onKeyDown={self.handleEditableKeyDown}>{this.newCode}</pre>
+        <pre className="editable-display" onBlur={this.setRemoteScratchToEditable} onFocus={this.setRemoteScratchToReadOnly} contentEditable='true' ref={(ref) => this.editablePreview = ref} onKeyUp={self.handleEditableKeyUp} onKeyDown={self.handleEditableKeyDown}>{this.newCode}</pre>
       </div>    
     )                                    
   }

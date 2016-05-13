@@ -54,6 +54,12 @@ $(function(){
     }
   });
 
+  editor.setOptions({
+    // enableBasicAutocompletion: true,
+    // enableSnippets: true,
+    enableLiveAutocompletion: true
+});
+
   // Set up iframe.
   var frame = document.getElementById('preview');  
   frame.contentWindow.document.body.setAttribute('tabindex', 0);
@@ -68,30 +74,14 @@ $(function(){
   var jquery = '<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>'
   var currentlyInsertedJs = "" 
 
-  function refresh(iframe) {    
-    refreshPage(iframe)
-    // var idoc = $(iframe.contentWindow.document);
-    // var scripts = idoc.find("script");
-
-    // var scriptString = scripts.map(function(i, el) {      
-    //   return el && el.innerHTML;
-    // }).toArray().join("")
-    
-    // if (currentlyInsertedJs != scriptString) {
-    //   currentlyInsertedJs = scriptString;      
-    //   refreshPageWithJs(iframe);
-    // }
-  }
-
-  function refreshPage(iframe) { 
+  function refreshPage(iframe, editor) { 
     var iframedoc = iframe.contentWindow.document   
     if (iframedoc.body) {
       iframedoc.body.innerHTML =  jquery + "\n\n" + firebase + "\n\n" + editor.getValue();      
     }    
   }
 
-  function refreshPageWithJs(iframe) {
-  
+  function refreshPageWithJs(iframe) {  
     var $iframe = $(iframe);
 
     var newFrame = $("<iframe id='" + iframe.id + "'>");
@@ -123,7 +113,7 @@ $(function(){
     syncPreviewRef.child("editor").on('value', function(dataSnapshot) {
       var previewEditor = syncPreview.editor       
       previewEditor.setValue(dataSnapshot.child('code').val() || "");       
-      refresh($("#sync-preview-preview")[0]); 
+      refreshPage($("#sync-preview-preview")[0], previewEditor); 
        
       previewEditor.clearSelection();    
       if (dataSnapshot.child('cursor').val() === null) {
@@ -243,7 +233,7 @@ $(function(){
   
   // On data change, re-render the code in the iframe.
   editor.getSession().on('change', function(e) {            
-    refresh($("#preview")[0]);  
+    refreshPage($("#preview")[0], editor);  
   });
   
   
@@ -273,6 +263,14 @@ $(function(){
   // Stupid (webkit only?) hover bug fix
   $('#title').hover(function(){$(this).addClass('hover')}, function(){$(this).removeClass('hover')});
   
+  // read only mode stuff 
+
+  var readOnlyRef = scratchpadRef.child('read_only');
+
+  readOnlyRef.on("value", function(snapshot) {
+    var isReadOnly = snapshot.val();    
+    editor.setReadOnly(isReadOnly);    
+  })
   
   // Fullscreen mode stuff
   //--------------------------------------------------------------------------------

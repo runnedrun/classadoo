@@ -9,12 +9,20 @@ ScratchTracker = function(parentRef, callback) {
 		return parentRef.child("students/" + docId + "/editor/code");		
 	}
 
+	function readOnlyRef(docId) {
+		return parentRef.child("students/" + docId + "/read_only");		
+	}
+
 	this.trackRealtime = function(docId) {				
 		rtScratch = docId
 		rtRef(docId).on("value", function(snap) {
 			scratches[docId] = snap.val();
 			callback(scratches, self)
 		});
+	}
+
+	this.setReadOnly = function(docId, isReadOnly) {
+		readOnlyRef(docId).set(isReadOnly);
 	}
 
 	this.offRealtime = function(docId) {
