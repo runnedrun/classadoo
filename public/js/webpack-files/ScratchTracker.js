@@ -5,15 +5,22 @@ ScratchTracker = function(parentRef, callback) {
 	var rtScratch = false;
 	var self = this;
 
+	var rtRefs = {};
+	var readOnlyRefs = {};
+
 	function rtRef(docId) {
-		return parentRef.child("students/" + docId + "/editor/code");		
+		var ref = rtRefs[docId] || parentRef.child("students/" + docId + "/editor/code");		
+		rtRefs[docId] = ref;
+		return ref
 	}
 
 	function readOnlyRef(docId) {
-		return parentRef.child("students/" + docId + "/read_only");		
+		var ref = readOnlyRefs[docId] || parentRef.child("students/" + docId + "/read_only");		
+		readOnlyRefs[docId] = ref;
+		return ref;
 	}
 
-	this.trackRealtime = function(docId) {				
+	this.trackRealtime = function(docId) {			
 		rtScratch = docId
 		rtRef(docId).on("value", function(snap) {
 			scratches[docId] = snap.val();

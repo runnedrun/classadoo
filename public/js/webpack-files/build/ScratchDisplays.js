@@ -70,7 +70,6 @@
 				"div",
 				{ className: "container" },
 				alphaDocIds.map(function (docId, i) {
-					console.log("showing this display", docId);
 					return React.createElement(ScratchDisplay, { scratchTracker: self.props.scratchTracker, key: docId, docId: docId, newCode: self.props.scratches[docId] });
 				})
 			);
@@ -21327,12 +21326,19 @@
 		var rtScratch = false;
 		var self = this;
 
+		var rtRefs = {};
+		var readOnlyRefs = {};
+
 		function rtRef(docId) {
-			return parentRef.child("students/" + docId + "/editor/code");
+			var ref = rtRefs[docId] || parentRef.child("students/" + docId + "/editor/code");
+			rtRefs[docId] = ref;
+			return ref;
 		}
 
 		function readOnlyRef(docId) {
-			return parentRef.child("students/" + docId + "/read_only");
+			var ref = readOnlyRefs[docId] || parentRef.child("students/" + docId + "/read_only");
+			readOnlyRefs[docId] = ref;
+			return ref;
 		}
 
 		this.trackRealtime = function (docId) {
@@ -21375,9 +21381,11 @@
 
 	  componentDidMount: function () {
 	    var self = this;
+
+	    self.updateTextAreaHeight();
+
 	    $(document).click(function (e) {
-	      console.log(e.target, self.staticPreview, e.target == self.staticPreview);
-	      if (!(e.target == self.editablePreview || e.target == self.staticPreview)) {
+	      if (!self.docDisplay.contains(e.target)) {
 	        self.makeDisplayStaticAndSnapshot();
 	        self.setRemoteScratchToEditable();
 	      }
@@ -21386,26 +21394,40 @@
 	  },
 
 	  componentDidUpdate: function () {
+	    this.updateTextAreaHeight();
 	    hljs.highlightBlock(this.staticPreview);
+	  },
+
+	  updateTextAreaHeight: function () {
+	    var previewHeight = this.editablePreview.scrollHeight;
+	    $(this.editablePreview).css("height", previewHeight);
 	  },
 
 	  handleEditableKeyDown: function (e) {
 	    // escape exits editable mode
+	    $preview = $(this.editablePreview);
+
 	    if (e.keyCode == 27) {
-	      self.setRemoteScratchToEditable();
-	      $(self.editablePreview).blur();
+	      this.setRemoteScratchToEditable();
+	      $preview.blur();
 	    } else if (e.keyCode == 9) {
-	      return false;
+	      e.preventDefault();
+	      var start = this.editablePreview.selectionStart;
+	      var end = this.editablePreview.selectionEnd;
+
+	      // set textarea value to: text before caret + tab + text after caret
+	      $preview.val($preview.val().substring(0, start) + "\t" + $preview.val().substring(end));
+
+	      // put caret at right position again
+	      this.editablePreview.selectionStart = this.editablePreview.selectionEnd = start + 1;
 	    }
 	  },
 
-	  handleEditableKeyUp: function (e) {
-	    this.scratchTracker.set(this.docId, this.editablePreview.innerText);
+	  onEditableChange: function (e) {
+	    this.scratchTracker.set(this.docId, this.editablePreview.value);
 	  },
 
 	  makeDisplayEditableAndRealtime: function (e) {
-	    console.log("back to real ssss");
-
 	    $(this.staticPreview).hide();
 	    $(this.editablePreview).show();
 
@@ -21421,8 +21443,6 @@
 	  },
 
 	  makeDisplayStaticAndSnapshot: function () {
-	    console.log("back to snapshot");
-
 	    $(this.staticPreview).show();
 	    $(this.editablePreview).hide();
 
@@ -21430,6 +21450,7 @@
 	  },
 
 	  render: function () {
+	    console.log("what?");
 	    var self = this;
 	    this.docId = this.props.docId;
 	    this.newCode = this.props.newCode;
@@ -21437,7 +21458,7 @@
 
 	    return React.createElement(
 	      "div",
-	      { id: this.docId, className: "student-display row" },
+	      { ref: ref => this.docDisplay = ref, id: this.docId, className: "student-display row" },
 	      React.createElement(
 	        "div",
 	        { className: "title" },
@@ -21449,18 +21470,14 @@
 	      ),
 	      React.createElement(
 	        "pre",
-	        { ref: ref => this.staticPreview = ref, onClick: self.makeDisplayEditableAndRealtime },
+	        { className: "static-display", ref: ref => this.staticPreview = ref, onClick: self.makeDisplayEditableAndRealtime },
 	        React.createElement(
 	          "code",
 	          null,
 	          this.newCode
 	        )
 	      ),
-	      React.createElement(
-	        "pre",
-	        { className: "editable-display", onBlur: this.setRemoteScratchToEditable, onFocus: this.setRemoteScratchToReadOnly, contentEditable: "true", ref: ref => this.editablePreview = ref, onKeyUp: self.handleEditableKeyUp, onKeyDown: self.handleEditableKeyDown },
-	        this.newCode
-	      )
+	      React.createElement("textarea", { className: "editable-display autoExpand", onBlur: this.setRemoteScratchToEditable, onFocus: this.setRemoteScratchToReadOnly, ref: ref => this.editablePreview = ref, onChange: self.onEditableChange, value: this.newCode, onKeyDown: self.handleEditableKeyDown })
 	    );
 	  }
 	});

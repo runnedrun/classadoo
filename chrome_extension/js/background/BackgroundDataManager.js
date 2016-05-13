@@ -121,7 +121,7 @@ DataManager = function(parentRef, classRef) {
 	self.tabSet = function(tabId, props) {										
 		localTabUpdate(tabId, Util.extend(tabCache[tabId], props));
 
-		if (globalCache.studentName) {					
+		if (globalCache && globalCache.studentName) {					
 			if (syncCache) {
 				syncCaches()
 			} else{				

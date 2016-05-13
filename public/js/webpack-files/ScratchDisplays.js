@@ -5,11 +5,11 @@ var $ = require("jquery");
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-$(function() {
+$(function() {	
 	var ref = new Firebase('https://classadoo-scratch.firebaseio.com');
 	new ScratchTracker(ref, function(scratches, tracker) {		
 		ReactDOM.render(<ScratchDisplays scratchTracker={tracker} scratches={scratches} />, document.getElementById("display-container"))   
-	})	
+	})		
 })
 
 ScratchDisplays = React.createClass({    
@@ -20,8 +20,7 @@ ScratchDisplays = React.createClass({
 
 		return (
 			<div className="container">
-				{alphaDocIds.map(function(docId, i) {
-					console.log("showing this display", docId);
+				{alphaDocIds.map(function(docId, i) {					
 					return <ScratchDisplay scratchTracker={self.props.scratchTracker} key={docId} docId={docId} newCode={self.props.scratches[docId]} />
 				})}
 			</div>			

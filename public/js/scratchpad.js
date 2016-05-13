@@ -46,13 +46,6 @@ $(function(){
         $('#help').toggleClass('visible');
     }
   });
-  editor.commands.addCommand({
-    name: 'toggleFullscreen',
-    bindKey: {win: 'Ctrl-i',  mac: 'Command-i'},
-    exec: function(editor) {
-        toggleFullscreen();
-    }
-  });
 
   editor.setOptions({
     // enableBasicAutocompletion: true,
@@ -88,9 +81,12 @@ $(function(){
 
     var frameHeight = $iframe.height();
     var frameWidth = $iframe.width();
-    var frameTop  = $iframe.offset().top
+    var offset  = $iframe.offset()
+    var frameTop  = offset.top;
+    var frameLeft  = offset.left;
+    var frameTop  = offset.top;    
 
-    newFrame.css({"height": frameHeight, width: frameWidth, top: frameTop});
+    newFrame.css({"height": frameHeight, width: frameWidth, top: frameTop, left: frameLeft});
     var code = editor.getValue();
 
     var html = jquery + "\n\n" + firebase + "\n\n" + code;
@@ -271,138 +267,6 @@ $(function(){
     var isReadOnly = snapshot.val();    
     editor.setReadOnly(isReadOnly);    
   })
-  
-  // Fullscreen mode stuff
-  //--------------------------------------------------------------------------------
-  
-  // Toggle fullscreen mode.
-  function toggleFullscreen() {
-    if ($('#scratchpad').hasClass('menu')) {
-      $('#scratchpad').removeClass('menu');
-    }
-    $('#scratchpad').toggleClass('fullscreen');
-    location.hash = $('#scratchpad').attr('class');
-  }
-  
-  // When the button is clicked, call toggleFullscreen.
-  $('#toggle-fullscreen').click(function() {
-    toggleFullscreen();
-  });
-  
-  // Even when iframe has focus, still toggleFullscreen
-  $("#preview").contents().find("body").on('keydown', function(e){
-    if (e.keyCode == 73) {
-      toggleFullscreen();
-    }
-  });
-  
-  // For good measure, always toggleFullscreen
-  key('⌘+i, ctrl+i', function(){
-    toggleFullscreen();
-  });
-  
-  // Automatically go into fullscreen mode when pageload includes #fullscreen
-  if (location.hash == '#fullscreen') {
-    $('#scratchpad').toggleClass('fullscreen');
-  }
-  
-  
-  // History (Recent Scratchpads)
-  //--------------------------------------------------------------------------------
-  if (typeof(Storage)!=="undefined") {
-    
-    // Initialize recentScratchpads row in localStorage if needed
-    if (localStorage['recentScratchpads'] === undefined) {
-      localStorage['recentScratchpads'] = JSON.stringify([]);
-    }
-    
-    function getRecentScratchpads() {
-      var scratchpadIds = JSON.parse(localStorage['recentScratchpads']);
-      return scratchpadIds;
-    }
-    
-    function addToRecentScratchpads(id) {
-      var recentScratchpadsArr = [];
-      recentScratchpadsArr = JSON.parse(localStorage['recentScratchpads']) || [];
-      if (!_.contains(recentScratchpadsArr, id)) {
-        recentScratchpadsArr.push(id);
-        localStorage['recentScratchpads'] = JSON.stringify(recentScratchpadsArr);
-      } else {
-        recentScratchpadsArr = _.without(recentScratchpadsArr, id);
-        recentScratchpadsArr.push(id);
-        localStorage['recentScratchpads'] = JSON.stringify(recentScratchpadsArr);
-      }
-    }
-    
-    function renderRecentScratchpads(listOfRecentScratchpads) {
-      
-      if (listOfRecentScratchpads.length > 1) {
-        
-        // Clear the loading text, save state that it's been loaded
-        $('#recent-scratchpads').html('');
-        var recentScratchpadTemplate = '<li><a class="recent-scratchpad" href="/<%= scratchpadId %>" target="_blank"><%= thisScratchpadTitle %> <time><%= dateTemplate %></time></a><a class="delete" data-id="<%= scratchpadId %>" href="javascript:void(0)">&times;</a></li>';
-        
-        _.each(listOfRecentScratchpads, function(scratchpadId) {
-          if (Scratchpad.document_id != scratchpadId) {
-            
-            var thisScratchpadRef = new Firebase('https://scratchpad.firebaseio.com/' + scratchpadId);
-            thisScratchpadRef.once('value', function(dataSnapshot) {
-              var thisScratchpadTitle = dataSnapshot.child('title').val();
-              dateObj = new Date(dataSnapshot.child('updatedAt').val());
-              dateTemplate = dateObj.getDate() +'/'+ dateObj.getMonth() +'/'+ dateObj.getFullYear();
-              thisScratchpadTemplate = _.template(recentScratchpadTemplate, {scratchpadId: scratchpadId, thisScratchpadTitle: thisScratchpadTitle, dateTemplate: dateTemplate});
-              $('#recent-scratchpads').prepend(thisScratchpadTemplate);
-            });
-            
-          }
-        });
-        
-      } else {
-        $('#recent-scratchpads').html('<li>No recent scratchpads!</li>');
-      }
-      Scratchpad.loadedRecentScratchpads = true;
-    }
-    
-    function deleteRecentScratchpadFromList (id) {
-      
-      // Delete from localstore
-      var recentScratchpadsArr;
-      recentScratchpadsArr = JSON.parse(localStorage['recentScratchpads']);
-      recentScratchpadsArr = _.without(recentScratchpadsArr, id);
-      localStorage['recentScratchpads'] = JSON.stringify(recentScratchpadsArr);
-            
-      // Delete from DOM
-      $('#recent-scratchpads li').each(function(index){
-        if ($(this).children('.delete').data('id') == id) {
-          $(this).remove();
-        }
-      });
-    }
-    
-    $('#recent-scratchpads').on('click', '.delete', function(e) {
-      deleteRecentScratchpadFromList($(this).data('id'));
-    });
-    
-    addToRecentScratchpads(Scratchpad.document_id);
-    
-  } else {
-    // Sorry! No web storage support.
-    $('#recent-scratchpads').html('Sorry! Your browser doesn\'t support HTML5 local storage.');
-  }
-  
-  
-  // Menu stuff
-  //--------------------------------------------------------------------------------
-  
-  // Toggle fullscreen mode on menu click
-  
-  // Show different tooltip for Windows users.
-  var isMac = navigator.platform.toUpperCase().indexOf('MAC')!==-1;
-  if (isMac != true) {
-    $('.tooltip').html('Keyboard Shortcut: Control + i');
-  }
-
-
 
   // Drag to resize
   //--------------------------------------------------------------------------------
@@ -424,9 +288,15 @@ $(function(){
     if (clicking === true) {
       editor.resize();
       $('body').addClass('resizing');
+
       $('#preview').css('right', '0px');
-      $('#preview').css('width', window.innerWidth - e.pageX);
+      $('#preview').css('width', window.innerWidth - e.pageX);      
       $('#preview').css('left', e.pageX + 'px');
+
+      $('#sync-preview-preview').css('right', '0px');
+      $('#sync-preview-preview').css('width', window.innerWidth - e.pageX);      
+      $('#sync-preview-preview').css('left', e.pageX + 'px');
+
       $('#drag-handle').css('left', (e.pageX - 5) + 'px');
       $('#commandbar, #editor, #footer, #sync-preview').css('right', window.innerWidth - e.pageX);
       $("#toggle-sync-preview").css({"width": e.pageX})

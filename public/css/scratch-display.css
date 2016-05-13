@@ -17,6 +17,14 @@
 
 .editable-display {
 	display: none;
+  white-space: pre;
+  outline: none;
+  resize: none;
+  width: 100%;
+}
+
+.static-display {
+  font-size: 11px;
 }
 
 .hljs {

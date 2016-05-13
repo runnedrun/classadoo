@@ -3,43 +3,62 @@ var $ = require("jquery");
 var hljs = require("highlight.js");
 
 ScratchDisplay = React.createClass({    
-  componentDidMount: function() {    
+  componentDidMount: function() { 
     var self = this;
-    $(document).click(function(e) {    
-      console.log(e.target, self.staticPreview, e.target == self.staticPreview)
-      if (!((e.target == self.editablePreview) || (e.target == self.staticPreview))) {
+
+    self.updateTextAreaHeight();
+
+    $(document).click(function(e) {       
+      if (!self.docDisplay.contains(e.target)) {
         self.makeDisplayStaticAndSnapshot();          
         self.setRemoteScratchToEditable();
       }
     })    
     hljs.highlightBlock(this.staticPreview);
-  },
+  },  
 
   componentDidUpdate: function() {    
+    this.updateTextAreaHeight();
     hljs.highlightBlock(this.staticPreview);
+  },
+
+  updateTextAreaHeight: function() {    
+    var previewHeight = this.editablePreview.scrollHeight;
+    $(this.editablePreview).css("height", previewHeight);
   },
 
   handleEditableKeyDown: function(e) {
     // escape exits editable mode
-    if (e.keyCode == 27) {    
-      self.setRemoteScratchToEditable();
-      $(self.editablePreview).blur()
-    } else if (e.keyCode == 9) {      
-      return false;
+    $preview = $(this.editablePreview)
+
+    if (e.keyCode == 27) {         
+      this.setRemoteScratchToEditable();
+      $preview.blur();
+    } else if (e.keyCode == 9) {   
+      e.preventDefault();   
+      var start = this.editablePreview.selectionStart;
+      var end = this.editablePreview.selectionEnd;
+
+      // set textarea value to: text before caret + tab + text after caret
+      $preview.val($preview.val().substring(0, start)
+                  + "\t"
+                  + $preview.val().substring(end));
+
+      // put caret at right position again
+      this.editablePreview.selectionStart =
+      this.editablePreview.selectionEnd = start + 1;
     } 
   },
 
-  handleEditableKeyUp: function(e) {    
-    this.scratchTracker.set(this.docId, this.editablePreview.innerText);     
+  onEditableChange: function(e) {    
+    this.scratchTracker.set(this.docId, this.editablePreview.value);     
   },
 
-  makeDisplayEditableAndRealtime: function(e) {    
-    console.log("back to real ssss")    
-
+  makeDisplayEditableAndRealtime: function(e) {              
     $(this.staticPreview).hide();
-    $(this.editablePreview).show();    
+    $(this.editablePreview).show();        
 
-    this.scratchTracker.trackRealtime(this.docId);            
+    this.scratchTracker.trackRealtime(this.docId);                
   },
 
   setRemoteScratchToReadOnly: function(e) {            
@@ -50,9 +69,7 @@ ScratchDisplay = React.createClass({
     this.scratchTracker.setReadOnly(this.docId, false);            
   },
 
-  makeDisplayStaticAndSnapshot: function() {
-    console.log("back to snapshot")
-    
+  makeDisplayStaticAndSnapshot: function() {           
     $(this.staticPreview).show();
     $(this.editablePreview).hide();
 
@@ -60,20 +77,21 @@ ScratchDisplay = React.createClass({
   },
 
   render: function() {
+    console.log("what?");
     var self = this;    
     this.docId = this.props.docId;
     this.newCode = this.props.newCode;
-    this.scratchTracker = this.props.scratchTracker
+    this.scratchTracker = this.props.scratchTracker    
     
     return (
-      <div id={this.docId} className="student-display row">
+      <div ref={(ref) => this.docDisplay = ref} id={this.docId} className="student-display row">
         <div className="title"><a className="title-link" href={"https://www.classadoo.com/scratchpad/" + this.docId}>{this.docId}</a></div>
-        <pre ref={(ref) => this.staticPreview = ref} onClick={self.makeDisplayEditableAndRealtime}>
+        <pre className="static-display" ref={(ref) => this.staticPreview = ref} onClick={self.makeDisplayEditableAndRealtime}>
           <code>
             {this.newCode}
           </code>
         </pre>        
-        <pre className="editable-display" onBlur={this.setRemoteScratchToEditable} onFocus={this.setRemoteScratchToReadOnly} contentEditable='true' ref={(ref) => this.editablePreview = ref} onKeyUp={self.handleEditableKeyUp} onKeyDown={self.handleEditableKeyDown}>{this.newCode}</pre>
+        <textarea className="editable-display autoExpand" onBlur={this.setRemoteScratchToEditable} onFocus={this.setRemoteScratchToReadOnly} ref={(ref) => this.editablePreview = ref} onChange={self.onEditableChange} value={this.newCode} onKeyDown={self.handleEditableKeyDown}></textarea>
       </div>    
     )                                    
   }
