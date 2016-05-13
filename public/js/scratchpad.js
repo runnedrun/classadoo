@@ -3,30 +3,7 @@ $(function(){
     
   // Scratchpad Intro
   //--------------------------------------------------------------------------------
-  var intro = ['<style>',
-'  body {',
-'  padding-top: 80px;',
-'  text-align: center;',
-'  font-family: monaco, monospace;',
-'  background: url(http://media.giphy.com/media/Jrd9E2kuPuOYM/giphy.gif) 50%;',
-'  background-size: cover;',
-'}',
-'h1, h2 {',
-'  display: inline-block;',
-'  background: #fff;',
-'}',
-'h1 {',
-  '  font-size: 30px',
-'}',
-'h2 {',
-'  font-size: 20px;',
-'}',
-'span {',
-'  background: #fd0;',
-'}',
-'</style>',
-'<h1>Welcome to <span>scratchpad.io</span></h1><br>',
-'<h2>(a realtime html + css editor)</h2>'].join('\n');
+  var intro = ""
   
   
   // Ace code edtor
