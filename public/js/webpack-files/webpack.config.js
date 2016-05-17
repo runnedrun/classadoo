@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = {  
   entry: {
     ClassDashboard: './ClassDashboard.js',
     ScratchDisplays: './ScratchDisplays.js'
@@ -16,7 +16,14 @@ module.exports = {
         query: {
           presets: ['react']
         }
-      }
+      },
+      {
+        test: /\.jsx$/,
+        loader: 'babel',
+        query: {
+          presets: ['react', 'es2015']
+        }
+      }      
     ]
   },
   resolve: {

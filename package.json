@@ -6,8 +6,12 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "babel": "*",
     "babel-loader": "*",
-    "babel-preset-react": "^6.5.0",
+    "babel-preset-react": "*",
+    "babel-preset-es2015": "*",     
+    "babel-cli": "*",
+    "babel-core": "*",        
     "babelify": "^7.2.0",
     "body-parser": "^1.5.2",
     "connect-flash": "*",
@@ -44,6 +48,8 @@
     "webpack": "*",
     "firebase-client": "*",
     "firebase-server": "*",
-    "highlight.js": "*"
+    "highlight.js": "*",    
+    "brace": "*",
+    "lodash": "*"
   }
 }

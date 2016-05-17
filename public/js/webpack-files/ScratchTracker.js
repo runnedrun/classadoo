@@ -1,12 +1,14 @@
 var $ = require("jquery");
 
 ScratchTracker = function(parentRef, callback) {	
-	var scratches = {}
+	var scratches = {};
+	var chats = {};
 	var rtScratch = false;
 	var self = this;
 
 	var rtRefs = {};
 	var readOnlyRefs = {};
+	var chatRefs = {};
 
 	function rtRef(docId) {
 		var ref = rtRefs[docId] || parentRef.child("students/" + docId + "/editor/code");		
@@ -20,13 +22,18 @@ ScratchTracker = function(parentRef, callback) {
 		return ref;
 	}
 
+	function chatRef(docId) {
+		chatRefs[docId] = chatRefs[docId] || parentRef.child("students/" + docId + "/chat");		
+		return chatRefs[docId];
+	}	
+
 	this.trackRealtime = function(docId) {			
 		rtScratch = docId
 		rtRef(docId).on("value", function(snap) {
 			scratches[docId] = snap.val();
 			callback(scratches, self)
 		});
-	}
+	}	
 
 	this.setReadOnly = function(docId, isReadOnly) {
 		readOnlyRef(docId).set(isReadOnly);
@@ -41,8 +48,22 @@ ScratchTracker = function(parentRef, callback) {
 		rtRef(docId).set(code);
 	}
 
-	parentRef.child("snapshot").on("value", function(snap) {
+	this.sendChat = function(docId, message) {
+      chatRef(docId).push({text: message, isStudent: false, timestamp: Firebase.ServerValue.TIMESTAMP});
+	}
+
+	parentRef.child("snapshot").on("value", function(snap) {		
 		$.extend(scratches, snap.val())
-		callback(scratches, self)
+
+		Object.keys(scratches).forEach(function(docId) {
+			if (!chatRefs[docId]) {
+				chatRef(docId).on("value", function(snapshot) {					
+					chats[docId] = snapshot.val();
+					callback(scratches, chats, self);
+				})
+			} 
+		})
+
+		callback(scratches, chats, self)
 	})	
 }

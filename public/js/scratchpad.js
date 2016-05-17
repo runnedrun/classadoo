@@ -26,9 +26,11 @@ $(function(){
 
   editor.setOptions({
     // enableBasicAutocompletion: true,
-    // enableSnippets: true,
+    // enableSnippets: true,    
     enableLiveAutocompletion: true
-});
+  });
+
+  editor.$blockScrolling = Infinity  
 
   // Set up iframe.
   var frame = document.getElementById('preview');  
@@ -75,13 +77,21 @@ $(function(){
   }
   // Base firebase ref
   //--------------------------------------------------------------------------------
-  var scratchpadRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/' + Scratchpad.document_id);
+
+  if (location.host.indexOf("localhost") > -1) {
+    var scratchpadRef = new Firebase('https://classadoo-sd.firebaseIO.com/students/' + Scratchpad.document_id);
+  } else {
+    var scratchpadRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/' + Scratchpad.document_id);
+  }
+
   var now = new Date();
   scratchpadRef.child('updatedAt').set(now.toString());  
 
   if (Scratchpad.document_id != "classadoo-instructor") {
     var syncPreviewRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/classadoo-instructor');
     var syncPreview = new ScratchpadSyncPreview(editor, syncPreviewRef)
+
+    new ScratchpadChat(scratchpadRef);
 
     syncPreviewRef.child("editor").on('value', function(dataSnapshot) {
       var previewEditor = syncPreview.editor       

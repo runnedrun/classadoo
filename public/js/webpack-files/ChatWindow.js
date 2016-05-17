@@ -9,8 +9,8 @@ ChatWindow = React.createClass({
 		history.scrollTop(history[0].scrollHeight);
 	},
 
-	componentDidMount: function() {		
-		var history = $(this.history)
+	componentDidMount: function() {			
+		var history = $(this.history);		
 		history.scrollTop(history[0].scrollHeight);
 	},
 
@@ -22,9 +22,7 @@ ChatWindow = React.createClass({
 			var value =  $(target).val();	
 
 			if (value != "") {                        	
-				this.studentUpdater.push("chatHistory", {text: value, isStudent: false, timestamp: Firebase.ServerValue.TIMESTAMP});
-				this.studentUpdater.update({"chatOpen": true});				
-				this.studentUpdater.updateActiveTab({"toolbarOpen": true});				
+				this.props.sendMessage(value);				
 			}           
 			
 			event.preventDefault();
@@ -46,13 +44,8 @@ ChatWindow = React.createClass({
 	},
 
 	render: function() {		
-		var chatHistory = this.props.state.global.chatHistory || {}
-		this.currentHistory = chatHistory;
-
-
-		this.studentUpdater = this.props.classState.studentUpdater(this.props.state.id);
-
-
+		var chatHistory = this.props.chatHistory || {}		
+		
 		var messages = Util.objectValues(chatHistory).sort(function(a, b) {
 			return a.timestamp - b.timestamp
 		})		

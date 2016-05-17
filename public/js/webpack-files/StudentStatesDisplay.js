@@ -55,6 +55,12 @@ var StudentState = React.createClass({
       return function() { self.studentUpdater.updateActiveTab(props) }
     },
 
+    sendChat: function(value) {
+      this.studentUpdater.push("chatHistory", {text: value, isStudent: false, timestamp: Firebase.ServerValue.TIMESTAMP});
+      this.studentUpdater.update({"chatOpen": true});       
+      this.studentUpdater.updateActiveTab({"toolbarOpen": true});       
+    },
+
     render: function() {   
       this.global = this.props.state.global;
       this.tab = this.props.state.tab;
@@ -176,7 +182,7 @@ var StudentState = React.createClass({
             </div>            
 
             
-            <ChatWindow {...this.props} / >            
+            <ChatWindow sendMessage={this.sendChat} chatHistory={this.props.state.global.chatHistory} / >            
 
             <div className="hidden-toggle text-center" onClick={this.toggleDisplay}>
               more...

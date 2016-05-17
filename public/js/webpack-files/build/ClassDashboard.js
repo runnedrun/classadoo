@@ -60,8 +60,8 @@
 	__webpack_require__(173);
 
 	var classState;
-	// var firebasePrefix  = "classadoo-dev.firebaseio.com/"
-	var firebasePrefix = "classadoo-prod.firebaseIO.com/";
+	var firebasePrefix = "classadoo-dev.firebaseio.com/";
+	// var firebasePrefix = "classadoo-prod.firebaseIO.com/"
 	// var firebasePrefix = "ws://classadoo-test.firebaseio.com:5000/"
 
 	var lessonsPrefix;
@@ -21998,6 +21998,12 @@
 	    };
 	  },
 
+	  sendChat: function (value) {
+	    this.studentUpdater.push("chatHistory", { text: value, isStudent: false, timestamp: Firebase.ServerValue.TIMESTAMP });
+	    this.studentUpdater.update({ "chatOpen": true });
+	    this.studentUpdater.updateActiveTab({ "toolbarOpen": true });
+	  },
+
 	  render: function () {
 	    this.global = this.props.state.global;
 	    this.tab = this.props.state.tab;
@@ -22175,7 +22181,7 @@
 	        " | ",
 	        takeScreenshotButton
 	      ),
-	      React.createElement(ChatWindow, this.props),
+	      React.createElement(ChatWindow, { sendMessage: this.sendChat, chatHistory: this.props.state.global.chatHistory }),
 	      React.createElement(
 	        "div",
 	        { className: "hidden-toggle text-center", onClick: this.toggleDisplay },
@@ -22281,9 +22287,7 @@
 				var value = $(target).val();
 
 				if (value != "") {
-					this.studentUpdater.push("chatHistory", { text: value, isStudent: false, timestamp: Firebase.ServerValue.TIMESTAMP });
-					this.studentUpdater.update({ "chatOpen": true });
-					this.studentUpdater.updateActiveTab({ "toolbarOpen": true });
+					this.props.sendMessage(value);
 				}
 
 				event.preventDefault();
@@ -22304,10 +22308,7 @@
 		},
 
 		render: function () {
-			var chatHistory = this.props.state.global.chatHistory || {};
-			this.currentHistory = chatHistory;
-
-			this.studentUpdater = this.props.classState.studentUpdater(this.props.state.id);
+			var chatHistory = this.props.chatHistory || {};
 
 			var messages = Util.objectValues(chatHistory).sort(function (a, b) {
 				return a.timestamp - b.timestamp;

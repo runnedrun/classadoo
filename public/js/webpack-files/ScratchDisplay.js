@@ -1,31 +1,33 @@
 var React = require('react');
 var $ = require("jquery");
-var hljs = require("highlight.js");
+// var hljs = require("highlight.js");
+require("./AceEditor.js");
+require("./ChatWindow.js");
 
 ScratchDisplay = React.createClass({    
   componentDidMount: function() { 
     var self = this;
 
-    self.updateTextAreaHeight();
+    // self.updateTextAreaHeight();
 
-    $(document).click(function(e) {       
-      if (!self.docDisplay.contains(e.target)) {
-        self.makeDisplayStaticAndSnapshot();          
-        self.setRemoteScratchToEditable();
-      }
-    })    
-    hljs.highlightBlock(this.staticPreview);
+    // $(document).click(function(e) {       
+    //   if (!self.docDisplay.contains(e.target)) {
+    //     self.makeDisplayStaticAndSnapshot();          
+    //     self.setRemoteScratchToEditable();
+    //   }
+    // })    
+    // hljs.highlightBlock(this.staticPreview);
   },  
 
   componentDidUpdate: function() {    
-    this.updateTextAreaHeight();
-    hljs.highlightBlock(this.staticPreview);
+    // this.updateTextAreaHeight();
+    // hljs.highlightBlock(this.staticPreview);
   },
 
-  updateTextAreaHeight: function() {    
-    var previewHeight = this.editablePreview.scrollHeight;
-    $(this.editablePreview).css("height", previewHeight);
-  },
+  // updateTextAreaHeight: function() {    
+  //   var previewHeight = this.editablePreview.scrollHeight;
+  //   $(this.editablePreview).css("height", previewHeight);
+  // },
 
   handleEditableKeyDown: function(e) {
     // escape exits editable mode
@@ -50,13 +52,13 @@ ScratchDisplay = React.createClass({
     } 
   },
 
-  onEditableChange: function(e) {    
-    this.scratchTracker.set(this.docId, this.editablePreview.value);     
+  onEditableChange: function(newValue) {    
+    this.scratchTracker.set(this.docId, newValue);     
   },
 
   makeDisplayEditableAndRealtime: function(e) {              
-    $(this.staticPreview).hide();
-    $(this.editablePreview).show();        
+    // $(this.staticPreview).hide();
+    // $(this.editablePreview).show();        
 
     this.scratchTracker.trackRealtime(this.docId);                
   },
@@ -70,29 +72,40 @@ ScratchDisplay = React.createClass({
   },
 
   makeDisplayStaticAndSnapshot: function() {           
-    $(this.staticPreview).show();
-    $(this.editablePreview).hide();
+    // $(this.staticPreview).show();
+    // $(this.editablePreview).hide();
 
     this.scratchTracker.offRealtime(this.docId)    
   },
 
-  render: function() {
-    console.log("what?");
+  render: function() {    
     var self = this;    
     this.docId = this.props.docId;
     this.newCode = this.props.newCode;
-    this.scratchTracker = this.props.scratchTracker    
-    
+    this.scratchTracker = this.props.scratchTracker       
+  
     return (
-      <div ref={(ref) => this.docDisplay = ref} id={this.docId} className="student-display row">
-        <div className="title"><a className="title-link" href={"https://www.classadoo.com/scratchpad/" + this.docId}>{this.docId}</a></div>
-        <pre className="static-display" ref={(ref) => this.staticPreview = ref} onClick={self.makeDisplayEditableAndRealtime}>
-          <code>
-            {this.newCode}
-          </code>
-        </pre>        
-        <textarea className="editable-display autoExpand" onBlur={this.setRemoteScratchToEditable} onFocus={this.setRemoteScratchToReadOnly} ref={(ref) => this.editablePreview = ref} onChange={self.onEditableChange} value={this.newCode} onKeyDown={self.handleEditableKeyDown}></textarea>
-      </div>    
-    )                                    
+      <div ref={(ref) => this.docDisplay = ref} className="student-display">        
+        <AceEditor
+          value={this.newCode || ""}
+          onChange={this.onEditableChange}
+          name={this.docId}
+          onBlur={this.makeDisplayStaticAndSnapshot} 
+          onFocus={this.makeDisplayEditableAndRealtime}          
+        />
+      </div>        
+    )
+
+    // return (
+     // <div ref={(ref) => this.docDisplay = ref} id={this.docId} className="student-display row">
+        // <div className="title"><a className="title-link" href={"https://www.classadoo.com/scratchpad/" + this.docId}>{this.docId}</a></div>
+        // <pre className="static-display" ref={(ref) => this.staticPreview = ref} onClick={self.makeDisplayEditableAndRealtime}>
+          // <code>
+            // {this.newCode}
+          // </code>
+        // </pre>        
+        // <textarea className="editable-display autoExpand" onBlur={this.setRemoteScratchToEditable} onFocus={this.setRemoteScratchToReadOnly} ref={(ref) => this.editablePreview = ref} onChange={self.onEditableChange} value={this.newCode} onKeyDown={self.handleEditableKeyDown}></textarea>
+      // </div>    
+    // )                                    
   }
 })
