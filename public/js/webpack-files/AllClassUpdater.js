@@ -65,7 +65,7 @@ AllClassUpdater = function(students, ref) {
 	}
 
 	function getActiveTab(id) {
-      var allTabs = students[id].state.tab;
+      var allTabs = students[id].tab;
       var activeTab;
       Object.keys(allTabs).forEach(function(tabId) {        
         if (allTabs[tabId].active) {

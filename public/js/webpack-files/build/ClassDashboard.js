@@ -21698,6 +21698,10 @@
 	    this.classUpdater.updateForActiveTab({ toolbarOpen: true });
 	  },
 
+	  closeToolbars: function () {
+	    this.classUpdater.updateForActiveTab({ toolbarOpen: false });
+	  },
+
 	  insertXrayGoggles: function () {
 	    this.classUpdater.update({ xray: Date.now() });
 	  },
@@ -21780,11 +21784,6 @@
 	            "button",
 	            { className: "btn btn-danger call-back-btn", onClick: this.callClassBack },
 	            "Call Back"
-	          ),
-	          React.createElement(
-	            "button",
-	            { className: "btn btn-primary open-toolbar-btn", onClick: this.openToolbars },
-	            "Open"
 	          )
 	        )
 	      ),
@@ -21810,8 +21809,13 @@
 	          { className: "col-md-2" },
 	          React.createElement(
 	            "button",
-	            { className: "btn btn-primary call-back-btn", onClick: this.hideAllChats },
-	            "Hide Chats"
+	            { className: "btn btn-primary open-toolbar-btn", onClick: this.openToolbars },
+	            "Open"
+	          ),
+	          React.createElement(
+	            "button",
+	            { className: "btn btn-primary open-toolbar-btn", onClick: this.closeToolbars },
+	            "Close"
 	          )
 	        )
 	      )
@@ -22702,7 +22706,7 @@
 		};
 
 		function getActiveTab(id) {
-			var allTabs = students[id].state.tab;
+			var allTabs = students[id].tab;
 			var activeTab;
 			Object.keys(allTabs).forEach(function (tabId) {
 				if (allTabs[tabId].active) {

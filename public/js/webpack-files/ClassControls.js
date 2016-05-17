@@ -42,6 +42,10 @@ ClassControls = React.createClass({
     this.classUpdater.updateForActiveTab({toolbarOpen: true});
   },
 
+  closeToolbars: function() {
+    this.classUpdater.updateForActiveTab({toolbarOpen: false});
+  },
+
   insertXrayGoggles: function() {
     this.classUpdater.update({xray: Date.now()});
   },
@@ -90,8 +94,7 @@ ClassControls = React.createClass({
           </div>
           <div className="col-md-2">
             <button className="btn btn-warning warn-btn" onClick={this.warnClass}>Warn</button>
-            <button className="btn btn-danger call-back-btn" onClick={this.callClassBack}>Call Back</button>
-            <button className="btn btn-primary open-toolbar-btn" onClick={this.openToolbars}>Open</button>            
+            <button className="btn btn-danger call-back-btn" onClick={this.callClassBack}>Call Back</button>            
           </div>        
         </div>        
         <div className="row">       
@@ -101,7 +104,8 @@ ClassControls = React.createClass({
           </div>
 
           <div className="col-md-2">
-            <button className="btn btn-primary call-back-btn" onClick={this.hideAllChats}>Hide Chats</button>            
+            <button className="btn btn-primary open-toolbar-btn" onClick={this.openToolbars}>Open</button>
+            <button className="btn btn-primary open-toolbar-btn" onClick={this.closeToolbars}>Close</button>
           </div>
         </div>
       </div>         
