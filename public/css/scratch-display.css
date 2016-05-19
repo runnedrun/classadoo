@@ -1,9 +1,8 @@
-.student-display {
-	width: 100%;	
-	font-size: 12px;
+#display-container {
+  width: 90%;  
 }
 
-.student-display {
+.scratch-display {
 	width: 100%;
 	margin-bottom: 30px;	
 }
@@ -53,4 +52,19 @@
 .chat-window .input-area {
   height: 20%;
   width: 100%;
+}
+
+.idle-time-display {
+  position: fixed;
+  top: 40%;
+  right: 0%;
+  width: 10%;
+}
+
+.student-idle {
+  cursor: pointer;  
+}
+
+.student-category {
+  margin-bottom: 20px
 }

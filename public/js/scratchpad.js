@@ -203,13 +203,13 @@ $(function(){
     
     // If nothing is highlighted, ship contents of editor and cursor data to Firebase
     if (startrow == endrow && startcolumn == endcolumn) {
-      scratchpadEditorRef.set({code: editor.getValue(), cursor: editor.selection.getCursor()});
+      scratchpadEditorRef.set({code: editor.getValue(), cursor: editor.selection.getCursor(), lastTyped: Date.now()});
     }
     
     // Set a timeout for 2 seconds that tells firebase who is typing
     typingTimeout = setTimeout(function(){
       thisClientRef.set('idle')
-    }, 2000) ;
+    }, 2000) ;    
   });
   
   // On data change, re-render the code in the iframe.

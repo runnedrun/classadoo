@@ -1,8 +1,11 @@
 var $ = require("jquery");
 
 ScratchTracker = function(parentRef, callback) {	
+	var newChats = {};
+
 	var scratches = {};
 	var chats = {};
+	var idleTimes = {};
 	var rtScratch = false;
 	var self = this;
 
@@ -26,6 +29,10 @@ ScratchTracker = function(parentRef, callback) {
 		chatRefs[docId] = chatRefs[docId] || parentRef.child("students/" + docId + "/chat");		
 		return chatRefs[docId];
 	}	
+
+	function refreshDisplays() {
+		callback(scratches, chats, idleTimes, newChats, self);
+	}
 
 	this.trackRealtime = function(docId) {			
 		rtScratch = docId
@@ -52,18 +59,27 @@ ScratchTracker = function(parentRef, callback) {
       chatRef(docId).push({text: message, isStudent: false, timestamp: Firebase.ServerValue.TIMESTAMP});
 	}
 
+	this.readChat = function(docId) {
+		// newChats[docId] = false;
+		// refreshDisplays();
+	}
+
 	parentRef.child("snapshot").on("value", function(snap) {		
-		$.extend(scratches, snap.val())
+		var snapshot = snap.val() || {};
+
+		$.extend(scratches, snapshot.code)
+		$.extend(idleTimes, snapshot.idleTimes)
 
 		Object.keys(scratches).forEach(function(docId) {
 			if (!chatRefs[docId]) {
 				chatRef(docId).on("value", function(snapshot) {					
 					chats[docId] = snapshot.val();
-					callback(scratches, chats, self);
+					// newChats[docId] = true;
+					refreshDisplays()
 				})
 			} 
 		})
 
-		callback(scratches, chats, self)
+		refreshDisplays()
 	})	
 }

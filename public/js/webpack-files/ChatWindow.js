@@ -41,6 +41,10 @@ ChatWindow = React.createClass({
 			$toggle.html("Hide Chat");				
 		}
 		
+	},	
+
+	readChat: function() {
+		this.props.readChat && this.props.readChat();
 	},
 
 	render: function() {		
@@ -63,7 +67,7 @@ ChatWindow = React.createClass({
 						})}
 					</div>
 					<div className="input-window">
-						<textarea onKeyDown={this.sendMessage} className="input-area"> 
+						<textarea onKeyDown={this.sendMessage} className="input-area" onFocus={this.readChat}> 
 						</textarea>
 					</div>				
 				</div>

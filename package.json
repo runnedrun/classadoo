@@ -50,6 +50,6 @@
     "firebase-server": "*",
     "highlight.js": "*",    
     "brace": "*",
-    "lodash": "*"
+    "lodash": "*"    
   }
 }

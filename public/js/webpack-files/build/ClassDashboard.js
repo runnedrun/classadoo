@@ -60,8 +60,8 @@
 	__webpack_require__(173);
 
 	var classState;
-	var firebasePrefix = "classadoo-dev.firebaseio.com/";
-	// var firebasePrefix = "classadoo-prod.firebaseIO.com/"
+	// var firebasePrefix  = "classadoo-dev.firebaseio.com/"
+	var firebasePrefix = "classadoo-prod.firebaseIO.com/";
 	// var firebasePrefix = "ws://classadoo-test.firebaseio.com:5000/"
 
 	var lessonsPrefix;
@@ -22311,6 +22311,10 @@
 			}
 		},
 
+		readChat: function () {
+			this.props.readChat && this.props.readChat();
+		},
+
 		render: function () {
 			var chatHistory = this.props.chatHistory || {};
 
@@ -22346,7 +22350,7 @@
 					React.createElement(
 						"div",
 						{ className: "input-window" },
-						React.createElement("textarea", { onKeyDown: this.sendMessage, className: "input-area" })
+						React.createElement("textarea", { onKeyDown: this.sendMessage, className: "input-area", onFocus: this.readChat })
 					)
 				)
 			);

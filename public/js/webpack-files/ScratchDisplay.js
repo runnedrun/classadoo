@@ -1,34 +1,8 @@
 var React = require('react');
 var $ = require("jquery");
-// var hljs = require("highlight.js");
 require("./AceEditor.js");
-require("./ChatWindow.js");
 
 ScratchDisplay = React.createClass({    
-  componentDidMount: function() { 
-    var self = this;
-
-    // self.updateTextAreaHeight();
-
-    // $(document).click(function(e) {       
-    //   if (!self.docDisplay.contains(e.target)) {
-    //     self.makeDisplayStaticAndSnapshot();          
-    //     self.setRemoteScratchToEditable();
-    //   }
-    // })    
-    // hljs.highlightBlock(this.staticPreview);
-  },  
-
-  componentDidUpdate: function() {    
-    // this.updateTextAreaHeight();
-    // hljs.highlightBlock(this.staticPreview);
-  },
-
-  // updateTextAreaHeight: function() {    
-  //   var previewHeight = this.editablePreview.scrollHeight;
-  //   $(this.editablePreview).css("height", previewHeight);
-  // },
-
   handleEditableKeyDown: function(e) {
     // escape exits editable mode
     $preview = $(this.editablePreview)
@@ -89,7 +63,7 @@ ScratchDisplay = React.createClass({
         <AceEditor
           value={this.newCode || ""}
           onChange={this.onEditableChange}
-          name={this.docId}
+          name={"ace" + this.docId}
           onBlur={this.makeDisplayStaticAndSnapshot} 
           onFocus={this.makeDisplayEditableAndRealtime}          
         />

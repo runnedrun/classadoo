@@ -26,7 +26,6 @@ AceEditor = React.createClass({
   componentWillReceiveProps: function(nextProps) {    
     if (this.editor.getValue() !== nextProps.value) {
       var cursor = this.editor.selection.getCursor();
-      console.log("cursor!!", this.editor.session.doc.positionToIndex(cursor))
 
       // editor.setValue is a synchronous function call, change event is emitted before setValue return.
       this.silent = true;      

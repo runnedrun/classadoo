@@ -16,14 +16,7 @@ module.exports = {
         query: {
           presets: ['react']
         }
-      },
-      {
-        test: /\.jsx$/,
-        loader: 'babel',
-        query: {
-          presets: ['react', 'es2015']
-        }
-      }      
+      }
     ]
   },
   resolve: {
