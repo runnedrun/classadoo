@@ -60,7 +60,7 @@ IdleTimesDisplay = React.createClass({
 
 			var blink = self.props.newChats[docId];			
 
-			if (idleTime > 5000) {
+			if (idleTime > 15000) {
 				needsHelp.push({ docId: docId, color: "red", idleTime: Math.round(idleTime / 1000), blink: blink })
 			} else {
 				allGood.push({ docId: docId, color: "black", idleTime: Math.round(idleTime / 1000), blink: blink })

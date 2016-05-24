@@ -182,6 +182,10 @@ Util = new function() {
     return self.timestampedUrl("https://www.classadoo.com/scratchpad/" + self.createScratchId(name));
   }
 
+  this.createChallengeUrl = function(name) {
+    return self.timestampedUrl("https://www.classadoo.com/challenge_3.html#" + self.createScratchId(name));
+  }
+
   this.createFiddleUrl = function(name) {
     return self.timestampedUrl("https://jsfiddle.net/#&togetherjs=" + self.createScratchId(name));
   }

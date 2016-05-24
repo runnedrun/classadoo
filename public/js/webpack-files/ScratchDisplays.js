@@ -49,7 +49,7 @@ ScratchDisplays = React.createClass({
 									<ScratchDisplay scratchTracker={self.props.scratchTracker} docId={docId} newCode={self.props.scratches[docId]} />
 								</div>
 								<div className="col-md-2">
-									<ChatWindow readChat={self.props.scratchTracker.readChat.bind({}, docId)} chatHistory={self.props.chats[docId]} sendMessage={self.props.scratchTracker.sendChat.bind({}, docId)} />
+									<ChatWindow chatHistory={self.props.chats[docId]} sendMessage={self.props.scratchTracker.sendChat.bind({}, docId)} />
 								</div>
 							</div>
 						</div>

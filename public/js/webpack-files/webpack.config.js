@@ -1,7 +1,8 @@
 module.exports = {  
   entry: {
     ClassDashboard: './ClassDashboard.js',
-    ScratchDisplays: './ScratchDisplays.js'
+    ScratchDisplays: './ScratchDisplays.js',
+    ChallengeDisplays: './challenge_displays/ChallengeDisplays.js'
     // ScreensharePage: './ScreensharePage.js' 
   },
   output: {

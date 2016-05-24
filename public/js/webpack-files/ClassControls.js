@@ -64,6 +64,14 @@ ClassControls = React.createClass({
     $(".chat-window").hide();
   },
 
+  goToChallenge: function() {
+    var self = this
+    this.classUpdater.updateBasedOnStudent("gotoUrl", function(student) {            
+      var name = student.global.studentName;      
+      return Util.createChallengeUrl(name)
+    }) 
+  },
+
   render: function() {
     this.classUpdater = this.props.classState.allClassUpdater();    
     this.studentUpdaters = this.props.classState.studentUpdaters(); 
@@ -81,7 +89,8 @@ ClassControls = React.createClass({
           </div>        
           <div className="col-md-2">
             <button className="btn btn-primary" onClick={this.gotoScratchPadUrls}>Scratchpad</button>    
-            <button className="btn btn-primary" onClick={this.insertXrayGoggles}>Xray</button>                                    
+            <button className="btn btn-primary" onClick={this.insertXrayGoggles}>Xray</button>    
+            <button className="btn btn-primary" onClick={this.goToChallenge}>Challenge</button>                                    
           </div>          
 
           <div className="col-md-4">
