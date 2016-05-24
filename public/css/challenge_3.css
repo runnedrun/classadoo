@@ -1,0 +1,13 @@
+.page-explanation {
+	font-size: 18px;
+	margin: 40px;
+}
+
+.challenge-row {
+	margin-bottom:  100px;
+	font-size: 20px;
+}
+
+.padding-challenge .example {
+	background: lightgreen;
+}
