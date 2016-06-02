@@ -60,7 +60,11 @@
 }
 
 .section-2 {
-	padding-top: 30px;	
+	margin-top: 100px;	
+}
+
+.intro-quote {
+	/*border: 2px solid #407F7F;*/
 }
 
 .component-results {
@@ -227,6 +231,32 @@
 
 .first-progress {	
     border-right: 2px solid #bbb;
+}
+
+.quote-text {
+	font-style: italic;
+}
+
+.quote-text-span {
+	display: inline-block;
+	border: 2px solid #407F7F;	
+	padding: 15px;
+}
+
+.quote-source {
+	font-weight: bold;
+}
+
+.quote h4 {
+	margin-bottom: 0px	
+}
+
+.quote h3 {
+	margin-top: 0px	
+}
+
+.quote {
+	padding: 10px;
 }
 
 @keyframes blink {

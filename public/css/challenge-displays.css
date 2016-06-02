@@ -1,7 +1,18 @@
-.student-display {
+.challenge-display {
 	margin-bottom: 20px;
+	height: 150px;
 }
 
 .solution {
 	font-size: 20px;
+}
+
+.user-challenges {
+	height: 170px;
+	overflow: scroll;
+	position: relative;
+}
+
+.top-bumper {
+	height: 10px;
 }

@@ -13,8 +13,7 @@ function IframeManager($iframe) {
         var iDoc = self.getIDoc()[0];
         iDoc.open();
         iDoc.writeln(html);
-        iDoc.close();
-        var headTag  = iDoc.getElementsByTagName("head")[0];        
+        iDoc.close();        
         return $iframe[0].contentWindow.document;
     };
 

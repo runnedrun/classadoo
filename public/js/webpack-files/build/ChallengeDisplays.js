@@ -54,24 +54,72 @@
 	$(function () {
 		// var ref = new Firebase('https://classadoo-sd.firebaseio.com');
 		var ref = new Firebase('https://classadoo-challenge.firebaseio.com');
-		var tracker = new ChallengeTracker(ref, function (challenges, tracker) {
-			ReactDOM.render(React.createElement(ChallengeDisplays, { challenges: challenges }), document.getElementById("display-container"));
+		var tracker = new ChallengeTracker(ref, function (userChallenges, tracker) {
+			var userChallengesClone = {};
+			$.extend(true, userChallengesClone, userChallenges);
+
+			ReactDOM.render(React.createElement(ChallengeDisplays, { userChallenges: userChallengesClone }), document.getElementById("display-container"));
 		});
 	});
 
 	ChallengeDisplays = React.createClass({
 		displayName: "ChallengeDisplays",
 
-		render: function () {
+		componentDidUpdate: function (prevProps) {
+			var currentUserChallenges = this.props.userChallenges;
+			var prevUserChallenges = prevProps.userChallenges;
 			var self = this;
-			var challenges = this.props.challenges;
-			var alphaDocIds = Object.keys(challenges);
+
+			Object.keys(currentUserChallenges).forEach(function (userId) {
+				var prevChallenges = prevUserChallenges[userId];
+				var currentChallenges = currentUserChallenges[userId];
+
+				if (prevChallenges) {
+					var challengeElToScrollTo;
+
+					Object.keys(currentChallenges).forEach(function (challengeNumber) {
+						var prevChallenge = prevChallenges[challengeNumber];
+						var currentChallenge = currentChallenges[challengeNumber];
+
+						if (!prevChallenge || prevChallenge.solutionStyle !== currentChallenge.solutionStyle) {
+							challengeElToScrollTo = self.challengeEls[userId][challengeNumber];
+						}
+					});
+
+					var rowToScroll = self.userRows[userId];
+
+					if (challengeElToScrollTo) {
+						self.scrollToUpdatedChallenge(challengeElToScrollTo, rowToScroll);
+					}
+				}
+			});
+		},
+
+		scrollToUpdatedChallenge: function (challengeElToScrollTo, rowToScroll) {
+			var scrollTop = $(challengeElToScrollTo).position().top;
+			var $row = $(rowToScroll);
+			$row.scrollTop($row.scrollTop() + scrollTop);
+		},
+
+		render: function () {
+			this.challengeEls = {};
+			this.userRows = {};
+
+			var self = this;
+			var userChallenges = this.props.userChallenges;
+			var alphaDocIds = Object.keys(userChallenges);
 			alphaDocIds.sort();
 
 			return React.createElement(
 				"div",
 				{ className: "container" },
 				alphaDocIds.map(function (docId, i) {
+					var challenges = userChallenges[docId];
+					var sortedChallengeNumbers = Object.keys(challenges);
+					sortedChallengeNumbers.sort(function (a, b) {
+						a - b;
+					});
+
 					return React.createElement(
 						"div",
 						{ className: "row", key: docId, id: docId },
@@ -82,12 +130,25 @@
 						),
 						React.createElement(
 							"div",
-							{ className: "row" },
-							React.createElement(
-								"div",
-								{ className: "col-md-10" },
-								React.createElement(ChallengeDisplay, { docId: docId, example: challenges[docId].example, solution: challenges[docId].solution })
-							)
+							{ className: "user-challenges", ref: function (ref) {
+									var existingRows = self.userRows[docId] || {};
+									existingRows[docId] = ref;
+									self.userRows = existingRows;
+								} },
+							React.createElement("div", { className: "top-bumper" }),
+							sortedChallengeNumbers.map(function (challengeNumber) {
+								var challenge = challenges[challengeNumber];
+
+								return React.createElement(
+									"div",
+									{ className: "row", key: challengeNumber, ref: function (ref) {
+											var docChallenges = self.challengeEls[docId] || {};
+											docChallenges[challengeNumber] = ref;
+											self.challengeEls[docId] = docChallenges;
+										} },
+									React.createElement(ChallengeDisplay, { onUpdate: self.scrollToUpdatedChallenge, example: challenge.example, solution: challenge.solution, solutionStyle: challenge.solutionStyle })
+								);
+							})
 						)
 					);
 				})
@@ -102,24 +163,35 @@
 	var $ = __webpack_require__(2);
 
 	ChallengeTracker = function (parentRef, callback) {
-		var challenges = {};
+		var userChallenges = {};
 		var self = this;
 		var ref = parentRef.child("submissions");
 
+		function updateChallenge(userId, snapshot) {
+			var challengeNumber = snapshot.key();
+
+			var challenge = snapshot.val();
+
+			var userObject = userChallenges[userId] || {};
+			userObject[challengeNumber] = snapshot.val();
+
+			callback(userChallenges, self);
+		}
+
 		ref.on("child_added", function (snap) {
-			var docId = snap.key();
+			var userId = snap.key();
 
 			var challenge = snap.val() || {};
 
-			challenges[docId] = challenge;
+			console.log("here", challenge);
+			userChallenges[userId] = challenge;
 
-			ref.child(docId).on("value", function (snapshot) {
-				console.log("getting val", snapshot.val());
-				challenges[docId] = snapshot.val();
-				callback(challenges, self);
+			ref.child(userId).on("child_added", function (snap) {
+				updateChallenge(userId, snap);
+				snap.ref().on("value", updateChallenge.bind({}, userId));
 			});
 
-			callback(challenges, self);
+			callback(userChallenges, self);
 		});
 	};
 
@@ -1730,20 +1802,42 @@
 	ChallengeDisplay = React.createClass({
 	  displayName: "ChallengeDisplay",
 
+	  shouldComponentUpdate: function (nextProps) {
+	    return nextProps.solution !== this.props.solution;
+	  },
+
 	  render: function () {
 	    this.challengeTracker = this.props.challengeTracker;
+	    var styleString = this.props.solutionStyle.replace(/;/g, "\n");
 
 	    return React.createElement(
 	      "div",
-	      { ref: ref => this.docDisplay = ref, className: "student-display row text-center" },
-	      React.createElement("div", { dangerouslySetInnerHTML: { __html: this.props.solution } }),
+	      { ref: ref => this.docDisplay = ref, className: "challenge-display row" },
 	      React.createElement(
 	        "div",
-	        { className: "col-md-4 col-md-offset-1" },
+	        { className: "col-xs-3" },
+	        React.createElement(
+	          "div",
+	          null,
+	          React.createElement("img", { src: this.props.solution })
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "col-xs-3 col-xs-offset-1" },
 	        React.createElement(
 	          "div",
 	          null,
 	          React.createElement("img", { src: this.props.example })
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "col-xs-2 col-xs-offset-1" },
+	        React.createElement(
+	          "pre",
+	          null,
+	          styleString
 	        )
 	      )
 	    );

@@ -11,3 +11,10 @@
 .padding-challenge .example {
 	background: lightgreen;
 }
+
+.hidden-rendering-frame {
+	position: absolute;
+	top: -2000px;
+	width: 100%;
+	height: 100%;
+}

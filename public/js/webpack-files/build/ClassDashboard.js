@@ -21736,6 +21736,7 @@
 	  goToChallenge: function () {
 	    var self = this;
 	    this.classUpdater.updateBasedOnStudent("gotoUrl", function (student) {
+	      console.log("hrer");
 	      var name = student.global.studentName;
 	      return Util.createChallengeUrl(name);
 	    });
