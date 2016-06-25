@@ -79,6 +79,23 @@
 	/*text-decoration: underline;*/
 }
 
+.program-diagram {
+	margin-top: 30px;	
+}
+
+.program-diagram-title {
+	color: #C84F4F;
+	margin-bottom: 30px;
+}
+
+.program-diagram-img {
+	width: 350px;
+}
+
+.format-title {
+	color: #407F7F
+}
+
 .component-1 .component-header {
 	color: #C84F4F;
 }
