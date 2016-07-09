@@ -1,8 +1,44 @@
-.categories-container {
+.section-header {
+	color: #C84F4F;
+}
+
+.pedagogy-container {
 	margin-top:  30px;
 }
 
-.cost-header {
+.explanation-row {
+	margin-top: 10px;
+}
+
+.pedagogy-line-2 {
+	margin-bottom: 0px;
+	margin-top: 40px;
+}
+
+.courses-headers {
+	margin-bottom: 30px;
+}
+
+.curriculum-row {
+	margin-top: 50px;
+}
+
+.curriculum-level {
+	border: 2px solid #7A9F35;
+	border-radius: 5px;
+	margin-bottom: 30px;
+}
+
+.level-header {
+	text-decoration: underline;
+}
+
+.course-listing {
+	margin-top: 20px	
+}
+
+
+/*.cost-header {
 	color: #C84F4F;
 	margin-top: 0px;
 	margin-bottom: 20px;
@@ -46,3 +82,4 @@
 .contact {
 	margin-bottom: 30px;	
 }
+*/
