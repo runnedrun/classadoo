@@ -1,0 +1,73 @@
+.intro-text {
+	color: #C84F4F;
+	margin-top: 40px;
+	margin-bottom: 25px;
+}
+
+.quote {
+	margin-top: 20px;
+	padding: 5px;
+}
+
+.quote-text {
+	font-style: italic;
+}
+
+.format-quote-row .quote-source {
+	margin-top: 10px;
+}
+
+.format-quote-row {
+	margin-top: 30px;
+}
+
+.details-container {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	border: 2px solid #407F7F;	
+	/*color: #407F7F;*/
+}
+
+.details-container h4 { 
+	margin-bottom: 0px;
+ }
+
+.enroll-link-wrapper {
+	margin-top: 20px;
+}
+
+.enroll-link {	
+	background: #7A9F35;
+	color: white;
+	padding: 10px;
+	display: inline-block;
+}
+
+.enroll-link:hover {
+	color: white;
+}
+
+@media (max-device-width: 480px) { 
+	.program-diagram-img {
+		width: 250px;
+	}
+
+	.format-img {
+		width: 300px;
+	}
+
+	.format-explanation, .quote-text, .quote-source {
+		font-size: 25px;
+	}
+
+	.format-wrapper, .quote-wrapper {
+		width: 100%;
+		margin: 0px;
+	}
+
+	.format-container, .quote-container {
+		width: 45%;
+		margin-right: 2.5%;
+		margin-left: 2.5%;
+	}
+}
