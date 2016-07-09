@@ -1,5 +1,6 @@
 body {
 	font-family: Varela Round, Helvetica;		
+	position: relative;
 }
 
 body div {
@@ -67,6 +68,33 @@ h4 {
 
 .desktop-only {
 	display: block
+}
+
+.footer {	
+	bottom: 0px;
+	position: absolute;
+	width: 100%;
+	padding: 0 10px 0 10px;	
+}
+
+.connect-wrapper {
+	float: right;
+	margin: 0 0 0 0;
+	font-size: 40px;
+	display: none;
+}
+
+.contact-wrapper {
+	/*float: left;*/
+	text-align: center;		
+}
+
+.contact {
+	font-size: 14px;
+}
+
+.last-item {
+	padding-bottom: 60px;
 }
 
 @media (max-device-width: 480px) { 	
