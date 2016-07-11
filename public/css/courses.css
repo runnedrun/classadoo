@@ -12,11 +12,15 @@
 	width: 100px;
 }
 
-.android .course-logo {
+.webdev-advanced .course-logo {
+	width: 140px;
+}
+
+.entrepreneurship .course-logo {
 	width: 200px;
 }
 
-.scratch .course-logo {
+.html .course-logo {
 	width: 120px;
 }
 
@@ -29,11 +33,6 @@
 	margin-top: 30px;
 }
 
-.full-listing .header {
-	margin-bottom: 20px;
-	color: #C84F4F;
-}
-
 .level-header {
 	margin-top: 20px;
 	margin-bottom: 20px;
@@ -43,6 +42,17 @@
 	color: #C84F4F;
 }
 
-.contact {
-	margin-bottom: 30px;	
+.enroll-link {
+	display: inline-block;	
+	background: #7A9F35;
+	color: white;
+	padding: 10px;
+}
+
+.enroll-link:hover {
+	color: white;
+}
+
+.categories-container {
+	padding-bottom: 60px;
 }

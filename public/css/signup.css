@@ -1,0 +1,29 @@
+.signup-container {
+	margin-top: 40px;
+}
+
+.header {
+	color: #C84F4F;	
+	margin-bottom: 20px;
+}
+
+.error-text {
+	display: none;	
+	color: red;
+}
+
+.error {
+	color: red;
+}
+
+.last-item {
+	margin-top: 20px;
+}
+
+.submit-request {
+	margin-top: 20px;
+}
+
+.request-form {
+	margin-top: 30px;
+}

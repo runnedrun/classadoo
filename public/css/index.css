@@ -1,5 +1,5 @@
 .intro {	
-  	color: white;  	
+  	color: whitesmoke;  	
 }
 
 .intro-container {
@@ -15,45 +15,10 @@
 	margin-top: 0px
 }
 
-
-.console-button {
-	/*color: limegreen;*/
-	color: #7ADf36;
-	margin-top: 20px;
-	font-family: FreeMono, monospace;    	
-	cursor: pointer;	
-	margin-bottom: 0px;
-}
-
-.console-container {
-	padding: 0px;
-	height: 0px;
-	overflow: hidden;
-	position: relative;
-	z-index: 4000;
-	background: #333333;  
-}
-
-.console-container div {
-	font-size: 16px;
-}
-
-.console-container, .progress-container {
-	font-family: FreeMono, monospace;    	
-	/*color: limegreen;*/
-	color: #7ADf36;
-	text-align: left;	
-	font-size: 18px;	
-}
-
 .class-intro {
 	margin-bottom: 10px;
 }
 
-.component-img {
-	height: 150px;
-	margin-bottom: 30px;
-}
 
 .explanation h3 {
 	margin-top: 0px;
@@ -79,158 +44,57 @@
 	/*text-decoration: underline;*/
 }
 
-.component-1 .component-header {
-	color: #C84F4F;
+.program-explanation {
+	margin-top: 30px;
 }
 
-.component-2 .component-header {
-	color: #407F7F;
-}
-
-.component-3 .component-header {
-	color: #7A9F35;
-}
-
-.explanation-question {
-	font-weight: bold;
-	margin-bottom: 20px;
-	/*margin-top: 40px;*/
-}
-
-.free-wrapper {
-	background: #6ec173;
-	color: white;
-	margin: 0 0 0 0;
-}
-
-.example-overlay {
-	position: absolute;
-	top: 0;
-	z-index: 1000;	
-	width: 100%;
-	height: 100%;
-	background: rgba(80,80,80,.9);
-	color: white;
-	text-align: center;
-	font-size: 24px;
-	border: 5px solid darkgrey;
-}
-
-.movement-example-overlay {
-	position: absolute;
-	top: 0px;
-	right: -200px;
-	z-index: 1500;
-	background: red;
-	color: black;
-	text-align: center;
-	font-size: 18px;
-	height: 100%;
-	width: 200px;
-	border-left: 5px solid white;
-}
-
-.no-img {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translatex(-50%);
-	z-index: 5000;
-	display: none;
-}
-
-.html-example {
-	font-size: 14px;
-}
-
-.example-dom {
-	display: none;
-}
-
-.footer {
+.program-diagram {
 	margin-top: 30px;	
 }
 
-.class-intro, .call-to-action {
-	text-align: center;	
+.program-diagram-title {
+	color: #C84F4F;
+	margin-bottom: 30px;
 }
 
-.call-to-action {
-	font-size: 18px;
+.program-diagram-img {
+	width: 350px;
 }
 
-.attr-highlight-style {
-	color: gold;
+.format-img {
+	width: 350px;
 }
 
-.class-title {
-	text-decoration: underline;
-	/*color: aqua;*/
-	color: #40DF7F;
-	text-align: center;
-	margin-bottom: 10px;
+.format-title {
+	/*color: #407F7F*/
 }
 
-/*Progress Bar*/
-
-.progress-container {
-	margin-bottom: 20px;
+.format-row {
 	margin-top: 20px;
-	visibility: hidden;
 }
 
-.progress-bar-container {
-	position: relative;
+.format-quote-row .quote-source {
+	margin-top: 10px;
 }
 
-.progress-meter {
-	height: 1em;
-	border-right: 1px solid gainsboro;
-	border-left: 1px solid gainsboro;
-	border-bottom: 1px solid gainsboro;
-	border-top: 1px solid gainsboro;
-	background: none;
-	border-radius: 0px;	
-	position: relative;
-	top: .25em;	
+.format-quote-row {
+	margin-top: 30px;
 }
 
-.progress-display {		
-	/*width: 80%;*/
+.enroll-row {
+	margin-top: 40px;
+	padding-bottom: 80px;
 }
 
-.progress-unit {
-  background-color: rgb(70, 70, 70);  
-  height: 100%;
-  display: inline-block;
+.enroll-link {
+	background: #7A9F35;
+	color: white;
+	padding: 10px;
+	display: inline-block;
 }
 
-.progress-label {
-	/*width: 10%;  */
-  	/*color: aqua; */
-  	color: #40DF7F;
-}
-
-.section-name {
-	/*width: 70%;*/
-	padding-left: 0px;
-	padding-right: 0px;
-	margin-left: 40px;
-	color: #EC81AC; 
-	/*display: inline-block;*/
-}
-
-.complete-overlay {
-	position: absolute;
-	text-align: center;
-	color: #EC81AC;
-	display: none;
-	top: 0;
-	width: 100%;
-}
-
-.first-progress {	
-    border-right: 2px solid #bbb;
+.enroll-link:hover {
+	color: white;
 }
 
 .quote-text {
@@ -259,56 +123,27 @@
 	padding: 10px;
 }
 
-@keyframes blink {
-  0%, 100% {
-        background-color: #333;        
-  }
-  50% {
-        background-color: #bbb; /* not #aaa because it's seem there is Google Chrome bug */   
-  }
-}
-@-webkit-keyframes blink {
-  0%, 100% {
-        background-color: #000;   
-  }
-  50% {
-        background-color: #bbb;   
-  }
-}
-@-ms-keyframes blink {
-  0%, 100% {
-        background-color: #000;        
-  }
-  50% {
-        background-color: #bbb;        
-  }
-}
-@-moz-keyframes blink {
-  0%, 100% {
-        background-color: #000;        
-  }
-  50% {
-        background-color: #bbb;   
-  }
-}
+@media (max-device-width: 480px) { 
+	.program-diagram-img {
+		width: 250px;
+	}
 
-/*CONSOLE*/
+	.format-img {
+		width: 300px;
+	}
 
-c {
-	color: gainsboro;
-}
+	.format-explanation, .quote-text, .quote-source {
+		font-size: 25px;
+	}
 
-d {
-	color: rgba(230, 230, 230, .7);
-	text-decoration: underline;
-}
+	.format-wrapper, .quote-wrapper {
+		width: 100%;
+		margin: 0px;
+	}
 
-e {
-	color: #EC81AC;
-}
-
-@media (max-device-width: 480px) { 	
-	.console-button {
-		display: none;
+	.format-container, .quote-container {
+		width: 45%;
+		margin-right: 2.5%;
+		margin-left: 2.5%;
 	}
 }
