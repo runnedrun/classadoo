@@ -10,18 +10,14 @@ $(function() {
 			$(".general-error").hide();
 			var data = $(".request-form").serialize();
 			// var formspree = submitFormSpree(data);
-			// var googleForm = submitGoogleForm(data);			
+			
 			$(".submit-request").removeClass("btn-primary").addClass("btn-warning");
 			$(".submit-request").html("Submitting...")
 
-
-			// $.when(formspree, googleForm).then(function() {
-
-			$(".submit-request").removeClass("btn-warning").addClass("btn-success");
-			$(".submit-request").html("Success!")
-
-
-			// })
+			submitGoogleForm(data).then(function(res) {
+				$(".submit-request").removeClass("btn-warning").addClass("btn-success");
+				$(".submit-request").html("Success!")
+			});			
 		}	
 	})
 })
@@ -31,17 +27,15 @@ function submitFormSpree(data) {
 		type: "post",
 		url: "//formspree.io/info@thelaunchcamp.com",
 		data: data,
-		"dataType": "text",
-		complete: callback
+		"dataType": "text"
 	})
 }
 
 function submitGoogleForm(data) {
 	return $.ajax({				
 		type: "post",
-		url: "'https://script.google.com/macros/s/AKfycbz1ThaaXXJk1Of3SmdR4pYVTcmWAj_qswmGLzUjpnZS3F7f19Pp/exec",
+		url: "https://script.google.com/macros/s/AKfycbxBvKoOIcyWzdvMbbH4SkiHqzPpAgv9EblqWYFVUhEdTZdZ9s6t/exec",
 		data: data,
-		"dataType": "text",
-		complete: callback
+		"dataType": "text"		
 	})
 }
