@@ -16,6 +16,10 @@ $(function() {
 
 			submitGoogleForm(data).then(function(res) {
 				$(".submit-request").removeClass("btn-warning").addClass("btn-success");
+				$(".submit-request").attr("disabled", "true");
+				$(".submit-request").off("click");
+				$(".form-group input").attr("disabled", "true");
+				$(".form-group textarea").attr("disabled", "true");
 				$(".submit-request").html("Success!")
 			});			
 		}	
@@ -25,7 +29,7 @@ $(function() {
 function submitFormSpree(data) {
 	return $.ajax({				
 		type: "post",
-		url: "//formspree.io/info@thelaunchcamp.com",
+		url: "//formspree.io/info@classadoo.com",
 		data: data,
 		"dataType": "text"
 	})

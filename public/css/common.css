@@ -97,6 +97,21 @@ h4 {
 	padding-bottom: 60px;
 }
 
+.sign-up-prompt {
+	margin-bottom: 10px;
+}
+
+.enroll-link {
+	background: #7A9F35;
+	color: white;
+	padding: 10px;
+	display: inline-block;
+}
+
+.enroll-link:hover {
+	color: white;
+}
+
 @media (max-device-width: 480px) { 	
 	h1 {
 		font-size: 80px;

@@ -42,6 +42,17 @@
 	color: #C84F4F;
 }
 
-.contact {
-	margin-bottom: 30px;	
+.enroll-link {
+	display: inline-block;	
+	background: #7A9F35;
+	color: white;
+	padding: 10px;
+}
+
+.enroll-link:hover {
+	color: white;
+}
+
+.categories-container {
+	padding-bottom: 60px;
 }
