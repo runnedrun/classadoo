@@ -112,6 +112,15 @@ h4 {
 	color: white;
 }
 
+.email-signup {
+	padding: 0 5px 0 5px;
+}
+
+.signup-btn {
+	margin-top: 10px;
+	background: #407F7F;	
+}
+
 @media (max-device-width: 480px) { 	
 	h1 {
 		font-size: 80px;
