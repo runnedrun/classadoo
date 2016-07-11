@@ -1,45 +1,8 @@
-.section-header {
-	color: #C84F4F;
-	margin-top: 0px;
+.categories-container {
+	margin-top:  30px;
 }
 
-.pedagogy-container {
-	margin-top:  40px;
-}
-
-.explanation-row {
-	margin-top: 10px;
-}
-
-.pedagogy-line-2 {
-	margin-bottom: 0px;
-	margin-top: 40px;
-}
-
-.courses-headers {
-	margin-bottom: 30px;
-}
-
-.curriculum-row {
-	margin-top: 50px;
-}
-
-.curriculum-level {
-	border: 2px solid #7A9F35;
-	border-radius: 5px;
-	margin-bottom: 30px;
-}
-
-.level-header {
-	text-decoration: underline;
-}
-
-.course-listing {
-	margin-top: 20px	
-}
-
-
-/*.cost-header {
+.cost-header {
 	color: #C84F4F;
 	margin-top: 0px;
 	margin-bottom: 20px;
@@ -49,11 +12,15 @@
 	width: 100px;
 }
 
-.android .course-logo {
+.webdev-advanced .course-logo {
+	width: 140px;
+}
+
+.entrepreneurship .course-logo {
 	width: 200px;
 }
 
-.scratch .course-logo {
+.html .course-logo {
 	width: 120px;
 }
 
@@ -64,11 +31,6 @@
 .category {
 	margin-bottom: 50px;
 	margin-top: 30px;
-}
-
-.full-listing .header {
-	margin-bottom: 20px;
-	color: #C84F4F;
 }
 
 .level-header {
@@ -83,4 +45,3 @@
 .contact {
 	margin-bottom: 30px;	
 }
-*/
