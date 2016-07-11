@@ -13,6 +13,10 @@ $(function() {
 		}
 	})	
 
+	$(".more-info").click(function() {		
+		$(".email-signup").show();
+	})
+
 	var emailSignupButton = $(".signup-btn")
 	emailSignupButton.click(function() {
 		var emailField = $(".email-field");

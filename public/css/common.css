@@ -108,17 +108,30 @@ h4 {
 	display: inline-block;
 }
 
+.enroll-link h4 {
+	margin: 0px;
+}
+
 .enroll-link:hover {
 	color: white;
 }
 
 .email-signup {
 	padding: 0 5px 0 5px;
+	display: none;
 }
 
 .signup-btn {
 	margin-top: 10px;
 	background: #407F7F;	
+}
+
+.more-info, .more-info:hover {
+	color: white;	
+}
+
+.more-info:hover {
+	cursor: pointer;
 }
 
 @media (max-device-width: 480px) { 	
