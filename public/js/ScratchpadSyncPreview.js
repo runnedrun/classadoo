@@ -1,5 +1,7 @@
 ScratchpadSyncPreview = function(liveEditor, ref) {	
 	var previewShown = false;
+	this.merged = true;
+	var self = this;
 
 	var previewEditor = ace.edit("sync-preview");
 	previewEditor.setTheme("ace/theme/tomorrow_night_eighties");
@@ -10,12 +12,16 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 	previewEditor.setShowPrintMargin(false);
 	previewEditor.setReadOnly(true)
 
+	this.editor = previewEditor;
+
 	var previewEl = $("#sync-preview")	
-	var togglePreviewEl = $("#toggle-sync-preview")
+	var togglePreviewEl = $("#toggle-sync-preview");
+	var toggleMergeEl = $(".merge-button");
 	var liveEditorEl = $(liveEditor.container);	
 	var topBarHeight = 52;
 
 	togglePreviewEl.click(togglePreview);
+	toggleMergeEl.click(toggleMerge);
 
 	this.editor = previewEditor;
 
@@ -36,15 +42,14 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 			previewShown = false;			
 			livePreview.css({height: "100%", top: 0});			
 			resizeLiveEditor();						
-		} else {			
-			previewEl.show();			
-			previewIframe.show();		
-			togglePreviewEl.text("Hide preview");	
-			previewShown = true;
+		} else {		
+			if (!self.merged) {				
+				showPreviewFrame();
+			}			
 
-			var iframeHeight = window.innerHeight - nonEditorHeight();
-			
-			livePreview.css({height: iframeHeight, top:  nonEditorHeight()});			
+			previewEl.show();			
+			togglePreviewEl.text("Hide preview");	
+			previewShown = true;			
 			resizeLiveEditor();			
 		}
 	}	
@@ -54,7 +59,37 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 		previewEditor.resize();
 	}
 
+	function showPreviewFrame() {
+		var previewIframe = $("#sync-preview-preview");
+		var livePreview = $("#preview");
 
+		previewIframe.show();		
+		var iframeHeight = window.innerHeight - nonEditorHeight();	
+		livePreview.css({height: iframeHeight, top:  nonEditorHeight()});			
+	}
+
+	function hidePreviewFrame() {
+		var previewIframe = $("#sync-preview-preview");
+		var livePreview = $("#preview");
+
+		previewIframe.hide();
+		livePreview.css({height: "100%", top: 0});			
+	}
+
+	function toggleMerge() {
+		var previewIframe = $("#sync-preview-preview");
+		var livePreview = $("#preview");
+
+		if (!self.merged) {			
+			hidePreviewFrame();
+			toggleMergeEl.html("Unmerge");
+			merged = true;
+		} else {
+			showPreviewFrame();
+			toggleMergeEl.html("Merge");
+			merged = false;
+		}		
+	}
 
 	function resizeLiveEditor(){		
 		var editorHeight = window.innerHeight - nonEditorHeight();

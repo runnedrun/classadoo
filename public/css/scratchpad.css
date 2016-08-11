@@ -511,3 +511,7 @@ body.resizing * {
 #drag-handle.dragging {
   width: 200px;
 }
+
+#hidden-frame {
+  display: none;
+}

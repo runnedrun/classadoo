@@ -1,3 +1,6 @@
+var syncPreview = false;
+var currentlyInsertedJs = "";
+
 $(function(){    
   // Scratchpad Intro
   //--------------------------------------------------------------------------------
@@ -31,7 +34,7 @@ $(function(){
   editor.$blockScrolling = Infinity  
 
   // Set up iframe.
-  var frame = document.getElementById('preview');  
+  var frame = document.getElementById('preview');    
   frame.contentWindow.document.body.setAttribute('tabindex', 0);
 
   var previewPreview = $("#sync-preview-preview")
@@ -46,9 +49,48 @@ $(function(){
 
   function refreshPage(iframe, editor) { 
     var iframedoc = iframe.contentWindow.document   
-    if (iframedoc.body) {
-      iframedoc.body.innerHTML =  jquery + "\n\n" + firebase + "\n\n" + editor.getValue();      
-    }    
+    if (iframedoc.body) {      
+      var code = editor.getValue();
+
+      iframedoc.body.innerHTML =  jquery + "\n\n" + firebase + "\n\n" + code;
+
+      if (syncPreview && syncPreview.merged) {
+        if 
+        autoRefreshJsIfNecessary(code, iframe);
+      }
+    }          
+  }
+
+  function autoRefreshJsIfNecessary(code, iframe) {    
+    var hiddenFrame = $("#hidden-frame")[0];
+
+    var idoc = $(hiddenFrame.contentWindow.document);
+    idoc[0].body.innerHTML = code;
+    var scripts = idoc.find("script");
+
+    var scriptsAreClean = true;
+    var scriptString = scripts.map(function(i, el) {
+      if (el) {
+        var code = el.innerHTML;
+
+        try {
+          eval(code); 
+          return code
+        } catch (e) {
+          console.log("error in JS, not refreshing", e);            
+          scriptsAreClean = false
+          return false;
+        }            
+      }            
+    }).toArray().join("")
+
+    scriptString = scriptString.replace(/\s/g, "");    
+
+    if (scriptsAreClean && (currentlyInsertedJs != scriptString)) {      
+      console.log("refe")
+      currentlyInsertedJs = scriptString;      
+      refreshPageWithJs(iframe);
+    } 
   }
 
   function refreshPageWithJs(iframe) {  
@@ -65,6 +107,10 @@ $(function(){
 
     newFrame.css({"height": frameHeight, width: frameWidth, top: frameTop, left: frameLeft});
     var code = editor.getValue();
+
+    if (syncPreview && syncPreview.merged) {
+      code = code + syncPreview.editor.getValue();
+    }
 
     var html = jquery + "\n\n" + firebase + "\n\n" + code;
     var manager = new IframeManager(newFrame);    
@@ -87,7 +133,7 @@ $(function(){
 
   if (Scratchpad.document_id != "classadoo-instructor") {
     var syncPreviewRef = new Firebase('https://classadoo-scratch.firebaseIO.com/students/classadoo-instructor');
-    var syncPreview = new ScratchpadSyncPreview(editor, syncPreviewRef)
+    syncPreview = new ScratchpadSyncPreview(editor, syncPreviewRef)
 
     new ScratchpadChat(scratchpadRef);
 

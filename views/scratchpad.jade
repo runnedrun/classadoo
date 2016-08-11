@@ -6,9 +6,8 @@ html(lang='en')
   body#scratchpad(tabindex='0')    
     #hidden-test-storage
     #commandbar
-      a#menu.run-js-button(href='javascript:void(0)')
-        span#menu-button JS
-      a#title(href='javascript:void(0)') Loading...
+      a#menu.menu-button.run-js-button(href='javascript:void(0)') JS
+      a#menu.menu-button.merge-button(href='javascript:void(0)') Unmerge
     #toggle-sync-preview Show Preview      
     #sync-preview
     #editor
@@ -17,6 +16,7 @@ html(lang='en')
     //-   a#firebase(href='https://www.firebase.com/', target='_blank') Firebase
     #drag-handle
     iframe#sync-preview-preview
+    iframe#hidden-frame
     iframe#preview
     #help
       h2 HTML & CSS Quick Reference
