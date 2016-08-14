@@ -3,20 +3,19 @@ html(lang='en')
   head
     title Scratchpad - Realtime HTML and CSS Editor
     link(href='/css/scratchpad.css', rel='stylesheet', type='text/css')
-  body#scratchpad(tabindex='0')    
-    #hidden-test-storage
+  body#scratchpad(tabindex='0')        
     #commandbar
       a#menu.menu-button.run-js-button(href='javascript:void(0)') JS
       a#menu.menu-button.merge-button(href='javascript:void(0)') Unmerge
-    #toggle-sync-preview Show Preview      
-    #sync-preview
+    #toggle-instructor-display Show Instructor Display      
+    #instructor-editor
     #editor
     //- #footer
     //-   | Powered by 
     //-   a#firebase(href='https://www.firebase.com/', target='_blank') Firebase
     #drag-handle
-    iframe#sync-preview-preview
-    iframe#hidden-frame
+    iframe#instructor-preview
+    iframe#hidden-frame("sandbox"="allow-same-origin")
     iframe#preview
     #help
       h2 HTML & CSS Quick Reference
@@ -44,7 +43,12 @@ html(lang='en')
     script(src='/js/underscore.js', type='text/javascript', charset='utf-8')
     script(src='/js/keymaster.js', type='text/javascript', charset='utf-8')
     script(src='/js/ScratchpadSyncPreview.js', type='text/javascript')
+    script(src='/js/SyncedEditorManager.js', type='text/javascript')      
     script(src='/js/ScratchpadChat.js', type='text/javascript')
     script(src='/js/IframeManager.js', type='text/javascript')    
+    script(src='/js/webpack-files/Util.js', type='text/javascript')    
+    script(src='/js/BindingUtils.js', type='text/javascript')    
+    script(src='/js/SelectionCreator.js', type='text/javascript')        
+    script(src='/js/SelectionManager.js', type='text/javascript')
     script(src='/js/scratchpad.js', type='text/javascript')
 

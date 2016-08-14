@@ -2,6 +2,12 @@
 
 /*chat*/
 
+.clickable-text {  
+  background: rebeccapurple;
+  position: absolute;
+    z-index: 2;
+}
+
 .chat-window {
   width: 200px;
   height: 18px;
@@ -72,7 +78,7 @@
 
 /*end chat*/
 
-#sync-preview-preview {
+#instructor-preview {
   display: none;
   background: white;
   height: 342px; 
@@ -86,7 +92,7 @@
   border-radius: 5px 0px 0px 5px;
 }
 
-#toggle-sync-preview {
+#toggle-instructor-display {
   background: whitesmoke;
   color: #333;
   width: 100%;
@@ -99,7 +105,7 @@
   cursor: pointer; 
 }
 
-#sync-preview {
+#instructor-editor {
   font-size: 11px;
   display: none;
   height: 290px;

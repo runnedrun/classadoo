@@ -1,29 +1,19 @@
-ScratchpadSyncPreview = function(liveEditor, ref) {	
+ScratchpadSyncPreview = function(instructorEditor, liveEditor, $instructorEditor, $liveEditor, instructorPreview, livePreview) {	
 	var previewShown = false;
 	this.merged = true;
 	var self = this;
 
-	var previewEditor = ace.edit("sync-preview");
-	previewEditor.setTheme("ace/theme/tomorrow_night_eighties");
-	previewEditor.getSession().setMode("ace/mode/html");
-	previewEditor.setHighlightActiveLine(false);
-	previewEditor.getSession().setTabSize(2);	
-	previewEditor.commands.removeCommand('gotoline');
-	previewEditor.setShowPrintMargin(false);
-	previewEditor.setReadOnly(true)
-
-	this.editor = previewEditor;
-
-	var previewEl = $("#sync-preview")	
-	var togglePreviewEl = $("#toggle-sync-preview");
+	this.editor = instructorEditor;
+	
+	var toggleInstructorDisplayEl = $("#toggle-instructor-display");
 	var toggleMergeEl = $(".merge-button");
 	var liveEditorEl = $(liveEditor.container);	
 	var topBarHeight = 52;
 
-	togglePreviewEl.click(togglePreview);
+	toggleInstructorDisplayEl.click(toggleInstructorDisplay);
 	toggleMergeEl.click(toggleMerge);
 
-	this.editor = previewEditor;
+	this.editor = instructorEditor;
 
 	function nonEditorHeight() {
 		var classadooToolbar = $(".classadoo-toolbar");
@@ -31,14 +21,11 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 		return (previewShown ? 300 : 0) + topBarHeight + classadooToolbarHeight;
 	}
 
-	function togglePreview() {
-		var previewIframe = $("#sync-preview-preview");
-		var livePreview = $("#preview");
-
+	function toggleInstructorDisplay() {
 		if (previewShown) {
-			previewEl.hide();		
-			previewIframe.hide();
-			togglePreviewEl.text("Show preview");			
+			$instructorEditor.hide();		
+			instructorPreview.hide();
+			toggleInstructorDisplayEl.text("Show preview");			
 			previewShown = false;			
 			livePreview.css({height: "100%", top: 0});			
 			resizeLiveEditor();						
@@ -47,8 +34,9 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 				showPreviewFrame();
 			}			
 
-			previewEl.show();			
-			togglePreviewEl.text("Hide preview");	
+			$instructorEditor.show();
+			instructorPreview.show();			
+			toggleInstructorDisplayEl.text("Hide preview");	
 			previewShown = true;			
 			resizeLiveEditor();			
 		}
@@ -56,30 +44,21 @@ ScratchpadSyncPreview = function(liveEditor, ref) {
 
 	function resize() {
 		liveEditor.resize();
-		previewEditor.resize();
+		instructorEditor.resize();
 	}
 
 	function showPreviewFrame() {
-		var previewIframe = $("#sync-preview-preview");
-		var livePreview = $("#preview");
-
-		previewIframe.show();		
+		instructorPreview.show();		
 		var iframeHeight = window.innerHeight - nonEditorHeight();	
 		livePreview.css({height: iframeHeight, top:  nonEditorHeight()});			
 	}
 
-	function hidePreviewFrame() {
-		var previewIframe = $("#sync-preview-preview");
-		var livePreview = $("#preview");
-
-		previewIframe.hide();
+	function hidePreviewFrame() {		
+		instructorPreview.hide();
 		livePreview.css({height: "100%", top: 0});			
 	}
 
-	function toggleMerge() {
-		var previewIframe = $("#sync-preview-preview");
-		var livePreview = $("#preview");
-
+	function toggleMerge() {	
 		if (!self.merged) {			
 			hidePreviewFrame();
 			toggleMergeEl.html("Unmerge");

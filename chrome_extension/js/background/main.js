@@ -35,6 +35,7 @@ chrome.management.getSelf(function(info) {
     clientId = storedClientId;
   }
 
+
   var clientRef = new Firebase(firebasePrefix + "users/" + clientId);
   var classRef = new Firebase(firebasePrefix + "class/");
 
