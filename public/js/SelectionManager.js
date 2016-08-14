@@ -14,6 +14,6 @@ SelectionManager = function(editor, ref) {
 
 		console.log(savedRange, range)
 
-		editor.session.addMarker(range, "clickable-text", "fullLine");	
-	}
+		editor.session.addMarker(range, "clickable-text", "text");	
+	}	
 }

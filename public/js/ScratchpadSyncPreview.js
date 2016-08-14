@@ -76,4 +76,6 @@ ScratchpadSyncPreview = function(instructorEditor, liveEditor, $instructorEditor
 		liveEditorEl.css({"top": nonEditorHeight(), height: editorHeight});				
 		setTimeout(resize, 200);		
 	}
+
+	toggleInstructorDisplay();
 }

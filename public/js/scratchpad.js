@@ -66,9 +66,7 @@ $(function(){
 
   var scratchpadRef = ref.child(Scratchpad.document_id);  
 
-  var editorRef = scratchpadRef.child('editor');
-
-  new SyncedEditorManager(editor, $("#editor"), getMainPreviewContent, mainPreview, editorRef);
+  var editorRef = scratchpadRef.child('editor')
 
   var now = new Date();
   scratchpadRef.child('updatedAt').set(now.toString());  
@@ -79,15 +77,18 @@ $(function(){
     var preview;
 
     // new SyncedEditorManager(instructorEditor, $("#instructor-editor"), getInstructorPreviewContent, instructorPreview, instructorEditorRef);  
+    new SyncedEditorManager(editor, $("#editor"), getMainPreviewContent, mainPreview, editorRef);
     new SyncedEditorManager(instructorEditor, $("#instructor-editor"), getMainPreviewContent, mainPreview, instructorEditorRef);  
 
     new ScratchpadSyncPreview(instructorEditor, editor, $("#instructor-editor"), $("#editor"), instructorPreview, $(mainPreview))
 
-    // new SelectionManager(instructorEditor, instructorEditorRef);
-
-    new ScratchpadChat(scratchpadRef);
+    new SelectionManager(instructorEditor, instructorEditorRef);
+    new SelectionCopier(instructorEditor, editor, $("#instructor-editor"), $("#editor"));
+    new ScratchpadChat(scratchpadRef);    
   } else {    
-    // new SelectionCreator(editor, scratchpadRef);
+    var noUpdates = true
+    new SyncedEditorManager(editor, $("#editor"), getMainPreviewContent, mainPreview, editorRef, noUpdates);
+    new SelectionCreator(editor, scratchpadRef);    
   }
 
 

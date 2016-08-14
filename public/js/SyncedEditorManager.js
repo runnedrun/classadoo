@@ -1,4 +1,6 @@
-SyncedEditorManager = function (editor, $editorEl, getPreviewContent, previewFrame, editorRef) {
+SyncedEditorManager = function (editor, $editorEl, getPreviewContent, previewFrame, editorRef, noInboundUpdates) {
+  var self = this
+
 	var intro = ""
 
 	// script locations	
@@ -77,21 +79,47 @@ SyncedEditorManager = function (editor, $editorEl, getPreviewContent, previewFra
     previewFrame = newFrame[0]; 
   }
 
+  self.refreshJs = refreshPageWithJs;
+
+  function isEmptyMarker(marker) {
+    return (marker.range.start.row == marker.range.end.row) && (marker.range.start.column == marker.range.end.column)
+  }
+
   function persistCode() {    	
 		// Get cursor position
     var startrow = editor.selection.getRange().start.row;
     var startcolumn = editor.selection.getRange().start.column;
     var endrow = editor.selection.getRange().end.row;
     var endcolumn = editor.selection.getRange().end.column;
+
+    var markers = editor.getSession().getMarkers();
+
+    var selections = {};
+
+    // we only add selections if we're not reading inbound updates, otherwise infinite loop
+    if (noInboundUpdates) {      
+      Object.keys(markers).forEach(function(markerId) {
+        var marker = markers[markerId]     
+
+        if (marker.range && !isEmptyMarker(marker) && marker.clazz == "clickable-text") {
+          selections[markerId] = {start: {row: marker.range.start.row, column: marker.range.start.column}, end: {row: marker.range.end.row, column: marker.range.end.column}};
+        } 
+      })
+    }    
     
     // If nothing is highlighted, ship contents of editor and cursor data to Firebase    
     if (startrow == endrow && startcolumn == endcolumn) {    	
-      editorRef.set({code: editor.getValue(), cursor: editor.selection.getCursor(), lastTyped: Date.now()});
+      editorRef.set({code: editor.getValue(), cursor: editor.selection.getCursor(), lastTyped: Date.now(), selections: selections});
     }        
   }
 
   function updateEditor(dataSnapshot) {
+    console.log("updating")    
   	editor.setValue(dataSnapshot.child('code').val() || "");      
+    var selections = dataSnapshot.child("selections").val();
+    if (selections) {
+      addSelectionMarkers(selections);
+    }    
     
     // Clear selection and move cursor to where it needs to be
     editor.clearSelection();
@@ -102,16 +130,45 @@ SyncedEditorManager = function (editor, $editorEl, getPreviewContent, previewFra
     }    
   }
 
+  function clearCurrentMarkers() {
+    var markers = editor.getSession().getMarkers();    
+    Object.keys(markers).forEach(function(markerId) {
+      editor.getSession().removeMarker(markers[markerId]);
+    })
+  }
+
+  function addSelectionMarkers(selections) {    
+    clearCurrentMarkers();
+
+    Object.keys(selections).forEach(function(selectionId) {
+      var savedRange = selections[selectionId];
+      console.log("saved range", savedRange)
+
+      var range = editor.getSelectionRange();
+
+      range.start = editor.session.doc.createAnchor(savedRange.start) 
+      range.end =  editor.session.doc.createAnchor(savedRange.end) ;
+
+      console.log("heres the rnag", range);
+
+      editor.session.addMarker(range, "clickable-text", "text");  
+    })    
+  }
+
   // firebase listening
 
   editorRef.once('value', function(dataSnapshot) {  	
     if (dataSnapshot.val() === null ) {
       editor.setValue(intro);
+    } else {
+      updateEditor(dataSnapshot)
     }
   })
   
   // When code changes, put it into the editor
-  editorRef.on('value', updateEditor);  
+  if (!noInboundUpdates) {
+    editorRef.on('value', updateEditor);    
+  }
   
   if (!editor.getReadOnly()) {
   	// On keyup, save the code and cursor data to firebase

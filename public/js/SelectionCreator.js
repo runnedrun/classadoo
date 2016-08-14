@@ -3,9 +3,7 @@ SelectionCreator = function(editor, ref) {
 
 	var highlightKeyBinding = KeyBinding.keydown(KeyCode.tilde, $(document), function(e) {		
 		var highlightedRange = editor.getSelectionRange();		
-
-		ref.child("selections").push({start: highlightedRange.start, end: highlightedRange.end});
-		
+			
 		highlightedRange.start = editor.session.doc.createAnchor(highlightedRange.start) 
 		highlightedRange.end = editor.session.doc.createAnchor(highlightedRange.end) 		
 

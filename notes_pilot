@@ -1,0 +1,10 @@
+ <img id="charizard" style="position:absolute; height: 100px" src="http://vignette4.wikia.nocookie.net/pokemon/images/e/e5/006Charizard_AG_anime.png/revision/latest?cb=20131213083244">
+
+
+<script>
+  $(function(){
+    $("body").click(function() {
+      $("#charizard").animate({"left": 500});
+    })
+  })
+</script>
