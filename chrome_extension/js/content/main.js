@@ -24,6 +24,7 @@ $(function() {
     			var backgroundDisplay = new BackgroundDisplay(manager);		
     			var helpManager = new HelpManager(manager);				    			
     			var xrayManager = new XRayManager(manager);
+                var InstcutorPreview = new ThimbleInstructorPreview(manager);
 
     			// not enabling this for now, it's too expensive, and not being used
     			// var pageSyncManager = new PageSyncManager(manager);	  

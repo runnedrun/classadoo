@@ -31,7 +31,7 @@
                 "js/content/BindingUtils.js", "js/content/DataManager.js",
                 "js/content/LoginManager.js", "js/content/XRayManager.js", "js/content/ModifyPageForToolbar.js",
                 "js/content/Toolbar.js", "js/content/ChatWindow.js", 
-                "js/content/RemoteRefreshManager.js",
+                "js/content/RemoteRefreshManager.js", "js/content/ThimbleInstructorPreview.js",
                  "js/content/ButterBar.js", "js/content/ScratchPadJsRunner.js", "js/content/main.js" 
                 ],
             "run_at": "document_start"            
@@ -40,6 +40,12 @@
             "matches": ["*://classadoo.github.io/lessons/samples/*", "http://localhost:8000/samples/*"],
             "js": ["third_party/jquery.js", "js/content/HintModifier.js"],
             "run_at": "document_start" 
+        },         
+        {
+            "matches": ["https://mozillathimblelivepreview.net/*"],
+            "js": ["third_party/jquery.js", "js/content/ThimbleInstructorPreview.js"],
+            "run_at": "document_start",
+            "all_frames": true
         }         
     ],
     "permissions": [
